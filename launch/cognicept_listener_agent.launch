@@ -1,0 +1,5 @@
+<launch>
+    <!-- Start Cognicept Listener Agent -->
+    <node pkg="cognicept_rosout_listener" type="cognicept_rosout_listener" name="cognicept_rosout_listener_node"  output="screen">
+    </node>
+</launch>
