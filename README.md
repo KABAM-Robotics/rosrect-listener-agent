@@ -13,10 +13,10 @@
 - [Related-Pages](#related-pages)
 
 ## Description
-This article explains how to run the rosrect Listener Agent ROS node.
+This article explains how to run the `rosrect Listener Agent` ROS node.
 
 ## Overview
-This article shows how to start the rosrect Listener Agent. By the end of this, you will be able to start the agent, run a simulation and test the listener agent to listen to navigation errors.
+This article shows how to start the `rosrect Listener Agent`. By the end of this, you will be able to start the agent, run a simulation and test the listener agent to listen to navigation errors.
 
 ## Prerequisites
 Some knowledge of ROS and robotics is necessary.
@@ -54,23 +54,23 @@ Now, you can run the listener agent using the provided launch file and `roslaunc
 ```
 $ roslaunch rosrect-listener-agent listener-agent.launch 
 ```
-**NOTE: Just launching the ROS node will start a new ROS master if one is not found. This is just a syntax. We will be using this to connect to a simulation to listen to errors in the next section!
+**NOTE: Just launching the ROS node will start a new ROS master if one is not found. This is just a syntax. We will be using this to connect to a simulation to listen to errors in the next section!**
 
 ## Example Application
 
 ### Catching Navigation Errors from /move_base
-In this example, we will run the rosrect Listener Agent along with the Turtlebot3 simulation to see how `/move_base` navigation errors are caught.
+In this example, we will run the `rosrect Listener Agent` along with the Turtlebot3 simulation to see how `/move_base` navigation errors are caught.
 
 ### Start Simulation
 Start a Turtlebot3 Navigation demo as documented by Robotis [here][1]. Please make sure you have gone through the Turtlebot3 installation [documentation][2] if you are facing any errors with this step.
 
-First, open a new terminal and launch the turtlebot3_world:
+First, open a new terminal and launch the `turtlebot3_world`:
 ```
 $ export TURTLEBOT3_MODEL=waffle_pi
 $ roslaunch turtlebot3_gazebo turtlebot3_world.launch
 ```
 
-Then, open a second termainal and launch the navigation stack:
+Then, open a second termainal and launch the `turtlebot3_navigation` launchf file:
 ```
 $ export TURTLEBOT3_MODEL=waffle_pi
 $ roslaunch turtlebot3_navigation turtlebot3_navigation.launch
@@ -122,8 +122,7 @@ Create a ticket!
 Create a ticket!
 ```
 
-This shows that the listener agent is able to successfully capture `rosout` logs with [severity level][3] `ERROR` and origin node of `/move_base` which is the navigation stack that the Turtlebot3 is using.
-
+This shows that the listener agent is able to successfully capture `rosout` logs with [severity level][3] `ERROR` and origin node of `/move_base` which is the navigation stack that the Turtlebot3 is using. We can now build on this to do a variety of things such as connect to an incident management system to keep track of robot errors or build further downstream diagnostic stacks.
 
 ## Related Pages
 For more related information, refer to:
