@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(cognicept_rosout_listener)
+project(rosrect-listener-agent)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -12,6 +12,9 @@ find_package(catkin REQUIRED COMPONENTS
   rosgraph_msgs
   std_msgs
 )
+set(cpprestsdk_DIR /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/cmake/)
+find_package(OpenSSL REQUIRED)
+find_package(cpprestsdk REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -105,7 +108,7 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES cognicept_rosout_listener
+#  LIBRARIES rosrect-listener-agent
   CATKIN_DEPENDS roscpp std_msgs rosgraph_msgs
 #  DEPENDS system_lib
 )
@@ -117,13 +120,13 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/cognicept_rosout_listener.cpp
+#   src/${PROJECT_NAME}/rosrect-listener-agent.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -134,7 +137,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(cognicept_rosout_listener src/cs_rosout_listener.cpp)
+add_executable(rosrect-listener-agent src/listener_agent.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -144,10 +147,10 @@ add_executable(cognicept_rosout_listener src/cs_rosout_listener.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(cognicept_rosout_listener ${cognicept_rosout_listener_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(rosrect-listener-agent ${rosrect-listener-agent_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(cognicept_rosout_listener
+target_link_libraries(rosrect-listener-agent
   ${catkin_LIBRARIES}
 )
 
@@ -198,7 +201,7 @@ target_link_libraries(cognicept_rosout_listener
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_cognicept_rosout_listener.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_rosrect-listener-agent.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
