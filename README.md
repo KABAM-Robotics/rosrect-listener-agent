@@ -8,10 +8,10 @@ This project adheres to the Contributor Covenant [code of conduct](https://githu
 - [Installation](#installation)
 - [Syntax](#syntax)
 - [Example-Application](#example-application)
-    * [Catching Navigation Errors from /move_base](catching-navigation-errors-from-/move_base)
+    * [Catching Navigation Errors from /move_base](catching-navigation-errors-from-move_base)
     * [Start Simulation](#start-simulation)
     * [Start rosrect Listener Agent](#start-rosrect-listener-agent)
-    * [Generate a navigation error](#generate-a-navigation-error)
+    * [Generate navigation errors and create tickets](#generate-navigation-errors-and-create-tickets)
 - [Related-Pages](#related-pages)
 
 ## Description
