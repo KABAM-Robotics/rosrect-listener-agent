@@ -25,6 +25,8 @@ Some knowledge of ROS and robotics is necessary.
 
 ## Installation
 
+**NOTE: These features have only been tested on Ubuntu 18.04 and ROS Melodic.**
+
 You can get access to the agent by cloning this repo and building the ROS node. Steps are as follows:
 
 1. Open a terminal window.
@@ -49,6 +51,11 @@ You can get access to the agent by cloning this repo and building the ROS node. 
     $ rospack list | grep rosrect
       rosrect-listener-agent /home/swaroophs/catkin_ws/src/rosrect-listener-agent
     ```
+7. Finally install Microsoft's [`C++ REST SDK`][6] for establishing the backend api for incident management using `apt-get`:
+    ```
+    $ sudo apt-get install libcpprest-dev
+    ```
+
 That is it for the installation!
 
 ## Syntax
@@ -92,6 +99,7 @@ export ROBOT_CODE=ROBOT11
 export SITE_CODE=CS12
 export AGENT_CODE=CPP
 ```
+**Note: These values are available only in the current terminal and need to be recreated every time before running the listener. One way to get around this is to place these statements in the `bashrc` file**
 
 Simply launch the listener ROS node using the launch file:
 ```
@@ -171,9 +179,11 @@ For more related information, refer to:
 * [rosgraph_msgs documentation][3]
 * [ROS logging documentation][4]
 * [Cognicept Systems Tickets Page][5]
+* [Microsoft C++ REST SDK][6]
 
 [1]: http://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/#virtual-navigation-with-turtlebot3
 [2]: http://emanual.robotis.com/docs/en/platform/turtlebot3/pc_setup/#install-dependent-ros-packages
 [3]: http://docs.ros.org/api/rosgraph_msgs/html/msg/Log.html
 [4]: http://wiki.ros.org/roscpp/Overview/Logging
 [5]: https://dashboard.cognicept.systems/#/tickets
+[6]: https://github.com/microsoft/cpprestsdk
