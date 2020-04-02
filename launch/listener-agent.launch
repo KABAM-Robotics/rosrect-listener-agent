@@ -1,0 +1,5 @@
+<launch>
+    <!-- Start Cognicept Listener Agent -->
+    <node pkg="rosrect-listener-agent" type="rosrect-listener-agent" name="rosrect_listener_agent_node"  output="screen">
+    </node>
+</launch>
