@@ -16,6 +16,9 @@ set(cpprestsdk_DIR /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/cmake/)
 find_package(OpenSSL REQUIRED)
 find_package(cpprestsdk REQUIRED)
 
+find_path(LIBUUID_INCLUDE_DIR uuid.h PATH_SUFFIXES uuid)
+find_library(LIBUUID_LIBRARY libuuid.a)
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -122,6 +125,7 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  {LIBUUID_INCLUDE_DIR}
 )
 
 ## Declare a C++ library
@@ -137,7 +141,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(rosrect-listener-agent src/listener_agent.cpp src/backend_api.cpp)
+add_executable(rosrect-listener-agent src/listener_agent.cpp src/backend_api.cpp src/robot_event.cpp src/state_manager.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -155,6 +159,7 @@ target_link_libraries(rosrect-listener-agent
 )
 
 target_link_libraries(rosrect-listener-agent PRIVATE cpprestsdk::cpprest)
+target_link_libraries(rosrect-listener-agent PUBLIC ${LIBUUID_LIBRARY})
 
 #############
 ## Install ##
