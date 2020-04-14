@@ -43,9 +43,9 @@ class BackendApi {
   int log_id;
   std::string error_api_host;
   std::string error_api_endpoint;
+  std::string msg_resp;
   
   public:
-  std::string msg_resp;
   BackendApi();
   ~BackendApi();
   pplx::task<void> login(); // Login to register access token
@@ -54,5 +54,6 @@ class BackendApi {
   json::value create_ticket_json(ticketDetails); // Create JSON payload data to feed create ticket POST request
   void push_kinesis(std::vector<std::vector<std::string>>);
   json::value create_event_log(std::vector<std::vector<std::string>>); // Create JSON payload data for downstream consumption
-  pplx::task<void> check_error_classification(std::string); // Check error classification
+  pplx::task<void> query_error_classification(std::string); // Query error classification database table
+  json::value check_error_classification(std::string); // Entry point for error classification
 };

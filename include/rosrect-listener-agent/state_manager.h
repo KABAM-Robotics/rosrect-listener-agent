@@ -33,7 +33,6 @@ class StateManager {
     public:
     StateManager();
     // ~StateManager();
-    json::value get_JSON(std::string); // Get JSON object from string
     std::vector<std::string> does_exist(std::string, std::string); // Check if message already logged with this robot
     void check_message(std::string, std::string, const rosgraph_msgs::Log::ConstPtr&); // Entry point to state management that calls the correct variant of check_message*
     void check_message_db(std::string, const rosgraph_msgs::Log::ConstPtr&); // State management in case of a ROS direct feed

@@ -10,14 +10,6 @@ StateManager::StateManager(){
 
 }
 
-json::value StateManager::get_JSON(std::string msg_resp){
-    // std::cout << "Parsing JSON" << std::endl;
-    json::value response = json::value::parse(msg_resp);
-    // std::cout << "Extracting data" << std::endl;
-    json::value response_data = response.at(U("data"));
-    return response_data;
-}
-
 std::vector<std::string> StateManager::does_exist(std::string robot_code, std::string msg_text){
 
     // Find if msg is already recorded for the given robot code
@@ -53,18 +45,19 @@ void StateManager::check_message_db(std::string robot_code, const rosgraph_msgs:
     // Parse message to query-able format
     std::string msg_text = data->msg;
     std::replace(msg_text.begin(), msg_text.end(), '/', ' ');
+    // std::cout << "Querying: " << msg_text << std::endl;
 
     // Check error classification, ECS
-    this->api_instance.check_error_classification(msg_text).wait();
-    bool ecs_hit = !((this->api_instance.msg_resp).empty());
+    json::value msg_info = this->api_instance.check_error_classification(msg_text);
+    
+    bool ecs_hit = !(msg_info.is_null());
     // std::cout << "ECS Hit: ";
     // std::cout << ecs_hit << std::endl;
 
     if(ecs_hit){
         // ECS has a hit, follow the message cycle
-        json::value msg_info = this->get_JSON(this->api_instance.msg_resp);
         // std::cout << "JSON parsed";
-        msg_info = msg_info[0];
+        // msg_info = msg_info[0];
 
         std::string error_level = (msg_info.at(U("error_level"))).as_string();
         // std::cout << "Level: " << error_level << std::endl;

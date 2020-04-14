@@ -330,8 +330,7 @@ json::value BackendApi::create_event_log(std::vector<std::vector<std::string>> l
 
 }
 
-pplx::task<void> BackendApi::check_error_classification (std::string msg_text) {
-  
+pplx::task<void> BackendApi::query_error_classification(std::string msg_text){  
   
   return pplx::create_task([this, msg_text]
   {
@@ -369,4 +368,32 @@ pplx::task<void> BackendApi::check_error_classification (std::string msg_text) {
       std::cout << "Request failed" << std::endl;
     }
   });
+}
+
+json::value BackendApi::check_error_classification(std::string msg_text){
+
+  this->query_error_classification(msg_text).wait();
+  std::string temp_msg = this->msg_resp;
+  json::value response = json::value::parse(temp_msg);
+  json::value response_data;
+  
+  try{
+    // std::cout << "Trying to get data..." << std::endl;
+    response_data = response.at(U("data")); 
+    
+    // // Write the current JSON value to a stream with the native platform character width
+    // utility::stringstream_t stream;
+    // response_data.serialize(stream);
+
+    // Display the string stream
+    // std::cout << "Get data: " << stream.str() << std::endl; 
+    return response_data[0];  
+  }
+  catch(const json::json_exception& e){
+    // const std::exception& e
+    // std::cout << " Can't get data, returning null" << std::endl;
+    response_data = json::value::null();
+    return response_data;
+  }   
+
 }
