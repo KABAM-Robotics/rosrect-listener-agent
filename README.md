@@ -7,11 +7,11 @@ This project adheres to the Contributor Covenant [code of conduct](https://githu
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Syntax](#syntax)
-- [Example-Application](#example-application)
-    * [Catching Navigation Errors from /move_base](catching-navigation-errors-from-move_base)
+- [Example Application](#example-application)
+    * [Creating Event Logs from Turtlebot3](creating-event-logs-from-turtlebot3)
     * [Start Simulation](#start-simulation)
     * [Start rosrect Listener Agent](#start-rosrect-listener-agent)
-    * [Generate navigation errors and create tickets](#generate-navigation-errors-and-create-tickets)
+    * [Generate navigation errors and create logs](#generate-navigation-errors-and-create-logs)
 - [Related-Pages](#related-pages)
 
 ## Description
@@ -145,7 +145,7 @@ TEST mode is ON. JSON Logs will be saved here: /home/swaroophs/catkin_ws/src/ros
 Subscribed to Listener Agent with direct rosout...
 ```
 
-### Generate navigation errors and create tickets
+### Generate navigation errors and create logs
 Now, use `rviz` to provide a `2D Nav Goal` for the robot. 
 
 ![alt text](/docs/images/NavGoal.png "Navigation Goal in rviz")
