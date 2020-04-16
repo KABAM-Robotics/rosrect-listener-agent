@@ -21,20 +21,19 @@ cs_listener::cs_listener(){
 
   this->agent_type = std::getenv("AGENT_TYPE");
   this->robot_code = std::getenv("ROBOT_CODE");
-  this->state_manager_instance = StateManager();
-
+  
   // Depending on ENV variable, communicate to user
   if(this->agent_type == "DB"){
-    std::cout << "Subscribed to Cognicept Agent with DB Access..." << std::endl;
+    std::cout << "Subscribed to Listener Agent with DB Access..." << std::endl;
   }
   else{
-    std::cout << "Subscribed to Cognicept Agent with direct rosout..." << std::endl;
+    std::cout << "Subscribed to Listener Agent with direct rosout..." << std::endl;
   }
 }
 
 cs_listener::~cs_listener(){
   // Destructor
-  std::cout << "Unsubscribed from Cognicept Agent..." << std::endl;
+  std::cout << "Unsubscribed from Listener Agent..." << std::endl;
 }
 
 void cs_listener::log_callback(const rosgraph_msgs::Log::ConstPtr& rosmsg){

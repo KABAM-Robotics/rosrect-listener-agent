@@ -9,6 +9,7 @@ project(rosrect-listener-agent)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  roslib
   rosgraph_msgs
   std_msgs
 )

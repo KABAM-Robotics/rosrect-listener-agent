@@ -98,7 +98,7 @@ void StateManager::check_message_db(std::string robot_code, const rosgraph_msgs:
                 if((data->level == 8) || (data->msg == "Goal reached")){
                     // Push on ALL errors / One named Info msg
                     // Push to stream
-                    this->api_instance.push_kinesis(this->event_instance.get_log());
+                    this->api_instance.push_event_log(this->event_instance.get_log());
                     // Clear only event log since this is compounding
                     this->event_instance.clear_log();
                 }
@@ -109,7 +109,7 @@ void StateManager::check_message_db(std::string robot_code, const rosgraph_msgs:
             else{
                 // This is a compounding log, need to push
                 // Push to stream
-                this->api_instance.push_kinesis(this->event_instance.get_log());
+                this->api_instance.push_event_log(this->event_instance.get_log());
                 // Clear everything
                 this->clear();
             }
@@ -153,7 +153,7 @@ void StateManager::check_message_ros(std::string robot_code, const rosgraph_msgs
         if((data->level == 8) || (data->msg == "Goal reached")){
             // Push on ALL errors / One named Info msg
             // Push to stream
-            this->api_instance.push_kinesis(this->event_instance.get_log());
+            this->api_instance.push_event_log(this->event_instance.get_log());
             // Clear everything
             this->clear();
         }

@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <cpprest/containerstream.h>
 #include <cpprest/producerconsumerstream.h>
+#include <ros/package.h>
 
 using namespace utility;                    // Common utilities like string conversions
 using namespace web;                        // Common features like URIs.
@@ -28,12 +29,8 @@ struct ticketDetails {
 };
 
 class BackendApi {
-  // This class provides access to Cognicept Ticket creation API through C++.
+  // This class provides access to Error Classification API and event log creation through C++.
 
-  std::string username;
-  std::string password;
-  std::string hostname;
-  std::string headers;
   std::string robot_id;
   std::string site_id;
   std::string agent_id;
@@ -48,11 +45,7 @@ class BackendApi {
   public:
   BackendApi();
   ~BackendApi();
-  pplx::task<void> login(); // Login to register access token
-  json::value create_login_json(); // Create JSON payload data to feed login POST request
-  pplx::task<void> create_ticket(ticketDetails); // Main create ticket post request
-  json::value create_ticket_json(ticketDetails); // Create JSON payload data to feed create ticket POST request
-  void push_kinesis(std::vector<std::vector<std::string>>);
+  void push_event_log(std::vector<std::vector<std::string>>);
   json::value create_event_log(std::vector<std::vector<std::string>>); // Create JSON payload data for downstream consumption
   pplx::task<void> query_error_classification(std::string); // Query error classification database table
   json::value check_error_classification(std::string); // Entry point for error classification
