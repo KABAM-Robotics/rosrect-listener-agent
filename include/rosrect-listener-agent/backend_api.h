@@ -20,14 +20,6 @@ using namespace concurrency::streams;       // Asynchronous streams
 using namespace ::pplx;                     // PPLX for tasks
 using namespace web::json;                  // JSON features
 
-struct ticketDetails {
-    std::string module_name;
-    std::string error_text;
-    std::string agent_id;
-    std::string robot_id;
-    std::string prop_id;
-};
-
 class BackendApi {
   // This class provides access to Error Classification API and event log creation through C++.
 
