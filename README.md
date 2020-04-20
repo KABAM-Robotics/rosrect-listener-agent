@@ -124,7 +124,7 @@ Create a ticket!
 Create a ticket!
 ```
 
-This shows that the listener agent is able to successfully capture `rosout` logs with [severity level][3] `ERROR` and origin node of `/move_base` which is the navigation stack that the Turtlebot3 is using. We can now build on this to do a variety of things such as connect to an incident management system to keep track of robot errors or build further downstream diagnostic stacks
+This shows that the listener agent is able to successfully capture `rosout` logs with [severity level][3] `ERROR` and origin node of `/move_base` which is the navigation stack that the Turtlebot3 is using. We can now build on this to do a variety of things such as connect to an incident management system to keep track of robot errors or build further downstream diagnostic stacks.
 
 ## Related Pages
 For more related information, refer to:
