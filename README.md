@@ -78,7 +78,7 @@ $ export TURTLEBOT3_MODEL=waffle_pi
 $ roslaunch turtlebot3_navigation turtlebot3_navigation.launch
 ```
 
-At the end of this step, you would need to see something that looks like the following. Notice that the robot is mislocalized (i.e. the scan doesn't match the map)! :
+At the end of this step, you would need to see something that looks like the following. Notice that the robot is mislocalized (i.e. the scan doesn't match the map) :
 
 ![alt text](/docs/images/Mislocalized.png "Turtlebot mislocalized")
 
