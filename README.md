@@ -1,4 +1,4 @@
-# rosrect Listener Agent Documentation
+# rosrect Listener Agent Documentation 
 
 This project adheres to the Contributor Covenant [code of conduct](https://github.com/cognicept-admin/rosrect/blob/master/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [info@cognicept.systems](mailto:info@cognicept.systems). If you are interested in contributing, please refer to the guidelines [here](https://github.com/cognicept-admin/rosrect/blob/master/CONTRIBUTING.md).
 
@@ -72,7 +72,7 @@ $ export TURTLEBOT3_MODEL=waffle_pi
 $ roslaunch turtlebot3_gazebo turtlebot3_world.launch
 ```
 
-Then, open a second termainal and launch the `turtlebot3_navigation` launchf file:
+Then, open a second termainal and launch the `turtlebot3_navigation` launch file:
 ```
 $ export TURTLEBOT3_MODEL=waffle_pi
 $ roslaunch turtlebot3_navigation turtlebot3_navigation.launch
