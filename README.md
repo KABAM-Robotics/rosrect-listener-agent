@@ -15,7 +15,7 @@ This project adheres to the Contributor Covenant [code of conduct](https://githu
 - [Related-Pages](#related-pages)
 
 ## Description
-This article explains how to run the `rosrect Listener Agent` ROS node.
+This article explains how to run the `rosrect Listener Agent` ROS node
 
 ## Overview
 This article shows how to start the `rosrect Listener Agent`. By the end of this, you will be able to start the agent, run a simulation and test the listener agent to listen to navigation errors.
