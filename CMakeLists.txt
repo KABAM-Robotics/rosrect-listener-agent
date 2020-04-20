@@ -216,3 +216,8 @@ target_link_libraries(rosrect-listener-agent PUBLIC ${LIBUUID_LIBRARY})
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(utest_node test/utests_launch.test src/test/utests_backendapi.cpp)
+  target_link_libraries(utest_node ${catkin_LIBRARIES})
+endif()
