@@ -5,7 +5,7 @@ RobotEvent::RobotEvent(){
     this->event_id_str = "";
 }
 
-void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr& data, web::json::value msg_info){
+void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr& data, json::value msg_info){
     // std::cout << "Event log updating..." << std::endl;
     // Each message has a queue id
     this->queue_id += 1;

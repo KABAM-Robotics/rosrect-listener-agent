@@ -6,6 +6,7 @@
 #include <rosgraph_msgs/Log.h>
 
 using namespace web::json;                  // JSON features
+using namespace web;                        // Common features like URIs.
 
 class RobotEvent {
 

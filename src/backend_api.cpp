@@ -12,7 +12,7 @@ BackendApi::BackendApi() {
 
   // File variables
   std::string package_path = ros::package::getPath("rosrect-listener-agent");
-  this->log_name = package_path + "/tests/logs/logData";
+  this->log_name = package_path + "/test/logs/logData";
   this->log_ext = ".json";
   this->log_id = 0;
 

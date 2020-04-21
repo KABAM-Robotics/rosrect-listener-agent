@@ -75,11 +75,11 @@ find_library(LIBUUID_LIBRARY libuuid.a)
 # )
 
 ## Generate added messages and services with any dependencies listed here
-generate_messages(
-  DEPENDENCIES
-  std_msgs  # Or other packages containing msgs
-  rosgraph_msgs
-)
+#generate_messages(
+#  DEPENDENCIES
+#  std_msgs  # Or other packages containing msgs
+#  rosgraph_msgs
+#)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -111,8 +111,8 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES rosrect-listener-agent
+  INCLUDE_DIRS include
+  LIBRARIES rosrect-listener-agent-lib
   CATKIN_DEPENDS roscpp std_msgs rosgraph_msgs
 #  DEPENDS system_lib
 )
@@ -142,8 +142,19 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(rosrect-listener-agent src/listener_agent.cpp src/backend_api.cpp src/robot_event.cpp src/state_manager.cpp)
-
+add_library(rosrect-listener-agent-lib src/backend_api.cpp src/robot_event.cpp src/state_manager.cpp)
+target_link_libraries(rosrect-listener-agent-lib
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(rosrect-listener-agent-lib PRIVATE cpprestsdk::cpprest)
+#target_link_libraries(rosrect-listener-agent-lib PUBLIC ${LIBUUID_LIBRARY})
+add_executable(rosrect-listener-agent src/listener_agent.cpp )
+target_link_libraries(rosrect-listener-agent
+  ${catkin_LIBRARIES}
+  rosrect-listener-agent-lib
+  cpprestsdk::cpprest
+)
+add_dependencies(rosrect-listener-agent ${rosrect-listener-agent_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -152,15 +163,6 @@ add_executable(rosrect-listener-agent src/listener_agent.cpp src/backend_api.cpp
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(rosrect-listener-agent ${rosrect-listener-agent_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-## Specify libraries to link a library or executable target against
-target_link_libraries(rosrect-listener-agent
-  ${catkin_LIBRARIES}
-)
-
-target_link_libraries(rosrect-listener-agent PRIVATE cpprestsdk::cpprest)
-target_link_libraries(rosrect-listener-agent PUBLIC ${LIBUUID_LIBRARY})
 
 #############
 ## Install ##
@@ -216,8 +218,14 @@ target_link_libraries(rosrect-listener-agent PUBLIC ${LIBUUID_LIBRARY})
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
 if(CATKIN_ENABLE_TESTING)
-  find_package(rostest REQUIRED)
-  add_rostest_gtest(utest_node test/utests_launch.test src/test/utests_backendapi.cpp)
-  target_link_libraries(utest_node ${catkin_LIBRARIES})
+  # find_package(rostest REQUIRED)
+  # add_rostest_gtest(utest_node test/utests_launch.test test/utests_backendapi.cpp)
+  
+  catkin_add_gtest(backend_test_node test/utests_backendapi.cpp)
+  catkin_add_gtest(robotevent_test_node test/utests_robotevent.cpp)
+  target_link_libraries(backend_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest ${LIBUUID_LIBRARY})
+  target_link_libraries(robotevent_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest ${LIBUUID_LIBRARY}) 
+  
 endif()
