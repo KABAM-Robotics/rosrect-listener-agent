@@ -55,7 +55,11 @@ You can get access to the agent by cloning this repo and building the ROS node. 
     $ rospack list | grep rosrect
       rosrect-listener-agent /home/swaroophs/catkin_ws/src/rosrect-listener-agent
     ```
-
+8. Optionally, you can run the unit tests by issuing the following command. Please switch to the `catkin_ws` directory before running the unit tests command:
+    ```
+    $ cd ~/catkin_ws
+    $ catkin_make run_tests_rosrect-listener-agent
+    ```    
 That is it for the installation!
 
 ## Syntax
