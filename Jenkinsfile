@@ -8,7 +8,7 @@ pipeline{
     }
     stage('--build--'){
       steps{
-        echo 'building Agent'
+        echo 'building agent'
       }
     }
 
