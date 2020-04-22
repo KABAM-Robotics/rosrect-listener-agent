@@ -8,8 +8,7 @@ pipeline{
     }
     stage('--build--'){
       steps{
-        sh 'cd /home/alok/catkin_ws_rosrect_listener/'
-        sh 'catkin_make run_tests_rosrect-listener-agent'
+        sh 'cd /home/alok/catkin_ws_rosrect_listener/ && catkin_make run_tests_rosrect-listener-agent'
       }
     }
 
