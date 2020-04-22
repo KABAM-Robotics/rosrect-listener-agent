@@ -1,5 +1,5 @@
 pipeline{
-  agent any
+  agent { label 'ubuntu' }
   stages{
     stage('--test--'){
       steps{
