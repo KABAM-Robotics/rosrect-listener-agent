@@ -8,7 +8,7 @@ pipeline{
     }
     stage('--build--'){
       steps{
-        echo 'building agent'
+        sh 'catkin_make run_tests_rosrect-listener-agent'
       }
     }
 
