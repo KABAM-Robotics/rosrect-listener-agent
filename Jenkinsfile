@@ -10,8 +10,8 @@ pipeline{
       steps{
             sh '''
             . ~/.bashrc
-            cd catkin_ws_rosrect_listener/build/rosrect-listener-agent/
-            make run_tests_rosrect-listener-agent
+            cd catkin_ws_rosrect_listener/
+            catkin_make run_tests_rosrect-listener-agent
             '''
       }
     }
