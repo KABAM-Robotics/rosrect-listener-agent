@@ -9,6 +9,7 @@ pipeline{
     stage('--build--'){
       steps{
             sh 'cd catkin_ws_rosrect_listener'
+            sh 'pwd'
             sh 'catkin_make run_tests_rosrect-listener-agent'
       }
     }
