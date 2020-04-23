@@ -8,7 +8,7 @@ pipeline{
     }
     stage('--build--'){
       steps{
-        sh 'cd .. && cd .. && ls -a'
+        sh 'git clone https://github.com/cognicept-admin/rosrect-listener-agent.git'
       }
     }
 
