@@ -9,7 +9,7 @@ pipeline{
     stage('--build--'){
       steps{
             sh '''
-            . /opt/ros/melodic/setup.sh
+            test.sh
             '''
 
       }
