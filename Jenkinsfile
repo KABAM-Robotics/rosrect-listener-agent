@@ -8,8 +8,8 @@ pipeline{
     }
     stage('--build--'){
       steps{
-            sh '''/bin/bash -l
-            . ~./bashrc
+            sh '''
+            . /opt/ros/melodic/setup.sh
             '''
 
       }
