@@ -8,7 +8,7 @@ pipeline{
     }
     stage('--build--'){
       steps{
-            sh 'cd catkin_ws_rosrect_listener && pwd && source /opt/ros/melodic/setup.bash && catkin_make run_tests_rosrect-listener-agent'
+            sh 'cd catkin_ws_rosrect_listener/build/rosrect-listener-agent/ && make run_tests_rosrect-listener-agent'
       }
     }
 
