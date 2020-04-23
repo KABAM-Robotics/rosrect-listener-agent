@@ -33,18 +33,21 @@ BackendApi::~BackendApi() {
 void BackendApi::push_event_log(std::vector<std::vector<std::string>> log){
   // Create JSON payload and push to kinesis
   auto last_log = log.back();
-  int i = 0;
+  int idx = 0;
 
   // Get values for JSON
-  std::string stop_time = last_log[i++];
-  std::string event_category = last_log[i++];
-  std::string cflag = last_log[i++];
-  std::string module_name = last_log[i++];
-  std::string event_id = last_log.back();
-  json::value event_log = this->create_event_log(log);
-  // std::string event_log = "Log";
+  std::string timestr = last_log[idx++];
+  std::string level = last_log[idx++];
+  std::string cflag = last_log[idx++];
+  std::string module = last_log[idx++];
+  std::string source = last_log[idx++];
+  std::string message = last_log[idx++];
+  std::string description = last_log[idx++];
+  std::string resolution = last_log[idx++];
+  std::string event_id = last_log[idx++];
+  
   bool ticketBool = false;
-  if((event_category == "Error") && ((cflag == "false") || (cflag == "Null"))){
+  if((level == "Error") && ((cflag == "false") || (cflag == "Null"))){
     ticketBool = true;
   }
   else
@@ -54,29 +57,36 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log){
 
   // Create JSON object
   json::value payload = json::value::object();
-  
+
   // Create keys
   utility::string_t agentKey(U("agent_id"));
   utility::string_t roboKey(U("robot_id"));
   utility::string_t propKey(U("property_id"));
   utility::string_t eventidKey(U("event_id"));
   utility::string_t timeKey(U("timestamp"));
-  utility::string_t logKey(U("event_log"));
-  utility::string_t catKey(U("event_category"));
-  utility::string_t modKey(U("module_name"));
+  utility::string_t msgKey(U("message"));
+  utility::string_t lvlKey(U("level"));
+  utility::string_t modKey(U("module"));
+  utility::string_t srcKey(U("source"));
+  utility::string_t cKey(U("compounding"));
   utility::string_t ticketKey(U("create_ticket"));
+  utility::string_t descKey(U("description"));
+  utility::string_t resKey(U("resolution"));
 
   // Assign key-value
   payload[agentKey] = json::value::string(U(this->agent_id));
   payload[roboKey] = json::value::string(U(this->robot_id));
   payload[propKey] = json::value::string(U(this->site_id));
   payload[eventidKey] = json::value::string(U(event_id));
-  payload[timeKey] = json::value::string(U(stop_time));
-  payload[logKey] = event_log;
-  // payload[logKey] = json::value::string(U(event_log));
-  payload[catKey] = json::value::string(U(event_category));
-  payload[modKey] = json::value::string(U(module_name));
+  payload[timeKey] = json::value::string(U(timestr));
+  payload[msgKey] = json::value::string(U(message));
+  payload[lvlKey] = json::value::string(U(level));
+  payload[modKey] = json::value::string(U(module));
+  payload[srcKey] = json::value::string(U(source));
+  payload[cKey] = json::value::string(U(cflag));
   payload[ticketKey] = json::value::boolean(U(ticketBool));
+  payload[descKey] = json::value::string(U(description));
+  payload[resKey] = json::value::string(U(resolution));
   
   if(this->agent_mode == "TEST"){
     // Write the current JSON value to a stream with the native platform character width
@@ -85,7 +95,7 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log){
 
     // Display the string stream
     // std::cout << stream.str() << std::endl;
-    std::cout << event_category << " Event logged with id: " << event_id << std::endl;
+    std::cout << level << " Event logged with id: " << event_id << std::endl;
     
     // Write to file
     std::ofstream outfile;

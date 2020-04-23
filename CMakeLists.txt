@@ -219,28 +219,16 @@ add_dependencies(rosrect-listener-agent ${rosrect-listener-agent_EXPORTED_TARGET
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
-  find_package(code_coverage REQUIRED)
-  # Add compiler flags for coverage instrumentation before defining any targets
-  APPEND_COVERAGE_COMPILER_FLAGS()
-endif()
-
 if(CATKIN_ENABLE_TESTING)
   # find_package(rostest REQUIRED)
-  # add_rostest_gtest(utest_node test/utests_launch.test test/utests_backendapi.cpp)
+  # add_rostest_gtest(listeneragent_test_node test/utests_launch.test test/utests_listeneragent.cpp)
   
   catkin_add_gtest(backend_test_node test/utests_backendapi.cpp)
   catkin_add_gtest(robotevent_test_node test/utests_robotevent.cpp)
   catkin_add_gtest(statemanager_test_node test/utests_statemanager.cpp)
+  catkin_add_gtest(listeneragent_test_node test/utests_listeneragent.cpp)
   target_link_libraries(backend_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest ${LIBUUID_LIBRARY})
   target_link_libraries(robotevent_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest ${LIBUUID_LIBRARY})
   target_link_libraries(statemanager_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest ${LIBUUID_LIBRARY})
-  
-  if(ENABLE_COVERAGE_TESTING)
-    # set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*" "*/${PROJECT_NAME}/include/rosrect=listener-agent/*")
-    add_code_coverage(
-      NAME ${PROJECT_NAME}_coverage_report
-      DEPENDENCIES tests
-    )
-  endif()
+  target_link_libraries(listeneragent_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest ${LIBUUID_LIBRARY})
 endif()

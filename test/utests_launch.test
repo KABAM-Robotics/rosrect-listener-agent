@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-    <node pkg="rosrect-listener-agent" type="rosrect-listener-agent" name="rosrect_listener_agent_node"/>
-    <test test-name="unit_test_node" pkg="rosrect-listener-agent" type="utest_node"/>
+    <node pkg="rosrect-listener-agent" type="rosrect-listener-agent" name="rosrect_listener_agent_node"  output="screen"/>
+    <test test-name="listeneragent_test_node" pkg="rosrect-listener-agent" type="listeneragent_test_node"/>
 </launch>

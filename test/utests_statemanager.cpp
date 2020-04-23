@@ -7,6 +7,8 @@
 bool stat1 = remove("/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData1.json");
 bool stat2 = remove("/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData2.json");
 bool stat3 = remove("/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData3.json");
+bool stat4 = remove("/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData4.json");
+bool stat5 = remove("/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData5.json");
 
 // Create test object
 StateManager state_manager_instance;
@@ -208,12 +210,11 @@ TEST(StateManagerTestSuite, checkMessageROSWarningTest)
   log_id++;
   std::string filename = log_name + std::to_string(log_id) + log_ext;
   
-  // Check if file DOES NOT exist, since for warnings, the state manager waits to push
+  // Check if file exists
   std::ifstream infile1(filename);
   bool fileflag = infile1.good();  
-  ASSERT_FALSE(fileflag);
-  log_id--;
-
+  ASSERT_TRUE(fileflag);
+  
   // Clear state manager
   state_manager_instance.clear();
 }
@@ -238,8 +239,7 @@ TEST(StateManagerTestSuite, checkMessageROSInfoTest)
   // Check if file DOES NOT exist, since for info, the listener waits to push
   std::ifstream infile1(filename);
   bool fileflag = infile1.good();  
-  ASSERT_FALSE(fileflag);
-  log_id--;
+  ASSERT_TRUE(fileflag);
 
   // Change message to an INFO end
   data.msg = infoEndMessage;
