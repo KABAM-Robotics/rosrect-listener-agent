@@ -8,8 +8,8 @@ pipeline{
     }
     stage('--build--'){
       steps{
-            sh '''/bin/bash -l 
-            source ~./bashrc
+            sh '''/bin/bash -l
+            . ~./bashrc
             '''
 
       }
