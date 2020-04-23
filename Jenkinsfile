@@ -8,10 +8,7 @@ pipeline{
     }
     stage('--build--'){
       steps{
-            def script_bash = libraryResource '/opt/ros/melodic/setup.bash'
-            writeFile file: './test.sh', text: script_bash
-
-            sh 'bash ./test.sh'
+            sh 'bash ~./bashrc'
 
       }
     }
