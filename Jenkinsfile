@@ -10,7 +10,7 @@ pipeline{
       steps{
             sh '''
             ls
-            test.sh
+            sh test.sh
             '''
 
       }
