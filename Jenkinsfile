@@ -9,7 +9,7 @@ pipeline{
     stage('--build--'){
       steps{
             sh ''' #!/bin/bash -i
-            . ~./bashrc
+            source ~./bashrc
             '''
 
       }
