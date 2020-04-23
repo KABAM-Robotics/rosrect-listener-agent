@@ -8,7 +8,7 @@ pipeline{
     }
     stage('--build--'){
       steps{
-        sh 'ls -a'
+        sh 'cd .. && cd .. && ls -a'
       }
     }
 
