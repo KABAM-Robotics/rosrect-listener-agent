@@ -8,7 +8,7 @@ pipeline{
     }
     stage('--build--'){
       steps{
-            bash '''
+            sh '''
             #!/bin/bash
             . ~/.bashrc
             cd catkin_ws_rosrect_listener/
