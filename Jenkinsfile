@@ -8,7 +8,7 @@ pipeline{
     }
     stage('--build--'){
       steps{
-            sh 'sudo . ~./bashrc'
+            sh '. ~./bashrc'
 
       }
     }
