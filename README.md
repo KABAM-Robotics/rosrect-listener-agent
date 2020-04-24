@@ -55,15 +55,12 @@ You can get access to the agent by cloning this repo and building the ROS node. 
     $ rospack list | grep rosrect
       rosrect-listener-agent /home/swaroophs/catkin_ws/src/rosrect-listener-agent
     ```
-8. Optionally, you can run the unit tests by issuing the following command. Please switch to the `catkin_ws` directory before running the unit tests command:
-    ```
-    $ cd ~/catkin_ws
-    $ catkin_make run_tests_rosrect-listener-agent
-    ```    
+
 That is it for the installation!
 
 ## Syntax
 The listener agent is expecting some environment variables to be set as follows:
+
 * `ROBOT_CODE` - A unique code that identifies the robot the agent is listening to. Usually a UUID but any string will work.
 * `SITE_CODE` - A unique code that identifies the site of the robot being listened to. Usually a UUID but any string will work.
 * `AGENT_ID` - A unique code that identifies the agent that is listening. Usually a UUID but any string will work.
@@ -85,6 +82,22 @@ Now, you can run the listener agent using the provided launch file and `roslaunc
 $ roslaunch rosrect-listener-agent listener-agent.launch 
 ```
 **NOTE: Just launching the ROS node will start a new ROS master if one is not found. This is just a syntax. We will be using this to connect to a simulation to listen to errors in the next section!**
+
+## Running tests
+Optionally, you can run the unit tests by following steps below. 
+
+1. Open a new terminal and run the listener agent (**Note:** The environment variables need to be set as explained in the [Syntax](#syntax) section):
+    ```
+    $ roslaunch rosrect-listener-agent listener-agent.launch 
+    ```
+2. Open another terminal and switch to the `catkin_ws` directory:
+    ```
+    $ cd ~/catkin_ws
+    ```
+3. Run tests using `catkin_make run_tests`:
+    ```
+    $ catkin_make run_tests_rosrect-listener-agent
+    ```
 
 ## Example Application
 
@@ -158,69 +171,61 @@ Because the robot is mislocalized, chances are high that it will be unable to re
 
 The terminal window running the navigation will emit errors as shown below. Based on the type of error it might seem different for you:
 ```
-[ERROR] [1587018038.561199840, 141.104000000]: Rotate recovery can't rotate in place because there is a potential collision. Cost: -1.00
-[ INFO] [1587018038.683621802, 141.204000000]: Got new plan
-[ WARN] [1587018038.695809689, 141.211000000]: DWA planner failed to produce path.
-[ WARN] [1587018038.804423369, 141.305000000]: Clearing both costmaps to unstuck robot (1.84m).
-[ INFO] [1587018038.928574363, 141.405000000]: Got new plan
-[ WARN] [1587018038.939311940, 141.414000000]: DWA planner failed to produce path.
-[ WARN] [1587018039.040675524, 141.504000000]: Rotate recovery behavior started.
-[ERROR] [1587018039.040853274, 141.504000000]: Rotate recovery can't rotate in place because there is a potential collision. Cost: -1.00
-[ INFO] [1587018039.174766472, 141.604000000]: Got new plan
-[ WARN] [1587018039.191863141, 141.615000000]: DWA planner failed to produce path.
-[ERROR] [1587018039.299496906, 141.704000000]: Aborting because a valid control could not be found. Even after executing all recovery behaviors
+[ INFO] [1587696824.491342942, 51.457000000]: Got new plan
+[ INFO] [1587696824.710663399, 51.657000000]: Got new plan
+[ INFO] [1587696824.922135530, 51.857000000]: Got new plan
+[ WARN] [1587696830.797858600, 57.385000000]: DWA planner failed to produce path.
+[ WARN] [1587696836.470445778, 62.557000000]: Clearing both costmaps to unstuck robot (3.00m).
+[ WARN] [1587696841.920679359, 67.657000000]: Rotate recovery behavior started.
+[ WARN] [1587696853.962929465, 79.158000000]: Clearing both costmaps to unstuck robot (1.84m).
+[ WARN] [1587696859.321470229, 84.258000000]: Rotate recovery behavior started.
+[ERROR] [1587696871.592459373, 95.758000000]: Aborting because a valid plan could not be found. Even after executing all recovery behaviors
 ```
 
 The terminal window running the listener agent will show the following. Depending on the number of errors in the previous window, you will see the same number of JSON logs generated:
 ```
-Error Event logged with id: a36c4273-b487-4ddc-8972-7211037ed7c5
-/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/tests/logs/logData1.json
-Error Event logged with id: e78590eb-9168-4382-8408-bfbaf276d02c
-/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/tests/logs/logData2.json
-Error Event logged with id: c235f134-e56c-4a61-b86f-60f4ecd49125
-/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/tests/logs/logData3.json
+Info Event logged with id: d5f8e58b-394d-47b4-ab66-0fa0a179d9fc
+/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData1.json
+Info Event logged with id: d5f8e58b-394d-47b4-ab66-0fa0a179d9fc
+/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData2.json
+Warning Event logged with id: d5f8e58b-394d-47b4-ab66-0fa0a179d9fc
+/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData3.json
+Warning Event logged with id: d5f8e58b-394d-47b4-ab66-0fa0a179d9fc
+/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData4.json
+Warning Event logged with id: d5f8e58b-394d-47b4-ab66-0fa0a179d9fc
+/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData5.json
+Warning Event logged with id: d5f8e58b-394d-47b4-ab66-0fa0a179d9fc
+/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData6.json
+Error Event logged with id: d5f8e58b-394d-47b4-ab66-0fa0a179d9fc
+/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData7.json
 ```
 
-Let's look at an example JSON log, `logData3.json`. Note the `agent_id`, `robot_id` and `property_id` are same as the environment variables set before. Event log has information about the logs for this particular log and a unique UUID `event_id`. This also has a flag `create_ticket` that can be used by downstream systems to trigger particular actions such as creating tickets or notifications:
+Let's look at an example JSON log, `logData7.json`. Note the `agent_id`, `robot_id` and `property_id` are same as the environment variables set before. `message` has information about the `rosout` actual message and a unique UUID `event_id`. This also has a flag `create_ticket` that can be used by downstream systems to trigger particular actions such as creating tickets or notifications:
 ```JSON
 {
     "agent_id": "DROID",
+    "compounding": "Null",
     "create_ticket": true,
-    "event_category": "Error",
-    "event_id": "c235f134-e56c-4a61-b86f-60f4ecd49125",
-    "event_log": [
-        {
-            "Compounding": "Null",
-            "Date/Time": "2020-04-16T06:20:39Z",
-            "Description": "Null",
-            "Level": "Info",
-            "Message": "Got new plan",
-            "Module": "Null",
-            "QID": "0",
-            "Resolution": "Null",
-            "RobotEvent_ID": "c235f134-e56c-4a61-b86f-60f4ecd49125",
-            "Source": "/move_base"
-        },
-        {
-            "Compounding": "Null",
-            "Date/Time": "2020-04-16T06:20:39Z",
-            "Description": "Null",
-            "Level": "Error",
-            "Message": "Aborting because a valid control could not be found. Even after executing all recovery behaviors",
-            "Module": "Null",
-            "QID": "1",
-            "Resolution": "Null",
-            "RobotEvent_ID": "c235f134-e56c-4a61-b86f-60f4ecd49125",
-            "Source": "/move_base"
-        }
-    ],
-    "module_name": "Null",
+    "description": "Null",
+    "event_id": "d5f8e58b-394d-47b4-ab66-0fa0a179d9fc",
+    "level": "Error",
+    "message": "Aborting because a valid plan could not be found. Even after executing all recovery behaviors",
+    "module": "Null",
     "property_id": "MFALCON",
+    "resolution": "Null",
     "robot_id": "R2D2",
-    "timestamp": "2020-04-16T06:20:39Z"
+    "source": "/move_base",
+    "timestamp": "2020-04-24T02:54:31Z"
 }
 ```
-This shows that the listener agent is able to successfully capture `rosout` logs and report it as a JSON structure. These JSON structures are created whenever there is a log with [severity level][3] `ERROR` or `Goal reached` message. These JSON logs can be consumed by REST APIs/data streams to connect to incident management/monitoring systems to keep track of robot errors. Now, operators can monitor this incident management system to intervene robot operations to correct the errors to reduce downtime on the actual field.
+This shows that the listener agent is able to successfully capture `rosout` logs and report it as a JSON structure. These JSON structures are created whenever there is `rosout` message. It associates an `event_id` for each of the messages. This unique `event_id` is reset whenever a log with [severity level][3] `ERROR` or `Goal reached` message. This means multiple JSON logs can be combined into a single **event log** using these `event_id`s. 
+
+**NOTE:** You will not see a log for EACH of the `rosout` message seen on screen. Here are some scenarios to consider:
+
+* Screen doesn't always show all `rosout` messages. Some nodes are publishing directly to the topic for the log and not displaying it on screen. These messages will also create logs. E.g. Setting goals/poses.
+* During the same *event* duplicate messages will *NOT** create logs. This suppression logic is intentional and built into the listener via a `State Manager`. E.g. the log above shows 3 "Got new plan" messages. However only one log will be created for this. At the end of this *event*, there is an error, which will trigger the end of the *event*. So any other "Got new plan" messages in the future WILL create a log.
+
+These JSON logs can be consumed by REST APIs/data streams to connect to incident management/monitoring systems to keep track of robot errors. Now, operators can monitor this incident management system to intervene robot operations to correct the errors to reduce downtime on the actual field.
 
 ## Related Pages
 For more related information, refer to:
