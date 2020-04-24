@@ -1,7 +1,9 @@
 #include <string>
 #include <vector>
 #include <ctime>
-#include <uuid/uuid.h>
+#include <boost/uuid/uuid.hpp>            // uuid class
+#include <boost/uuid/uuid_generators.hpp> // generators
+#include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
 #include <cpprest/json.h>
 #include <rosgraph_msgs/Log.h>
 

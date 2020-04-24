@@ -17,9 +17,6 @@ set(cpprestsdk_DIR /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/cmake/)
 find_package(OpenSSL REQUIRED)
 find_package(cpprestsdk REQUIRED)
 
-find_path(LIBUUID_INCLUDE_DIR uuid.h PATH_SUFFIXES uuid)
-find_library(LIBUUID_LIBRARY libuuid.a)
-
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -126,7 +123,6 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  {LIBUUID_INCLUDE_DIR}
 )
 
 ## Declare a C++ library
@@ -147,7 +143,6 @@ target_link_libraries(rosrect-listener-agent-lib
   ${catkin_LIBRARIES}
 )
 target_link_libraries(rosrect-listener-agent-lib PRIVATE cpprestsdk::cpprest)
-#target_link_libraries(rosrect-listener-agent-lib PUBLIC ${LIBUUID_LIBRARY})
 add_executable(rosrect-listener-agent src/listener_agent.cpp )
 target_link_libraries(rosrect-listener-agent
   ${catkin_LIBRARIES}
@@ -230,8 +225,8 @@ if(CATKIN_ENABLE_TESTING)
   catkin_add_gtest(robotevent_test_node test/utests_robotevent.cpp)
   catkin_add_gtest(statemanager_test_node test/utests_statemanager.cpp)
   catkin_add_gtest(listeneragent_test_node test/utests_listeneragent.cpp)
-  target_link_libraries(backend_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest ${LIBUUID_LIBRARY})
-  target_link_libraries(robotevent_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest ${LIBUUID_LIBRARY})
-  target_link_libraries(statemanager_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest ${LIBUUID_LIBRARY})
-  target_link_libraries(listeneragent_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest ${LIBUUID_LIBRARY})
+  target_link_libraries(backend_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest)
+  target_link_libraries(robotevent_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest)
+  target_link_libraries(statemanager_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest)
+  target_link_libraries(listeneragent_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest)
 endif()

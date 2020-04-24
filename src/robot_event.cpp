@@ -94,11 +94,18 @@ void RobotEvent::update_event_id(){
     // Update event_id if necessary
     
     if (!(this->event_id_str.compare(""))){
-        uuid_t event_id;
-        char uuid_str[37];
-        uuid_generate_random(event_id);
-        uuid_unparse_lower(event_id, uuid_str);
-        this->event_id_str = std::string(uuid_str);
+        // Generate UUID
+        boost::uuids::uuid uuid = boost::uuids::random_generator()();
+        
+        // Stream
+        std::stringstream uuid_str;
+        uuid_str << uuid;
+
+        // Assign
+        this->event_id_str = uuid_str.str();
+
+        // Clear stream
+        uuid_str.clear();
     }    
 }
 
