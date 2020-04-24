@@ -20,7 +20,7 @@ void logCleanup()
     // Get filename
     log_id++;
     std::string filename = log_name + std::to_string(log_id) + log_ext;
-    std::cout << "Trying to remove file: " << filename << std::endl;
+    // std::cout << "Trying to remove file: " << filename << std::endl;
     // Remove file
     fileRemoveError = remove(filename.c_str());
   }
@@ -190,6 +190,9 @@ TEST(ListenerAgentTestSuite, warningSuppressionTest)
 
 int main(int argc, char **argv)
 {
+  // Sleep for other unit tests to finish first
+  std::cout << "Listener agent test will wait 5 seconds for other unit tests to finish..." << std::endl;
+  sleep(5);
   // Cleanup
   logCleanup();
 

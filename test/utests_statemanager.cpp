@@ -19,7 +19,7 @@ void logCleanup()
     // Get filename
     log_id++;
     std::string filename = log_name + std::to_string(log_id) + log_ext;
-    std::cout << "Trying to remove file: " << filename << std::endl;
+    // std::cout << "Trying to remove file: " << filename << std::endl;
     // Remove file
     fileRemoveError = remove(filename.c_str());
   }
