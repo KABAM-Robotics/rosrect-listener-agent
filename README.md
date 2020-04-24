@@ -98,7 +98,7 @@ Optionally, you can run the unit tests by following steps below.
     ```
     $ cd ~/catkin_ws
     ```
-    
+
 3. Run tests using `catkin_make run_tests`:
 
     ```
@@ -229,7 +229,7 @@ This shows that the listener agent is able to successfully capture `rosout` logs
 **NOTE:** You will not see a log for EACH of the `rosout` message seen on screen. Here are some scenarios to consider:
 
 * Screen doesn't always show all `rosout` messages. Some nodes are publishing directly to the topic for the log and not displaying it on screen. These messages will also create logs. E.g. Setting goals/poses.
-* During the same *event* duplicate messages will *NOT** create logs. This suppression logic is intentional and built into the listener via a `State Manager`. E.g. the log above shows 3 "Got new plan" messages. However only one log will be created for this. At the end of this *event*, there is an error, which will trigger the end of the *event*. So any other "Got new plan" messages in the future WILL create a log.
+* During the same *event* duplicate messages will *NOT* create logs. This suppression logic is intentional and built into the listener via a `State Manager`. E.g. the log above shows 3 "Got new plan" messages. However only one log will be created for this. At the end of this *event*, there is an error, which will trigger the end of the *event*. So any other "Got new plan" messages in the future WILL create a log.
 
 These JSON logs can be consumed by REST APIs/data streams to connect to incident management/monitoring systems to keep track of robot errors. Now, operators can monitor this incident management system to intervene robot operations to correct the errors to reduce downtime on the actual field.
 
