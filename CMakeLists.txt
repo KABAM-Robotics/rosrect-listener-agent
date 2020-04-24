@@ -221,6 +221,9 @@ add_dependencies(rosrect-listener-agent ${rosrect-listener-agent_EXPORTED_TARGET
 
 if(CATKIN_ENABLE_TESTING)
   # find_package(rostest REQUIRED)
+  # add_rostest_gtest(backend_test_node test/utests_launch.test test/utests_backendapi.cpp)
+  # add_rostest_gtest(robotevent_test_node test/utests_launch.test test/utests_robotevent.cpp)
+  # add_rostest_gtest(statemanager_test_node test/utests_launch.test test/utests_statemanager.cpp)
   # add_rostest_gtest(listeneragent_test_node test/utests_launch.test test/utests_listeneragent.cpp)
   
   catkin_add_gtest(backend_test_node test/utests_backendapi.cpp)

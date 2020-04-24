@@ -3,12 +3,28 @@
 #include <fstream>
 #include <rosrect-listener-agent/backend_api.h>
 
-// Clean up
-bool stat1 = remove("/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData1.json");
-bool stat2 = remove("/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData2.json");
-bool stat3 = remove("/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData3.json");
-bool stat4 = remove("/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData4.json");
-bool stat5 = remove("/home/swaroophs/catkin_ws/src/cognicept_rosout_listener/test/logs/logData5.json");
+// Log file settings
+std::string package_path = ros::package::getPath("rosrect-listener-agent");
+std::string log_name = package_path + "/test/logs/logData";
+std::string log_ext = ".json";
+int log_id = 0;
+
+// Utility function to clean up log files
+void logCleanup()
+{
+  bool fileRemoveError = false;
+
+  while (!fileRemoveError)
+  {
+    // Get filename
+    log_id++;
+    std::string filename = log_name + std::to_string(log_id) + log_ext;
+    std::cout << "Trying to remove file: " << filename << std::endl;
+    // Remove file
+    fileRemoveError = remove(filename.c_str());
+  }
+  log_id = 0;
+}
 
 // Create test object
 BackendApi api_instance;
@@ -48,9 +64,6 @@ TEST(BackEndApiTestSuite, pushTest)
   api_instance.push_event_log(sample_log);
 
   // Get log file
-  std::string package_path = ros::package::getPath("rosrect-listener-agent");
-  std::string log_name = package_path + "/test/logs/logData";
-  std::string log_ext = ".json";
   int log_id = 1;
   std::string filename = log_name + std::to_string(log_id) + log_ext;
 
@@ -94,6 +107,8 @@ TEST(BackEndApiTestSuite, jsonTest)
   }
   ASSERT_TRUE(fieldFlag);
 }
+
+/* Error classification features in development below
 
 TEST(BackEndApiTestSuite, ecsHitTest)
 {
@@ -146,9 +161,14 @@ TEST(BackEndApiTestSuite, ecsMissTest)
   bool nullFlag = msgInfo.is_null();  
   ASSERT_TRUE(nullFlag);
 }
+*/
 
 int main(int argc, char **argv)
 {
+  // Cleanup
+  logCleanup();
+
+  // Start tests
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
