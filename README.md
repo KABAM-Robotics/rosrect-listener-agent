@@ -7,6 +7,7 @@ This project adheres to the Contributor Covenant [code of conduct](https://githu
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Syntax](#syntax)
+- [Running tests](#running-tests)
 - [Example Application](#example-application)
     * [Creating Event Logs from Turtlebot3](creating-event-logs-from-turtlebot3)
     * [Start Simulation](#start-simulation)
@@ -87,14 +88,17 @@ $ roslaunch rosrect-listener-agent listener-agent.launch
 Optionally, you can run the unit tests by following steps below. 
 
 1. Open a new terminal and run the listener agent (**Note:** The environment variables need to be set as explained in the [Syntax](#syntax) section):
+
     ```
     $ roslaunch rosrect-listener-agent listener-agent.launch 
     ```
 2. Open another terminal and switch to the `catkin_ws` directory:
+
     ```
     $ cd ~/catkin_ws
     ```
 3. Run tests using `catkin_make run_tests`:
+
     ```
     $ catkin_make run_tests_rosrect-listener-agent
     ```
