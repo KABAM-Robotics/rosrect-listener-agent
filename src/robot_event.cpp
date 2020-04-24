@@ -11,14 +11,8 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr& data, json::valu
     this->queue_id += 1;
 
     // Get current time
-    time_t now;
-    time(&now);
-    char buf[sizeof "2011-10-08T07:07:09Z"];
-    strftime(buf, sizeof buf, "%FT%TZ", gmtime(&now));
-    auto time_str = std::string(buf);
-    // this will work too, if your compiler doesn't support %F or %T:
-    //strftime(buf, sizeof buf, "%Y-%m-%dT%H:%M:%SZ", gmtime(&now));
-    // std::cout << buf << "\n";
+    boost::posix_time::ptime timeLocal = boost::posix_time::microsec_clock::local_time();
+    std::string time_str = to_iso_extended_string(timeLocal);
 
     // Event log order
     // 'QID', 'Date/Time', 'Level', 'Compounding',
