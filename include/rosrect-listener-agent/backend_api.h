@@ -30,15 +30,19 @@ class BackendApi {
   std::string log_name;
   std::string log_ext;
   int log_id;
+  std::string msg_resp;
+  /* Error classification features in development below
   std::string error_api_host;
   std::string error_api_endpoint;
-  std::string msg_resp;
+  */
   
   public:
   BackendApi();
   ~BackendApi();
-  void push_event_log(std::vector<std::vector<std::string>>);
-  json::value create_event_log(std::vector<std::vector<std::string>>); // Create JSON payload data for downstream consumption
+  void push_event_log(std::vector<std::vector<std::string>>); // Create and push single JSON record payload data for downstream consumption
+  json::value create_event_log(std::vector<std::vector<std::string>>); // Create JSON "multiple record" payload data for downstream consumption
+  /* Error classification features in development below
   pplx::task<void> query_error_classification(std::string); // Query error classification database table
   json::value check_error_classification(std::string); // Entry point for error classification
+  */
 };

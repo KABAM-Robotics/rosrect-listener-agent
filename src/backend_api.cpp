@@ -20,9 +20,11 @@ BackendApi::BackendApi() {
     std::cout << "TEST mode is ON. JSON Logs will be saved here: " << package_path + "/tests/logs/" << std::endl;
   }
 
+  /* Error classification features in development below
   // Error classification API variables
   this->error_api_host = std::getenv("ECS_API");
   this->error_api_endpoint = "/api/getErrorData/";
+  */
 }
 
 BackendApi::~BackendApi() {
@@ -163,6 +165,8 @@ json::value BackendApi::create_event_log(std::vector<std::vector<std::string>> l
 
 }
 
+/* Error Classification Features in development below
+
 pplx::task<void> BackendApi::query_error_classification(std::string msg_text){  
   
   return pplx::create_task([this, msg_text]
@@ -230,3 +234,5 @@ json::value BackendApi::check_error_classification(std::string msg_text){
   }   
 
 }
+
+*/

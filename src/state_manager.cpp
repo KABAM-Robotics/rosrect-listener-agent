@@ -31,7 +31,9 @@ void StateManager::check_message(std::string agent_type, std::string robot_code,
 
     if(agent_type == "DB"){
         // std::cout << "Checking with DB..." << std::endl;
+        /* Error classification features in development below
         this->check_message_db(robot_code, data);
+        */
     }
     else{
         // std::cout << "Checking with ROS..." << std::endl;
@@ -40,6 +42,7 @@ void StateManager::check_message(std::string agent_type, std::string robot_code,
 
 }
 
+/* Error classification features in development below
 void StateManager::check_message_db(std::string robot_code, const rosgraph_msgs::Log::ConstPtr& data){
 
     // Parse message to query-able format
@@ -121,6 +124,7 @@ void StateManager::check_message_db(std::string robot_code, const rosgraph_msgs:
         // ECS does not have a hit, normal operation resumes
     }
 }
+*/
 
 void StateManager::check_message_ros(std::string robot_code, const rosgraph_msgs::Log::ConstPtr& data){
 
