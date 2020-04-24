@@ -92,11 +92,13 @@ Optionally, you can run the unit tests by following steps below.
     ```
     $ roslaunch rosrect-listener-agent listener-agent.launch 
     ```
+
 2. Open another terminal and switch to the `catkin_ws` directory:
 
     ```
     $ cd ~/catkin_ws
     ```
+    
 3. Run tests using `catkin_make run_tests`:
 
     ```
