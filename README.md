@@ -6,8 +6,8 @@ This project adheres to the Contributor Covenant [code of conduct](https://githu
 - [Overview](#overview)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
-- [Syntax](#syntax)
 - [Running tests](#running-tests)
+- [Syntax](#syntax)
 - [Example Application](#example-application)
     * [Creating Event Logs from Turtlebot3](creating-event-logs-from-turtlebot3)
     * [Start Simulation](#start-simulation)
@@ -59,6 +59,104 @@ You can get access to the agent by cloning this repo and building the ROS node. 
 
 That is it for the installation!
 
+## Running tests
+Optionally, you can run the unit tests by following steps below. 
+
+1. Open a new terminal and switch to the `catkin_ws` directory:
+
+    ```
+    $ cd ~/catkin_ws
+    ```
+
+3. Run tests using `catkin_make run_tests`. Your terminal will show test results similar to a snapshot below. Logs will be created in the `./test/logs` folder:
+
+    ```
+    $ catkin_make run_tests_rosrect-listener-agent
+    .
+    .
+    .
+    [==========] Running 5 tests from 1 test case.
+    [----------] Global test environment set-up.
+    [----------] 5 tests from RobotEventTestSuite
+    [ RUN      ] RobotEventTestSuite.getLogTest
+    [       OK ] RobotEventTestSuite.getLogTest (1 ms)
+    [ RUN      ] RobotEventTestSuite.updateLogROSTest
+    [       OK ] RobotEventTestSuite.updateLogROSTest (1 ms)
+    [ RUN      ] RobotEventTestSuite.updateLogDBTest
+    [       OK ] RobotEventTestSuite.updateLogDBTest (1 ms)
+    [ RUN      ] RobotEventTestSuite.updateEventIdTest
+    [       OK ] RobotEventTestSuite.updateEventIdTest (2 ms)
+    [ RUN      ] RobotEventTestSuite.clearTest
+    [       OK ] RobotEventTestSuite.clearTest (1 ms)
+    [----------] 5 tests from RobotEventTestSuite (6 ms total)
+
+    [----------] Global test environment tear-down
+    [==========] 5 tests from 1 test case ran. (6 ms total)
+    [  PASSED  ] 5 tests.
+    .
+    .
+    .
+    .
+    [==========] Running 2 tests from 1 test case.
+    [----------] Global test environment set-up.
+    [----------] 2 tests from BackEndApiTestSuite
+    [ RUN      ] BackEndApiTestSuite.pushTest
+    Error Event logged with id: Sample id
+    /home/swaroophs/catkin_ws/src/rosrect-listener-agent/test/logs/logData1.json
+    [       OK ] BackEndApiTestSuite.pushTest (0 ms)
+    [ RUN      ] BackEndApiTestSuite.jsonTest
+    [       OK ] BackEndApiTestSuite.jsonTest (0 ms)
+    [----------] 2 tests from BackEndApiTestSuite (0 ms total)
+
+    [----------] Global test environment tear-down
+    [==========] 2 tests from 1 test case ran. (0 ms total)
+    [  PASSED  ] 2 tests.
+    .
+    .
+    .
+    .
+    [==========] Running 8 tests from 1 test case.
+    [----------] Global test environment set-up.
+    [----------] 8 tests from StateManagerTestSuite
+    [ RUN      ] StateManagerTestSuite.existTest
+    [       OK ] StateManagerTestSuite.existTest (0 ms)
+    [ RUN      ] StateManagerTestSuite.checkErrorTest
+    [       OK ] StateManagerTestSuite.checkErrorTest (0 ms)
+    [ RUN      ] StateManagerTestSuite.checkWarningTest
+    [       OK ] StateManagerTestSuite.checkWarningTest (0 ms)
+    [ RUN      ] StateManagerTestSuite.checkInfoTest
+    [       OK ] StateManagerTestSuite.checkInfoTest (0 ms)
+    [ RUN      ] StateManagerTestSuite.checkMessageROSErrorTest
+    [       OK ] StateManagerTestSuite.checkMessageROSErrorTest (4 ms)
+    [ RUN      ] StateManagerTestSuite.checkMessageROSWarningTest
+    [100%] Built target _run_tests_rosrect-listener-agent_gtest_robotevent_test_node
+    /home/swaroophs/catkin_ws/src/rosrect-listener-agent/test/logs/logData3.json
+    [       OK ] StateManagerTestSuite.checkMessageROSWarningTest (3 ms)
+    [ RUN      ] StateManagerTestSuite.checkMessageROSInfoTest
+    [       OK ] StateManagerTestSuite.checkMessageROSInfoTest (1 ms)
+    [ RUN      ] StateManagerTestSuite.clearTest
+    [       OK ] StateManagerTestSuite.clearTest (0 ms)
+    [----------] 8 tests from StateManagerTestSuite (8 ms total)
+
+    [----------] Global test environment tear-down
+    [==========] 8 tests from 1 test case ran. (8 ms total)
+    [  PASSED  ] 8 tests.
+
+    [Testcase: testlisteneragent_test_node] ... ok
+
+    [ROSTEST]-----------------------------------------------------------------------
+
+    [rosrect-listener-agent.rosunit-listeneragent_test_node/errorSuppressionTest][passed]
+    [rosrect-listener-agent.rosunit-listeneragent_test_node/infoSuppressionTest][passed]
+    [rosrect-listener-agent.rosunit-listeneragent_test_node/warningSuppressionTest][passed]
+
+    SUMMARY
+    * RESULT: SUCCESS
+    * TESTS: 3
+    * ERRORS: 0
+    * FAILURES: 0
+    ```
+
 ## Syntax
 The listener agent is expecting some environment variables to be set as follows:
 
@@ -66,7 +164,7 @@ The listener agent is expecting some environment variables to be set as follows:
 * `SITE_CODE` - A unique code that identifies the site of the robot being listened to. Usually a UUID but any string will work.
 * `AGENT_ID` - A unique code that identifies the agent that is listening. Usually a UUID but any string will work.
 * `AGENT_MODE` - A variable that when set to value TEST, will save JSON logs as "outputs" of the listener in the logs folder.
-* `AGENT_TYPE` - The same listener can be operated to catch *ANY* ROS log or logs that are only available as part of the Error Classification System (ECS) to enable log suppression for particular robots/sites. Set it to value ROS or DB respectively.
+* `AGENT_TYPE` - The same listener can be operated to catch *ANY* ROS log or logs that are only available as part of the Error Classification System (ECS) to enable log suppression for particular robots/sites. Set it to value ROS or DB respectively. **NOTE:** The ECS feature is currently under development and is unavailable for use. 
 
 For example,
 ```
@@ -83,27 +181,6 @@ Now, you can run the listener agent using the provided launch file and `roslaunc
 $ roslaunch rosrect-listener-agent listener-agent.launch 
 ```
 **NOTE: Just launching the ROS node will start a new ROS master if one is not found. This is just a syntax. We will be using this to connect to a simulation to listen to errors in the next section!**
-
-## Running tests
-Optionally, you can run the unit tests by following steps below. 
-
-1. Open a new terminal and run the listener agent (**Note:** The environment variables need to be set as explained in the [Syntax](#syntax) section):
-
-    ```
-    $ roslaunch rosrect-listener-agent listener-agent.launch 
-    ```
-
-2. Open another terminal and switch to the `catkin_ws` directory:
-
-    ```
-    $ cd ~/catkin_ws
-    ```
-
-3. Run tests using `catkin_make run_tests`:
-
-    ```
-    $ catkin_make run_tests_rosrect-listener-agent
-    ```
 
 ## Example Application
 
