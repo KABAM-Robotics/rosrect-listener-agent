@@ -3,6 +3,47 @@
 #include <fstream>
 #include <ros/console.h>
 #include <ros/package.h>
+#include <rosrect-listener-agent/tester_talker.h>
+
+// Utility function to broadcast log messages
+void TesterTalker::talk(std::vector<std::string> msg_list, std::vector<std::string> sev_list)
+{
+  ros::NodeHandle nh;
+  this->pub = nh.advertise<rosgraph_msgs::Log>("rosout_agg", 1);
+
+  ros::Rate looprate(2);
+  rosgraph_msgs::Log rosmsg;
+
+  for (int idx = 0; idx < msg_list.size(); idx++)
+  {
+    std::string msg = msg_list[idx];
+    rosmsg.msg = msg;
+
+    std::string sev = sev_list[idx];
+    
+    if (sev == "E")
+    {
+      // ROS_ERROR("%s", msg.c_str());
+      rosmsg.level = 8;
+    }
+    else if (sev == "W")
+    {
+      // ROS_WARN("%s", msg.c_str());
+      rosmsg.level = 4;
+    }
+    else
+    {
+      // ROS_INFO("%s", msg.c_str());
+      rosmsg.level = 2;
+    }
+    this->pub.publish(rosmsg);
+    ros::spinOnce();
+    looprate.sleep();
+  }
+}
+
+// Create Talker object for tests
+TesterTalker talker_instance;
 
 // Log file settings
 std::string package_path = ros::package::getPath("rosrect-listener-agent");
@@ -25,34 +66,6 @@ void logCleanup()
     fileRemoveError = remove(filename.c_str());
   }
   log_id = 0;
-}
-
-// Utility function to broadcast log messages
-void talk(std::vector<std::string> msg_list, std::vector<std::string> sev_list)
-{
-
-  ros::Rate looprate(2);
-
-  for (int idx = 0; idx < msg_list.size(); idx++)
-  {
-    std::string msg = msg_list[idx];
-    std::string sev = sev_list[idx];
-
-    if (sev == "E")
-    {
-      ROS_ERROR("%s", msg.c_str());
-    }
-    else if (sev == "W")
-    {
-      ROS_WARN("%s", msg.c_str());
-    }
-    else
-    {
-      ROS_INFO("%s", msg.c_str());
-    }
-    ros::spinOnce();
-    looprate.sleep();
-  }
 }
 
 TEST(ListenerAgentTestSuite, errorSuppressionTest)
@@ -84,7 +97,7 @@ TEST(ListenerAgentTestSuite, errorSuppressionTest)
           "E", "W", "W", "W", "W", "E",
           "I", "W", "W", "W", "E"};
 
-  talk(msg_list, sev_list);
+  talker_instance.talk(msg_list, sev_list);
 
   // Check if log is created
   int expected_logs = 16;
@@ -117,7 +130,7 @@ TEST(ListenerAgentTestSuite, infoSuppressionTest)
       {
           "I", "I", "I", "I", "I", "I"};
 
-  talk(msg_list, sev_list);
+  talker_instance.talk(msg_list, sev_list);
 
   // Check if log is created
   int expected_logs = 2;
@@ -171,7 +184,7 @@ TEST(ListenerAgentTestSuite, warningSuppressionTest)
           "W", "I", "W", "I", "W", "I",
           "W", "I", "W", "W", "I", "I"};
 
-  talk(msg_list, sev_list);
+  talker_instance.talk(msg_list, sev_list);
 
   // Check if log is created
   int expected_logs = 5;
@@ -190,9 +203,6 @@ TEST(ListenerAgentTestSuite, warningSuppressionTest)
 
 int main(int argc, char **argv)
 {
-  // Sleep for other unit tests to finish first
-  std::cout << "Listener agent test will wait 5 seconds for other unit tests to finish..." << std::endl;
-  sleep(5);
   // Cleanup
   logCleanup();
 

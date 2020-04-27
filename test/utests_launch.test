@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <node pkg="rosrect-listener-agent" type="rosrect-listener-agent" name="rosrect_listener_agent_node"  output="screen"/>
-    <!-- <test test-name="backend_test_node" pkg="rosrect-listener-agent" type="backend_test_node"/> -->
-    <!-- <test test-name="statemanager_test_node" pkg="rosrect-listener-agent" type="statemanager_test_node"/> -->
-    <!-- <test test-name="robotevent_test_node" pkg="rosrect-listener-agent" type="robotevent_test_node"/> -->
-    <test test-name="listeneragent_test_node" pkg="rosrect-listener-agent" type="listeneragent_test_node"/>
-</launch>
