@@ -1,6 +1,6 @@
-# rosrect Listener Agent Documentation
+# rosrect Listener Agent Documentation 
 
-This project adheres to the Contributor Covenant [code of conduct](https://github.com/cognicept-admin/rosrect/blob/master/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [info@cognicept.systems](mailto:info@cognicept.systems). If you are interested in contributing, please refer to the guidelines [here](https://github.com/cognicept-admin/rosrect/blob/master/CONTRIBUTING.md).
+This project adheres to the Contributor Covenant [code of conduct](https://github.com/cognicept-admin/rosrect/blob/master/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [info@cognicept.systems](mailto:info@cognicept.systems). If you are interested in contributing, please refer to the guidelines [here](https://github.com/cognicept-admin/rosrect/blob/master/CONTRIBUTING.md).  
 
 - [Description](#description)
 - [Overview](#overview)
@@ -8,50 +8,50 @@ This project adheres to the Contributor Covenant [code of conduct](https://githu
 - [Installation](#installation)
 - [Running tests](#running-tests)
 - [Syntax](#syntax)
-- [Example Application](#example-application)
-    * [Creating Event Logs from Turtlebot3](creating-event-logs-from-turtlebot3)
+- [Example-Application](#example-application)
+    * [Catching Navigation Errors from /move_base](catching-navigation-errors-from-/move_base)
     * [Start Simulation](#start-simulation)
     * [Start rosrect Listener Agent](#start-rosrect-listener-agent)
-    * [Generate navigation errors and create logs](#generate-navigation-errors-and-create-logs)
+    * [Generate a navigation error](#generate-a-navigation-error)
 - [Related-Pages](#related-pages)
 
 ## Description
 This article explains how to run the `rosrect Listener Agent` ROS node.
 
 ## Overview
-This article shows how to start the `rosrect Listener Agent`. By the end of this, you will be able to start the agent, run a simulation and test the listener agent to listen to and create JSON logs.
+This article shows how to start the `rosrect Listener Agent`. By the end of this, you will be able to start the agent, run a simulation and test the listener agent to listen to navigation errors.
 
 ## Prerequisites
 Some knowledge of ROS and robotics is necessary.
 
 ## Installation
 
-**NOTE: These features have only been tested on Ubuntu 18.04 and ROS Melodic.**
-
 You can get access to the agent by cloning this repo and building the ROS node. Steps are as follows:
 
 1. Open a terminal window.
+
 2. Install Microsoft's [`C++ REST SDK`][6] for establishing the backend api for incident management using `apt-get`:
     ```
     $ sudo apt-get install libcpprest-dev
     ```
-3. Change to your `src` folder of the catkin workspace directory. Generally it is as follows:
+
+2. Change to your `src` folder of the catkin workspace directory. Generally it is as follows:
     ```
     $ cd ~/catkin_ws/src
     ```
-4. Clone the repo:
+3. Clone the repo:
     ```git
     $ git clone https://github.com/cognicept-admin/rosrect-listener-agent
     ```
-5. Change to your `catkin_ws` folder:
+4. Change to your `catkin_ws` folder:
    ```
     $ cd ..
     ``` 
-6. Issue `catkin_make` to build the ROS node:
+5. Issue `catkin_make` to build the ROS node:
     ```
     $ catkin_make
     ```
-7. Check if node has built correctly and registered using `rospack`:
+6. Check if node has built correctly and registered using `rospack`:
     ```
     $ rospack list | grep rosrect
       rosrect-listener-agent /home/swaroophs/catkin_ws/src/rosrect-listener-agent
@@ -184,8 +184,8 @@ $ roslaunch rosrect-listener-agent listener-agent.launch
 
 ## Example Application
 
-### Creating Event Logs from Turtlebot3
-In this example, we will run the `rosrect Listener Agent` along with the Turtlebot3 simulation to see how JSON logs are created for different `/rosout` logs.
+### Catching Navigation Errors from /move_base
+In this example, we will run the `rosrect Listener Agent` along with the Turtlebot3 simulation to see how `/move_base` navigation errors are caught.
 
 ### Start Simulation
 Start a Turtlebot3 Navigation demo as documented by Robotis [here][1]. Please make sure you have gone through the Turtlebot3 installation [documentation][2] if you are facing any errors with this step.
@@ -196,36 +196,26 @@ $ export TURTLEBOT3_MODEL=waffle_pi
 $ roslaunch turtlebot3_gazebo turtlebot3_world.launch
 ```
 
-Then, open a second terminal and launch the `turtlebot3_navigation` launch file:
+Then, open a second termainal and launch the `turtlebot3_navigation` launch file:
 ```
 $ export TURTLEBOT3_MODEL=waffle_pi
 $ roslaunch turtlebot3_navigation turtlebot3_navigation.launch
 ```
 
-At the end of this step, you would need to see something that looks like the following. Notice that the robot is mislocalized i.e. the laser scan doesn't match the map! :
+At the end of this step, you would need to see something that looks like the following. Notice that the robot is mislocalized (i.e. the scan doesn't match the map) :
 
 ![alt text](/docs/images/Mislocalized.png "Turtlebot mislocalized")
 
 ### Start rosrect Listener Agent
-We are ready to start listening to robot errors. Open a new terminal window. First, let us set up some test environment variables for the robot, agent and the site. For actual deployments, these will need to be configured for the real robot/site configuration on the incident management backend. Some example values are below:
+We are ready to start listening to robot errors. Simply launch the listener ROS node using the launch file:
 ```
-$ export ROBOT_CODE=R2D2
-$ export SITE_CODE=MFALCON
-$ export AGENT_ID=DROID
-$ export AGENT_MODE=TEST
-$ export AGENT_TYPE=ROS
-```
-**Note: These values are available only in the current terminal and need to be recreated every time before running the listener. One way to get around this is to place these statements in the `bashrc` file**
-
-Simply launch the listener ROS node using the launch file:
-```
-$ roslaunch rosrect-listener-agent listener-agent.launch
-... logging to /home/swaroophs/.ros/log/e8a150c4-7fa9-11ea-a48a-9cb6d09cab4f/roslaunch-swarooph-xps-26224.log
+$ roslaunch rosrect-listener-agent listener-agent.launch 
+... logging to /home/swaroophs/.ros/log/005da8e6-73ef-11ea-b5e3-9cb6d09cab4f/roslaunch-swarooph-xps-12815.log
 Checking log directory for disk usage. This may take a while.
 Press Ctrl-C to interrupt
 Done checking log file disk usage. Usage is <1GB.
 
-started roslaunch server http://localhost:40351/
+started roslaunch server http://localhost:42941/
 
 SUMMARY
 ========
@@ -240,19 +230,15 @@ NODES
 
 ROS_MASTER_URI=http://localhost:11311
 
-process[rosrect_listener_agent_node-1]: started with pid [26244]
-TEST mode is ON. JSON Logs will be saved here: /home/swaroophs/catkin_ws/src/rosrect-listener-agent/tests/logs/
-Subscribed to Listener Agent with direct rosout...
+process[rosrect_listener_agent_node-1]: started with pid [12834]
 ```
 
-### Generate navigation errors and create logs
+### Generate a navigation error
 Now, use `rviz` to provide a `2D Nav Goal` for the robot. 
 
 ![alt text](/docs/images/NavGoal.png "Navigation Goal in rviz")
 
-Because the robot is mislocalized, chances are high that it will be unable to reach its goal, generating an error. When that happens, the following can be observed:
-
-The terminal window running the navigation will emit errors as shown below. Based on the type of error it might seem different for you:
+Because the robot is mislocalized, chances are high that it will be unable to reach its goal, generating an error. When that happens, the terminal window running the listener agent will show something like the following:
 ```
 [ INFO] [1587696824.491342942, 51.457000000]: Got new plan
 [ INFO] [1587696824.710663399, 51.657000000]: Got new plan
@@ -323,5 +309,4 @@ For more related information, refer to:
 [2]: http://emanual.robotis.com/docs/en/platform/turtlebot3/pc_setup/#install-dependent-ros-packages
 [3]: http://docs.ros.org/api/rosgraph_msgs/html/msg/Log.html
 [4]: http://wiki.ros.org/roscpp/Overview/Logging
-[5]: https://dashboard.cognicept.systems/#/tickets
 [6]: https://github.com/microsoft/cpprestsdk
