@@ -16,9 +16,10 @@ pipeline{
       }
     }
     stage ("--Extract test results--") {
+    steps {
     cobertura coberturaReportFile: 'myxmlfile.xml'
-}
-
+    }
+    }
   }
 
 }
