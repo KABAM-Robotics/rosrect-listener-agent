@@ -203,6 +203,10 @@ TEST(ListenerAgentTestSuite, warningSuppressionTest)
 
 int main(int argc, char **argv)
 {
+  // Wait for 5 seconds to run the listener test
+  std::cout << "Listener test will wait 5 seconds for other tests to finish..." << std::endl;
+  sleep(5);
+
   // Cleanup
   logCleanup();
 
@@ -210,16 +214,5 @@ int main(int argc, char **argv)
   testing::InitGoogleTest(&argc, argv);
   ros::init(argc, argv, "tester");
   ros::NodeHandle nh;
-  bool logger_change = ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug);
-  if (logger_change)
-  {
-    std::cout << "Logger level changed for testing..." << std::endl;
-    ros::console::notifyLoggerLevelsChanged();
-  }
-  else
-  {
-    ROS_ERROR("Nothing happened...");
-  }
-  // ROS_INFO("Starting tester...");
   return RUN_ALL_TESTS();
 }
