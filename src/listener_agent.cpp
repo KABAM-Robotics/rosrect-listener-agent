@@ -1,43 +1,47 @@
-#include <ros/ros.h>
-#include <rosgraph_msgs/Log.h>
-#include <iostream>
+#include <rosrect-listener-agent/listener_agent.h>
 
-class cs_listener{
+cs_listener::cs_listener(){
+  // Constructor
 
-    public:
+  this->agent_type = std::getenv("AGENT_TYPE");
+  this->robot_code = std::getenv("ROBOT_CODE");
+  
+  // Depending on ENV variable, communicate to user
+  if(this->agent_type == "DB"){
+    std::cout << "Subscribed to Listener Agent with DB Access..." << std::endl;
+  }
+  else{
+    std::cout << "Subscribed to Listener Agent with direct rosout..." << std::endl;
+  }
+}
 
-    void log_callback(const rosgraph_msgs::Log::ConstPtr& rosmsg){
+cs_listener::~cs_listener(){
+  // Destructor
+  std::cout << "Unsubscribed from Listener Agent..." << std::endl;
+}
 
-        // Using cout intentionally to not introduce noise to log from this node
-        int msg_level;
-        msg_level = static_cast<int>(rosmsg->level);
+void cs_listener::log_callback(const rosgraph_msgs::Log::ConstPtr& rosmsg){
+  // Callback that hands over message to State Manager
+  this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg);
 
-        // Support only navigation errors to start similar to roslibpy agent        
-        if(~(rosmsg->name.compare(std::string{"/move_base"}))){
-
-          // Start with only ticket creation on errors. Can include notifications for warnings later
-          if(msg_level == 8){
-            std::cout << rosmsg->name << " reporting error: " << rosmsg->msg << std::endl;
-            std::cout << "Create a ticket!" << std::endl;
-          }
-
-        }
-    }
-};
+}
 
 int main(int argc, char** argv){
 
   // Initialize node
-  ros::init(argc, argv, "cognicept_rosout_listener_node");
+  ros::init(argc, argv, "rosrect_listener_agent_node");
   ros::NodeHandle nh;
-//   ros::Rate looprate(2);
+  ros::Rate looprate(10);
 
   // Create /rosout_agg subcriber
   cs_listener cs_agent;
   ros::Subscriber sub =
       nh.subscribe("rosout_agg", 1, &cs_listener::log_callback, &cs_agent);
 
-  ros::spin();
+  while(ros::ok()){
+    ros::spinOnce();
+    looprate.sleep();    
+  }
   
   return 0;
 }
