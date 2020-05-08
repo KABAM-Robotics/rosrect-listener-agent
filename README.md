@@ -1,4 +1,4 @@
-![Build Status](https://jenkins.cognicept.systems/buildStatus/icon?job=cognicept-agent-pipeline)
+![Build Status](https://jenkins.cognicept.systems/job/cognicept-agent-pipeline/badge/icon)
 
 # rosrect Listener Agent Documentation 
 
