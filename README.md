@@ -1,4 +1,4 @@
-![Build Status](https://jenkins.cognicept.systems/job/cognicept-agent-pipeline/badge/icon)
+![Build Status](https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&url=https://jenkins.cognicept.systems/job/cognicept-agent-pipeline/badge/icon)
 
 # rosrect Listener Agent Documentation 
 
