@@ -1,16 +1,31 @@
 pipeline{
-  agent any
+  agent { label 'ubuntu' }
   stages{
     stage('--test--'){
       steps{
-        echo 'conducting test'
+        echo 'conducting tests'
       }
     }
     stage('--build--'){
       steps{
-        echo 'conducting build'
+            sh '''
+            ls
+            sh test.sh
+            '''
+
       }
     }
-  
+    stage ("--Extract test results--") {
+    steps {
+    cobertura coberturaReportFile: 'coverage.xml'
+    }
+    }
   }
+  post {
+  always {
+     // junit 'coverage.xml'
+      step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
+  }
+}
+
 }
