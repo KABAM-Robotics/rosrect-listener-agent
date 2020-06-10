@@ -25,21 +25,23 @@ BackendApi::BackendApi() {
   if(check_id)
   {
     ros::param::get("run_id", run_id);
-    parent_dir.append("/.ros/log/" + run_id + "/rosrect_agent_logs");
+    parent_dir.append("/.cognicept/agent/logs/" + run_id);
+    std::cout<< "ROS session detected" << std::endl;
   }
   else
   {
-    parent_dir.append("/.ros/log/rosrect_agent_unittest_logs");
+    parent_dir.append("/.cognicept/agent/logs/unittest_logs");
+    std::cout<< "NO ROS session detected" << std::endl;
   } 
   
-  boost::filesystem::path dir(parent_dir);
-  if (boost::filesystem::exists(dir))
+  boost::filesystem::path dir2(parent_dir);
+  if (boost::filesystem::exists(dir2))
   {
     std::cout<< "Agent log directory already exists: "<< parent_dir <<std::endl;
   }
   else
   {
-    if(boost::filesystem::create_directory(dir))
+    if(boost::filesystem::create_directories(dir2))
     {
       std::cout<< "Agent log directory created: "<< parent_dir <<std::endl;
     }

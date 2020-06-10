@@ -9,7 +9,7 @@ using namespace web;                        // Common features like URIs.
 // Log file settings
 std::string run_id;
 std::string parent_dir = std::getenv("HOME");
-std::string log_name = parent_dir.append("/.ros/log/rosrect_agent_unittest_logs") + "/logData";
+std::string log_name = parent_dir.append("/.cognicept/agent/logs/unittest_logs") + "/logData";
 std::string log_ext = ".json";
 int log_id = 0;
 

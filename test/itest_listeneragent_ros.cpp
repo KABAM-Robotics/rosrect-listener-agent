@@ -214,7 +214,7 @@ int main(int argc, char **argv)
   // Set log folder 
   ros::param::get("run_id", run_id);
   parent_dir = std::getenv("HOME");
-  parent_dir.append("/.ros/log/" + run_id + "/rosrect_agent_logs");
+  parent_dir.append("/.cognicept/agent/logs/" + run_id);
   log_name = parent_dir + "/logData";
 
   ros::NodeHandle nh;
