@@ -3,12 +3,15 @@
 #include <fstream>
 #include <rosrect-listener-agent/robot_event.h>
 
+using namespace web::json;                  // JSON features
+using namespace web;                        // Common features like URIs.
+
 // Create test object
 RobotEvent event_instance;
 
 // Create sample log  
 std::vector<std::vector<std::string>> sample_log;
-std::string level = "Error";
+int level = 8;
 std::string cflag = "Null";
 std::string module = "Null";
 std::string source = "/move_base";
@@ -76,7 +79,7 @@ TEST(RobotEventTestSuite, updateLogROSTest)
   // Expected log
   // For ROS, cflag is Null
   cflag = "Null";
-  event_details.push_back(level);
+  event_details.push_back(std::to_string(level));
   event_details.push_back(cflag);
   event_details.push_back(module);
   event_details.push_back(source);
@@ -112,7 +115,7 @@ TEST(RobotEventTestSuite, updateLogDBTest)
   json::value msgInfo = json::value::object();
   // For DB, cflag is NOT Null
   cflag = "true";
-  event_details.push_back(level);
+  event_details.push_back(std::to_string(level));
   event_details.push_back(cflag);
   event_details.push_back("Navigation");
   event_details.push_back(source);
@@ -136,7 +139,7 @@ TEST(RobotEventTestSuite, updateLogDBTest)
 
   // Assign key-value
   msgInfo[codeKey] = json::value::string("Null");
-  msgInfo[lvlKey] = json::value::string(level);
+  msgInfo[lvlKey] = json::value::number(level);
   msgInfo[cfKey] = json::value::boolean(true);
   msgInfo[modKey] = json::value::string("Navigation");
   msgInfo[srcKey] = json::value::string("/move_base");

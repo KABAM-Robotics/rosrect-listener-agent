@@ -7,9 +7,6 @@
 #include <cpprest/json.h>
 #include <rosgraph_msgs/Log.h>
 
-using namespace web::json;                  // JSON features
-using namespace web;                        // Common features like URIs.
-
 class RobotEvent {
 
     // This class provides access to Robot Event for Cognicept's Listener Agent.

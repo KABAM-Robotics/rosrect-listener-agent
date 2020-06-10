@@ -100,13 +100,13 @@ TEST(ListenerAgentTestSuite, errorSuppressionTest)
   talker_instance.talk(msg_list, sev_list);
 
   // Check if log is created
-  int expected_logs = 16;
+  int expected_logs = 8;
   for (int idx = 0; idx < expected_logs; idx++)
   {
     // Get filename
     log_id++;
     std::string filename = log_name + std::to_string(log_id) + log_ext;
-    std::cout << "Checking: " << filename << std::endl; 
+
     // Check if file exists
     std::ifstream infile1(filename);
     bool fileflag = infile1.good();
@@ -187,7 +187,61 @@ TEST(ListenerAgentTestSuite, warningSuppressionTest)
   talker_instance.talk(msg_list, sev_list);
 
   // Check if log is created
-  int expected_logs = 5;
+  int expected_logs = 4;
+  for (int idx = 0; idx < expected_logs; idx++)
+  {
+    // Get filename
+    log_id++;
+    std::string filename = log_name + std::to_string(log_id) + log_ext;
+
+    // Check if file exists
+    std::ifstream infile1(filename);
+    bool fileflag = infile1.good();
+    ASSERT_TRUE(fileflag);
+  }
+}
+
+TEST(ListenerAgentTestSuite, compoundingErrorTest)
+{
+  // Test message list
+  std::vector<std::string> msg_list =
+      {
+          "Rotate recovery can't rotate in place because there is a potential collision. Cost: -1.00",
+          "Aborting because a valid control could not be found. Even after executing all recovery behaviors"};
+
+  std::vector<std::string> sev_list =
+      {"E", "E"};
+
+  talker_instance.talk(msg_list, sev_list);
+
+  // Check if log is created
+  int expected_logs = 2;
+  for (int idx = 0; idx < expected_logs; idx++)
+  {
+    // Get filename
+    log_id++;
+    std::string filename = log_name + std::to_string(log_id) + log_ext;
+
+    // Check if file exists
+    std::ifstream infile1(filename);
+    bool fileflag = infile1.good();
+    ASSERT_TRUE(fileflag);
+  }
+}
+
+TEST(ListenerAgentTestSuite, noncompoundingErrorTest)
+{
+  // Test message list
+  std::vector<std::string> msg_list =
+      {"Aborting because a valid control could not be found. Even after executing all recovery behaviors"};
+
+  std::vector<std::string> sev_list =
+      {"E"};
+
+  talker_instance.talk(msg_list, sev_list);
+
+  // Check if log is created
+  int expected_logs = 1;
   for (int idx = 0; idx < expected_logs; idx++)
   {
     // Get filename
@@ -204,19 +258,19 @@ TEST(ListenerAgentTestSuite, warningSuppressionTest)
 int main(int argc, char **argv)
 {
   // Wait for 5 seconds to run the listener test
-  std::cout << "Listener test will wait 5 seconds for other tests to finish..." << std::endl;
-  sleep(5);
+  std::cout << "Listener test DB will wait 20 seconds for other tests to finish..." << std::endl;
+  sleep(20);
 
   // Start tests
   testing::InitGoogleTest(&argc, argv);
   ros::init(argc, argv, "tester");
-  
+
   // Set log folder 
   ros::param::get("run_id", run_id);
   parent_dir = std::getenv("HOME");
   parent_dir.append("/.ros/log/" + run_id + "/rosrect_agent_logs");
   log_name = parent_dir + "/logData";
-
+  
   ros::NodeHandle nh;
   return RUN_ALL_TESTS();
 }

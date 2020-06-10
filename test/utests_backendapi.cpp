@@ -3,9 +3,18 @@
 #include <fstream>
 #include <rosrect-listener-agent/backend_api.h>
 
+using namespace utility;                    // Common utilities like string conversions
+using namespace web;                        // Common features like URIs.
+using namespace web::http;                  // Common HTTP functionality
+using namespace web::http::client;          // HTTP client features
+using namespace concurrency::streams;       // Asynchronous streams
+using namespace ::pplx;                     // PPLX for tasks
+using namespace web::json;                  // JSON features
+
 // Log file settings
-std::string package_path = ros::package::getPath("rosrect-listener-agent");
-std::string log_name = package_path + "/test/logs/logData";
+std::string run_id;
+std::string parent_dir = std::getenv("HOME");
+std::string log_name = parent_dir.append("/.ros/log/rosrect_agent_unittest_logs") + "/logData";
 std::string log_ext = ".json";
 int log_id = 0;
 
@@ -108,7 +117,7 @@ TEST(BackEndApiTestSuite, jsonTest)
   ASSERT_TRUE(fieldFlag);
 }
 
-/* Error classification features in development below
+/* Error classification features in development below */
 
 TEST(BackEndApiTestSuite, ecsHitTest)
 {
@@ -137,6 +146,9 @@ TEST(BackEndApiTestSuite, ecsHitTest)
     if(fieldNames[idx] == "compounding_flag"){
       fieldFlag = msgInfo.has_boolean_field(fieldNames[idx]);
     }
+    else if(fieldNames[idx] == "error_level"){
+      fieldFlag = msgInfo.has_integer_field(fieldNames[idx]);
+    }
     else{
       fieldFlag = msgInfo.has_string_field(fieldNames[idx]);
     }
@@ -161,12 +173,10 @@ TEST(BackEndApiTestSuite, ecsMissTest)
   bool nullFlag = msgInfo.is_null();  
   ASSERT_TRUE(nullFlag);
 }
-*/
+
 
 int main(int argc, char **argv)
 {
-  // Cleanup
-  logCleanup();
 
   // Start tests
   testing::InitGoogleTest(&argc, argv);

@@ -8,8 +8,6 @@
 #include <rosrect-listener-agent/backend_api.h>
 #include <rosrect-listener-agent/robot_event.h>
 
-using namespace web::json;                  // JSON features
-
 class StateManager {
 
     // This class provides access to State Manager for Cognicept's Listener Agent.

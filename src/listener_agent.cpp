@@ -23,7 +23,7 @@ cs_listener::~cs_listener(){
 void cs_listener::log_callback(const rosgraph_msgs::Log::ConstPtr& rosmsg){
 
   // To debug this callback function
-  // std::cout << "Message received: " << rosmsg->msg << std::endl;
+  std::cout << "Message received: " << rosmsg->msg << std::endl;
   
   // Callback that hands over message to State Manager
   this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg);
@@ -37,7 +37,7 @@ int main(int argc, char** argv){
   ros::NodeHandle nh;
   ros::Rate looprate(10);
 
-  // Create /rosout_agg subcriber
+  // Create /rosout_agg subscriber
   cs_listener cs_agent;
   ros::Subscriber sub =
       nh.subscribe("rosout_agg", 1000, &cs_listener::log_callback, &cs_agent);

@@ -1,5 +1,13 @@
 #include <rosrect-listener-agent/backend_api.h>
 
+using namespace utility;                    // Common utilities like string conversions
+using namespace web;                        // Common features like URIs.
+using namespace web::http;                  // Common HTTP functionality
+using namespace web::http::client;          // HTTP client features
+using namespace concurrency::streams;       // Asynchronous streams
+using namespace ::pplx;                     // PPLX for tasks
+using namespace web::json;                  // JSON features
+
 BackendApi::BackendApi() {
 
   // std::cout << "Creating API instance..." << std::endl;
@@ -11,20 +19,45 @@ BackendApi::BackendApi() {
   this->agent_mode = std::getenv("AGENT_MODE");
 
   // File variables
-  std::string package_path = ros::package::getPath("rosrect-listener-agent");
-  this->log_name = package_path + "/test/logs/logData";
+  std::string run_id;
+  bool check_id = ros::param::has("run_id");
+  std::string parent_dir = std::getenv("HOME");
+  if(check_id)
+  {
+    ros::param::get("run_id", run_id);
+    parent_dir.append("/.ros/log/" + run_id + "/rosrect_agent_logs");
+  }
+  else
+  {
+    parent_dir.append("/.ros/log/rosrect_agent_unittest_logs");
+  } 
+  
+  boost::filesystem::path dir(parent_dir);
+  if (boost::filesystem::exists(dir))
+  {
+    std::cout<< "Agent log directory already exists: "<< parent_dir <<std::endl;
+  }
+  else
+  {
+    if(boost::filesystem::create_directory(dir))
+    {
+      std::cout<< "Agent log directory created: "<< parent_dir <<std::endl;
+    }
+  }
+  
+  this->log_name = parent_dir + "/logData";
   this->log_ext = ".json";
   this->log_id = 0;
 
   if(this->agent_mode == "TEST"){
-    std::cout << "TEST mode is ON. JSON Logs will be saved here: " << package_path + "/tests/logs/" << std::endl;
+    std::cout << "TEST mode is ON. JSON Logs will be saved here: " << parent_dir << std::endl;
   }
 
-  /* Error classification features in development below
+  /* Error classification features in development below */
   // Error classification API variables
-  this->error_api_host = std::getenv("ECS_API");
-  this->error_api_endpoint = "/api/getErrorData/";
-  */
+  this->ecs_api_host = std::getenv("ECS_API");
+  this->ecs_api_endpoint = "/api/ert/getErrorData/";
+  this->ecs_robot_model = std::getenv("ECS_ROBOT_MODEL");
 }
 
 BackendApi::~BackendApi() {
@@ -97,7 +130,7 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log){
 
     // Display the string stream
     // std::cout << stream.str() << std::endl;
-    std::cout << level << " Event logged with id: " << event_id << std::endl;
+    std::cout << level << " level event logged with id: " << event_id << std::endl;
     
     // Write to file
     std::ofstream outfile;
@@ -165,7 +198,7 @@ json::value BackendApi::create_event_log(std::vector<std::vector<std::string>> l
 
 }
 
-/* Error Classification Features in development below
+/* Error Classification Features in development below */
 
 pplx::task<void> BackendApi::query_error_classification(std::string msg_text){  
   
@@ -176,14 +209,15 @@ pplx::task<void> BackendApi::query_error_classification(std::string msg_text){
     config.set_validate_certificates(false);
     
     // Create HTTP client
-    http_client client(this->error_api_host, config);
+    http_client client(this->ecs_api_host, config);
 
     // Build request
     http_request req(methods::GET);
 
     // Build request URI.
-    uri_builder builder(this->error_api_endpoint);
-    builder.append_path(msg_text, true);
+    uri_builder builder(this->ecs_api_endpoint);
+    builder.append_query("RobotModel", this->ecs_robot_model);
+    builder.append_query("ErrorText", msg_text);
     req.set_request_uri(builder.to_string());
         
     return client.request(req);
@@ -235,4 +269,3 @@ json::value BackendApi::check_error_classification(std::string msg_text){
 
 }
 
-*/
