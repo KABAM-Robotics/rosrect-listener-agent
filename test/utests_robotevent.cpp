@@ -39,7 +39,7 @@ TEST(RobotEventTestSuite, getLogTest)
   std::vector<std::string> currentRow;
 
   // Update log
-  event_instance.update_log(rosmsg, msgInfo);
+  event_instance.update_log(rosmsg, msgInfo, "ROS");
 
   // Check number of elements in event log
   // Get log
@@ -74,7 +74,7 @@ TEST(RobotEventTestSuite, updateLogROSTest)
   std::vector<std::string> currentRow;
 
   // Update log
-  event_instance.update_log(rosmsg, msgInfo);
+  event_instance.update_log(rosmsg, msgInfo, "ROS");
 
   // Expected log
   // For ROS, cflag is Null
@@ -148,7 +148,7 @@ TEST(RobotEventTestSuite, updateLogDBTest)
   msgInfo[resKey] = json::value::string("Relocalize the robot using intervention, assign a sample goal. If that does not work, use teleoperation to nudge the robot from the impossible position. If that does not work, escalate to property.");   
 
   // Update log
-  event_instance.update_log(rosmsg, msgInfo);
+  event_instance.update_log(rosmsg, msgInfo, "ERT");
 
   // Get log
   updatedLog = event_instance.get_log();
@@ -182,7 +182,7 @@ TEST(RobotEventTestSuite, updateEventIdTest)
   std::vector<std::string> currentRow;
 
   // Update log
-  event_instance.update_log(rosmsg, msgInfo);
+  event_instance.update_log(rosmsg, msgInfo, "ROS");
 
   // Get log
   updatedLog = event_instance.get_log();
@@ -193,7 +193,7 @@ TEST(RobotEventTestSuite, updateEventIdTest)
 
   // Clear LOG and Update log again, this should result in same event id
   event_instance.clear_log();
-  event_instance.update_log(rosmsg, msgInfo);
+  event_instance.update_log(rosmsg, msgInfo, "ROS");
 
   // Get log
   updatedLog = event_instance.get_log();
@@ -204,7 +204,7 @@ TEST(RobotEventTestSuite, updateEventIdTest)
 
   // Clear EVENT and Update log again, this should result in a different event id
   event_instance.clear();
-  event_instance.update_log(rosmsg, msgInfo);
+  event_instance.update_log(rosmsg, msgInfo, "ROS");
 
   // Get log
   updatedLog = event_instance.get_log();
@@ -240,7 +240,7 @@ TEST(RobotEventTestSuite, clearTest)
   std::vector<std::string> currentRow;
 
   // Update log
-  event_instance.update_log(rosmsg, msgInfo);
+  event_instance.update_log(rosmsg, msgInfo, "ROS");
 
   // Get log
   updatedLog = event_instance.get_log();

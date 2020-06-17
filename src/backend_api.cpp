@@ -61,8 +61,23 @@ BackendApi::BackendApi()
   /* Error classification features in development below */
   // Error classification API variables
   this->ecs_api_host = std::getenv("ECS_API");
-  this->ecs_api_endpoint = "/api/ert/getErrorData/";
   this->ecs_robot_model = std::getenv("ECS_ROBOT_MODEL");
+
+  if ((this->agent_type == "ERT") || (this->agent_type == "DB"))
+  {
+    // This configures the endpoint to ERT queries. Must be used only for testing. Undocumented.
+    this->ecs_api_endpoint = "/api/ert/getErrorData/";
+  }
+  else if (this->agent_type == "ECS")
+  {
+    // This configures the endpoint to ECS queries. Production version.
+    this->ecs_api_endpoint = "/api/ecs/getErrorData/";
+  }
+  else
+  {
+    // This means the agent is running in ROS mode. So no need to configure endpoint.
+    this->ecs_api_endpoint = "/api/ert/getErrorData/";
+  }
 }
 
 BackendApi::~BackendApi()
@@ -132,7 +147,7 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   std::string event_id = last_log[idx++];
 
   bool ticketBool = false;
-  if ((level == "8") && ((cflag == "false") || (cflag == "Null")))
+  if (((level == "8") || (level == "16")) && ((cflag == "false") || (cflag == "Null")))
   {
     ticketBool = true;
   }
@@ -194,8 +209,11 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
     outfile.close();
   }
 
-  // Post downstream
-  this->post_event_log(payload);
+  if(this->agent_mode == "PIPELINE_TEST")
+  {
+    // Post downstream
+    this->post_event_log(payload);
+  }
 }
 
 json::value BackendApi::create_event_log(std::vector<std::vector<std::string>> log)
