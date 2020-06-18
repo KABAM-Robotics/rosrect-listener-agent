@@ -53,7 +53,7 @@ BackendApi::BackendApi()
   this->log_ext = ".json";
   this->log_id = 0;
 
-  if (this->agent_mode == "TEST")
+  if (this->agent_mode != "PROD")
   {
     std::cout << "TEST mode is ON. JSON Logs will be saved here: " << parent_dir << std::endl;
   }
@@ -88,6 +88,7 @@ BackendApi::~BackendApi()
 
 pplx::task<void> BackendApi::post_event_log(json::value payload)
 {
+  std::cout << "Posting" << std::endl;
 
   return pplx::create_task([this, payload] {
            // Create HTTP client configuration
@@ -99,7 +100,7 @@ pplx::task<void> BackendApi::post_event_log(json::value payload)
 
            // // Write the current JSON value to a stream with the native platform character width
            // utility::stringstream_t stream;
-           // postData.serialize(stream);
+           // payload.serialize(stream);
 
            // // Display the string stream
            // std::cout << "Post data: " << stream.str() << std::endl;
@@ -127,6 +128,106 @@ pplx::task<void> BackendApi::post_event_log(json::value payload)
           std::cout << "Request failed" << std::endl;
         }
       });
+}
+
+void BackendApi::push_status(bool status)
+{
+  // Set all required info
+  boost::posix_time::ptime utcTime = boost::posix_time::microsec_clock::universal_time();
+  std::string timestr = to_iso_extended_string(utcTime);
+  std::string level = "Heartbeat";
+  std::string cflag = "Null";
+  std::string module = "Status";
+  std::string source = "Null";
+  std::string message = "Null";
+  std::string description = "Null";
+  std::string resolution = "Null";
+  std::string event_id = "Null";
+  bool ticketBool = false;
+
+  if (status)
+  {
+    message = "Online";
+    ticketBool = false;
+  }
+  else
+  {
+    message = "Offline";
+    ticketBool = true;
+  }
+
+  // Create JSON object
+  json::value payload = json::value::object();
+
+  // Create keys
+  utility::string_t agentKey(U("agent_id"));
+  utility::string_t roboKey(U("robot_id"));
+  utility::string_t propKey(U("property_id"));
+  utility::string_t eventidKey(U("event_id"));
+  utility::string_t timeKey(U("timestamp"));
+  utility::string_t msgKey(U("message"));
+  utility::string_t lvlKey(U("level"));
+  utility::string_t modKey(U("module"));
+  utility::string_t srcKey(U("source"));
+  utility::string_t cKey(U("compounding"));
+  utility::string_t ticketKey(U("create_ticket"));
+  utility::string_t descKey(U("description"));
+  utility::string_t resKey(U("resolution"));
+
+  // Assign key-value
+  payload[agentKey] = json::value::string(U(this->agent_id));
+  payload[roboKey] = json::value::string(U(this->robot_id));
+  payload[propKey] = json::value::string(U(this->site_id));
+  payload[eventidKey] = json::value::string(U(event_id));
+  payload[timeKey] = json::value::string(U(timestr));
+  payload[msgKey] = json::value::string(U(message));
+  payload[lvlKey] = json::value::string(U(level));
+  payload[modKey] = json::value::string(U(module));
+  payload[srcKey] = json::value::string(U(source));
+  payload[cKey] = json::value::string(U(cflag));
+  payload[ticketKey] = json::value::boolean(U(ticketBool));
+  payload[descKey] = json::value::string(U(description));
+  payload[resKey] = json::value::string(U(resolution));
+
+  if (this->agent_mode == "JSON_TEST")
+  {
+    // Write the current JSON value to a stream with the native platform character width
+    utility::stringstream_t stream;
+    payload.serialize(stream);
+
+    // Display the string stream
+    // std::cout << stream.str() << std::endl;
+    std::cout << "Status Logged: " << message << std::endl;
+
+    // Write to file
+    std::ofstream outfile;
+    std::string filename = this->log_name + "Status" + this->log_ext;
+    // std::cout << filename << std::endl;
+    outfile.open(filename);
+    outfile << std::setw(4) << stream.str() << std::endl;
+    outfile.close();
+  }
+  else if (this->agent_mode == "POST_TEST")
+  {
+    // Write the current JSON value to a stream with the native platform character width
+    utility::stringstream_t stream;
+    payload.serialize(stream);
+
+    // Display the string stream
+    // std::cout << stream.str() << std::endl;
+    std::cout << "Status Logged: " << message << std::endl;
+
+    // Write to file
+    std::ofstream outfile;
+    std::string filename = this->log_name + "Status" + this->log_ext;
+    // std::cout << filename << std::endl;
+    outfile.open(filename);
+    outfile << std::setw(4) << stream.str() << std::endl;
+    outfile.close();
+
+    // Post downstream
+    this->post_event_log(payload).wait();
+  }
 }
 
 void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
@@ -189,7 +290,7 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   payload[descKey] = json::value::string(U(description));
   payload[resKey] = json::value::string(U(resolution));
 
-  if (this->agent_mode == "TEST")
+  if (this->agent_mode == "JSON_TEST")
   {
     // Write the current JSON value to a stream with the native platform character width
     utility::stringstream_t stream;
@@ -208,11 +309,27 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
     outfile << std::setw(4) << stream.str() << std::endl;
     outfile.close();
   }
-
-  if(this->agent_mode == "PIPELINE_TEST")
+  else if (this->agent_mode == "POST_TEST")
   {
+    // Write the current JSON value to a stream with the native platform character width
+    utility::stringstream_t stream;
+    payload.serialize(stream);
+
+    // Display the string stream
+    // std::cout << stream.str() << std::endl;
+    std::cout << level << " level event logged with id: " << event_id << std::endl;
+
+    // Write to file
+    std::ofstream outfile;
+    this->log_id++;
+    std::string filename = this->log_name + std::to_string(this->log_id) + this->log_ext;
+    std::cout << filename << std::endl;
+    outfile.open(filename);
+    outfile << std::setw(4) << stream.str() << std::endl;
+    outfile.close();
+
     // Post downstream
-    this->post_event_log(payload);
+    this->post_event_log(payload).wait();
   }
 }
 

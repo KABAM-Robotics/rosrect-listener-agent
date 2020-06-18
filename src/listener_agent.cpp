@@ -21,10 +21,15 @@ cs_listener::cs_listener()
   {
     std::cout << "Subscribed to Listener Agent with direct rosout..." << std::endl;
   }
+
+  // Heartbeat parameters
+  this->heartrate = ros::WallDuration(15.0);
 }
 
 cs_listener::~cs_listener()
 {
+  // Stop heartbeat
+  this->heartbeat_stop();
   // Destructor
   std::cout << "Unsubscribed from Listener Agent..." << std::endl;
 }
@@ -39,6 +44,28 @@ void cs_listener::log_callback(const rosgraph_msgs::Log::ConstPtr &rosmsg)
   this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg);
 }
 
+void cs_listener::heartbeat_start(ros::NodeHandle nh)
+{
+  // Records heartbeat online status when node is started. Future status is pushed by timer bound callback
+  this->state_manager_instance.check_heartbeat(true);
+
+  // Create a Wall Timer for heartrate period
+  this->heartbeat_timer = nh.createWallTimer(this->heartrate, &cs_listener::heartbeat_log, this);
+}
+
+void cs_listener::heartbeat_log(const ros::WallTimerEvent &timer_event)
+{
+  // A timer bound method that periodically checks the ROS connection status and passes it to the state manager.
+  bool status = ros::ok;
+  this->state_manager_instance.check_heartbeat(status);
+}
+
+void cs_listener::heartbeat_stop()
+{
+  // Records heartbeat offline status when node is shutdown
+  this->state_manager_instance.check_heartbeat(false);
+}
+
 int main(int argc, char **argv)
 {
 
@@ -47,8 +74,13 @@ int main(int argc, char **argv)
   ros::NodeHandle nh;
   ros::Rate looprate(10);
 
-  // Create /rosout_agg subscriber
+  // Create Agent
   cs_listener cs_agent;
+
+  // Start heartbeat
+  cs_agent.heartbeat_start(nh);
+
+  // Create /rosout_agg subscriber
   ros::Subscriber sub =
       nh.subscribe("rosout_agg", 1000, &cs_listener::log_callback, &cs_agent);
 

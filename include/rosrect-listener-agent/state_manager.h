@@ -40,5 +40,6 @@ public:
     void check_error(std::string, std::string);                                         // Check error suppression
     void check_warning(std::string, std::string);                                       // Check warning suppression
     void check_info(std::string, std::string);                                          // Check info suppression
+    void check_heartbeat(bool);                                                         // Performs heartbeat check and pushes appropriate data
     void clear();                                                                       // Clearing all states
 };

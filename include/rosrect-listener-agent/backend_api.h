@@ -12,6 +12,7 @@
 #include <cpprest/producerconsumerstream.h>
 #include <ros/ros.h>
 #include <boost/filesystem.hpp>
+#include <boost/date_time.hpp>
 
 class BackendApi
 {
@@ -37,6 +38,7 @@ public:
   BackendApi();
   ~BackendApi();
   pplx::task<void> post_event_log(web::json::value);                        // A configurable downstream push method
+  void push_status(bool);                                                   // Pushes appropriate status data
   void push_event_log(std::vector<std::vector<std::string>>);               // Create and push single JSON record payload data for downstream consumption
   web::json::value create_event_log(std::vector<std::vector<std::string>>); // Create JSON "multiple record" payload data for downstream consumption
   pplx::task<void> query_error_classification(std::string);                 // Query error classification database table

@@ -10,7 +10,7 @@ StateManager::StateManager()
     this->suppress_flag = false;
 
     // Timeout parameter in minutes for alert timeout
-    float alert_timeout_limit = 5.0;
+    this->alert_timeout_limit = 5.0;
 }
 
 std::vector<std::string> StateManager::does_exist(std::string robot_code, std::string msg_text)
@@ -35,15 +35,18 @@ std::vector<std::string> StateManager::does_exist(std::string robot_code, std::s
 void StateManager::check_message(std::string agent_type, std::string robot_code, const rosgraph_msgs::Log::ConstPtr &data)
 {
 
-    if(agent_type == "ECS"){
+    if (agent_type == "ECS")
+    {
         // std::cout << "Checking with ECS..." << std::endl;
         this->check_message_ecs(robot_code, data);
     }
-    else if((agent_type == "ERT") || (agent_type == "DB")){
+    else if ((agent_type == "ERT") || (agent_type == "DB"))
+    {
         // std::cout << "Checking with ERT..." << std::endl;
         this->check_message_ert(robot_code, data);
     }
-    else{
+    else
+    {
         // std::cout << "Checking with ROS..." << std::endl;
         this->check_message_ros(robot_code, data);
     }
@@ -74,7 +77,7 @@ void StateManager::check_message_ecs(std::string robot_code, const rosgraph_msgs
         std::string error_msg = (msg_info.at(U("error_text"))).as_string();
         // std::cout << "Text: " << error_msg << std::endl;
 
-        if ((error_level == 8) || (error_level ==16))
+        if ((error_level == 8) || (error_level == 16))
         {
             // std::cout << "Error... " << data->msg << std::endl;
             // Check for suppression
@@ -409,6 +412,12 @@ void StateManager::check_info(std::string robot_code, std::string msg_text)
         // Do not suppress
         this->suppress_flag = false;
     }
+}
+
+void StateManager::check_heartbeat(bool status)
+{
+    // Pass data to backend to push appropriate status
+    this->api_instance.push_status(status);
 }
 
 void StateManager::clear()
