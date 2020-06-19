@@ -130,7 +130,7 @@ pplx::task<void> BackendApi::post_event_log(json::value payload)
       });
 }
 
-void BackendApi::push_status(bool status)
+void BackendApi::push_status(bool status, json::value telemetry)
 {
   // Set all required info
   boost::posix_time::ptime utcTime = boost::posix_time::microsec_clock::universal_time();
@@ -173,6 +173,7 @@ void BackendApi::push_status(bool status)
   utility::string_t ticketKey(U("create_ticket"));
   utility::string_t descKey(U("description"));
   utility::string_t resKey(U("resolution"));
+  utility::string_t telKey(U("telemetry"));
 
   // Assign key-value
   payload[agentKey] = json::value::string(U(this->agent_id));
@@ -188,6 +189,7 @@ void BackendApi::push_status(bool status)
   payload[ticketKey] = json::value::boolean(U(ticketBool));
   payload[descKey] = json::value::string(U(description));
   payload[resKey] = json::value::string(U(resolution));
+  payload[telKey] = telemetry;
 
   if (this->agent_mode == "JSON_TEST")
   {
@@ -246,6 +248,7 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   std::string description = last_log[idx++];
   std::string resolution = last_log[idx++];
   std::string event_id = last_log[idx++];
+  std::string telemetry_str = last_log[idx++];
 
   bool ticketBool = false;
   if (((level == "8") || (level == "16")) && ((cflag == "false") || (cflag == "Null")))
@@ -274,6 +277,7 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   utility::string_t ticketKey(U("create_ticket"));
   utility::string_t descKey(U("description"));
   utility::string_t resKey(U("resolution"));
+  utility::string_t telKey(U("telemetry"));
 
   // Assign key-value
   payload[agentKey] = json::value::string(U(this->agent_id));
@@ -289,6 +293,7 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   payload[ticketKey] = json::value::boolean(U(ticketBool));
   payload[descKey] = json::value::string(U(description));
   payload[resKey] = json::value::string(U(resolution));
+  payload[telKey] = json::value::parse(U(telemetry_str));
 
   if (this->agent_mode == "JSON_TEST")
   {

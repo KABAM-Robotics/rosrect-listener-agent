@@ -9,7 +9,7 @@ RobotEvent::RobotEvent()
     this->event_id_str = "";
 }
 
-void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::value msg_info, std::string agent_type)
+void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::value msg_info, json::value telemetry, std::string agent_type)
 {
     // std::cout << "Event log updating..." << std::endl;
     // Each message has a queue id
@@ -22,7 +22,7 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
     // Event log order
     // 'QID', 'Date/Time', 'Level', 'Compounding',
     // 'Module', 'Source', 'Message', 'Description',
-    // 'Resolution', 'RobotEvent_ID'
+    // 'Resolution', 'RobotEvent_ID', 'Telemetry'
     int level = 8;
     std::string cflag = "Null";
     std::string module = "Null";
@@ -30,6 +30,11 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
     std::string message = "Null";
     std::string description = "Null";
     std::string resolution = "Null";
+
+    utility::stringstream_t stream;
+    telemetry.serialize(stream);
+    // std::cout << "Event telemetry: " << stream.str() << std::endl;
+    std::string telemetry_str = stream.str();
 
     if (agent_type == "ECS")
     {
@@ -102,6 +107,7 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
     event_details.push_back(description);
     event_details.push_back(resolution);
     event_details.push_back(this->event_id_str);
+    event_details.push_back(telemetry_str);
 
     // Push to log
     this->event_log.push_back(event_details);
