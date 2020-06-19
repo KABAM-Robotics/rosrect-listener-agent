@@ -32,27 +32,27 @@ std::vector<std::string> StateManager::does_exist(std::string robot_code, std::s
     return emptyString;
 }
 
-void StateManager::check_message(std::string agent_type, std::string robot_code, const rosgraph_msgs::Log::ConstPtr &data)
+void StateManager::check_message(std::string agent_type, std::string robot_code, const rosgraph_msgs::Log::ConstPtr &data, json::value telemetry)
 {
 
     if (agent_type == "ECS")
     {
         // std::cout << "Checking with ECS..." << std::endl;
-        this->check_message_ecs(robot_code, data);
+        this->check_message_ecs(robot_code, data, telemetry);
     }
     else if ((agent_type == "ERT") || (agent_type == "DB"))
     {
         // std::cout << "Checking with ERT..." << std::endl;
-        this->check_message_ert(robot_code, data);
+        this->check_message_ert(robot_code, data, telemetry);
     }
     else
     {
         // std::cout << "Checking with ROS..." << std::endl;
-        this->check_message_ros(robot_code, data);
+        this->check_message_ros(robot_code, data, telemetry);
     }
 }
 
-void StateManager::check_message_ecs(std::string robot_code, const rosgraph_msgs::Log::ConstPtr &data)
+void StateManager::check_message_ecs(std::string robot_code, const rosgraph_msgs::Log::ConstPtr &data, json::value telemetry)
 {
 
     // Parse message to query-able format
@@ -106,7 +106,7 @@ void StateManager::check_message_ecs(std::string robot_code, const rosgraph_msgs
         {
             // std::cout << "Not suppressed!" << std::endl;
             // If not suppressed, send it to event to update
-            this->event_instance.update_log(data, msg_info, "ECS");
+            this->event_instance.update_log(data, msg_info, telemetry, "ECS");
 
             // Push to stream
             this->api_instance.push_event_log(this->event_instance.get_log());
@@ -141,7 +141,7 @@ void StateManager::check_message_ecs(std::string robot_code, const rosgraph_msgs
     }
 }
 
-void StateManager::check_message_ert(std::string robot_code, const rosgraph_msgs::Log::ConstPtr &data)
+void StateManager::check_message_ert(std::string robot_code, const rosgraph_msgs::Log::ConstPtr &data, json::value telemetry)
 {
 
     // Parse message to query-able format
@@ -195,7 +195,7 @@ void StateManager::check_message_ert(std::string robot_code, const rosgraph_msgs
         {
             // std::cout << "Not suppressed!" << std::endl;
             // If not suppressed, send it to event to update
-            this->event_instance.update_log(data, msg_info, "ERT");
+            this->event_instance.update_log(data, msg_info, telemetry, "ERT");
 
             // Push to stream
             this->api_instance.push_event_log(this->event_instance.get_log());
@@ -230,7 +230,7 @@ void StateManager::check_message_ert(std::string robot_code, const rosgraph_msgs
     }
 }
 
-void StateManager::check_message_ros(std::string robot_code, const rosgraph_msgs::Log::ConstPtr &data)
+void StateManager::check_message_ros(std::string robot_code, const rosgraph_msgs::Log::ConstPtr &data, json::value telemetry)
 {
 
     if (data->level == 8)
@@ -262,7 +262,7 @@ void StateManager::check_message_ros(std::string robot_code, const rosgraph_msgs
     {
         // std::cout << "Not suppressed!" << std::endl;
         // If not suppressed, send it to event to update
-        this->event_instance.update_log(data, json::value::null(), "ROS");
+        this->event_instance.update_log(data, json::value::null(), telemetry, "ROS");
 
         // Push log
         this->api_instance.push_event_log(this->event_instance.get_log());
@@ -414,10 +414,10 @@ void StateManager::check_info(std::string robot_code, std::string msg_text)
     }
 }
 
-void StateManager::check_heartbeat(bool status)
+void StateManager::check_heartbeat(bool status, json::value telemetry)
 {
     // Pass data to backend to push appropriate status
-    this->api_instance.push_status(status);
+    this->api_instance.push_status(status, telemetry);
 }
 
 void StateManager::clear()

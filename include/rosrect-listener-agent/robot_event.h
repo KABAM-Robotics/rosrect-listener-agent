@@ -24,9 +24,9 @@ class RobotEvent
 
 public:
     RobotEvent();
-    void update_log(const rosgraph_msgs::Log::ConstPtr &, web::json::value, std::string); // Append to event log
-    void update_event_id();                                                               // Update event id, create and udpate if necessary
-    std::vector<std::vector<std::string>> get_log();                                      // Return event log
-    void clear_log();                                                                     // Clear only event log
-    void clear();                                                                         // Clearing all events
+    void update_log(const rosgraph_msgs::Log::ConstPtr &, web::json::value, web::json::value, std::string); // Append to event log
+    void update_event_id();                                                                                 // Update event id, create and udpate if necessary
+    std::vector<std::vector<std::string>> get_log();                                                        // Return event log
+    void clear_log();                                                                                       // Clear only event log
+    void clear();                                                                                           // Clearing all events
 };
