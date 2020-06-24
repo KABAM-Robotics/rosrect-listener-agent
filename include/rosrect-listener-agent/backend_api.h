@@ -37,6 +37,7 @@ class BackendApi
 public:
   BackendApi();
   ~BackendApi();
+  void check_environment();                                                 // Utility method to pull environment variables and set defaults
   pplx::task<void> post_event_log(web::json::value);                        // A configurable downstream push method
   void push_status(bool, web::json::value);                                 // Pushes appropriate status data
   void push_event_log(std::vector<std::vector<std::string>>);               // Create and push single JSON record payload data for downstream consumption

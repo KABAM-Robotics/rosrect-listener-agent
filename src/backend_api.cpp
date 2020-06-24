@@ -12,13 +12,8 @@ BackendApi::BackendApi()
 {
 
   // std::cout << "Creating API instance..." << std::endl;
-
-  // Other environment variables
-  this->robot_id = std::getenv("ROBOT_CODE");
-  this->site_id = std::getenv("SITE_CODE");
-  this->agent_id = std::getenv("AGENT_ID");
-  this->agent_mode = std::getenv("AGENT_MODE");
-  this->agent_post_api = std::getenv("AGENT_POST_API");
+  // Check and set environment variables
+  this->check_environment();
 
   // File variables
   std::string run_id;
@@ -60,9 +55,7 @@ BackendApi::BackendApi()
 
   /* Error classification features in development below */
   // Error classification API variables
-  this->ecs_api_host = std::getenv("ECS_API");
-  this->ecs_robot_model = std::getenv("ECS_ROBOT_MODEL");
-
+  
   if ((this->agent_type == "ERT") || (this->agent_type == "DB"))
   {
     // This configures the endpoint to ERT queries. Must be used only for testing. Undocumented.
@@ -86,6 +79,127 @@ BackendApi::~BackendApi()
   // std::cout << "Logged out of API..." << std::endl;
 }
 
+void BackendApi::check_environment()
+{
+  // Other environment variables
+  std::cout << "=======================Environment variables setup======================" << std::endl;
+  // AGENT_TYPE
+  if(std::getenv("AGENT_TYPE"))
+  {
+    // Success case
+    this->agent_type = std::getenv("AGENT_TYPE");
+    std::cout << "Environment variable AGENT_TYPE set to: " << this->agent_type << std::endl;
+    // ECS_API, ECS_ROBOT_MODEL
+    if((this->agent_type == "DB") || (this->agent_type == "ERT") || (this->agent_type == "ECS"))
+    {
+      if(std::getenv("ECS_API"))
+      {
+        // Success case
+        this->ecs_api_host = std::getenv("ECS_API");
+        std::cout << "Environment variable ECS_API set to: " << this->ecs_api_host << std::endl;
+        if(std::getenv("ECS_ROBOT_MODEL"))
+        {
+          // Success case
+          this->ecs_robot_model = std::getenv("ECS_ROBOT_MODEL");
+          std::cout << "Environment variable ECS_ROBOT_MODEL set to: " << this->ecs_robot_model << std::endl;
+        }
+        else
+        {
+          // Failure case - Default
+          std::cerr << "Agent configured in " << this->agent_type << " mode but ECS_ROBOT_MODEL environment variable is not configured. Defaulting back to ROS mode instead..." << std::endl;
+          this->agent_type = "ROS";
+          this->agent_type = "ROS";
+        } 
+      }
+      else
+      {
+        // Failure case - Default
+        std::cerr << "Agent configured in " << this->agent_type << " mode but ECS_API environment variable is not configured. Defaulting back to ROS mode instead..." << std::endl;
+        this->agent_type = "ROS";
+      }  
+    }
+  }
+  else
+  {
+    // Failure case - Default
+    this->agent_type = "ROS";
+    std::cerr << "Environment variable AGENT_TYPE unspecified. Defaulting to ROS mode..." << std::endl;
+  }
+
+  // ROBOT_CODE
+  if(std::getenv("ROBOT_CODE"))
+  {
+    // Success case
+    this->robot_id = std::getenv("ROBOT_CODE");
+    std::cout << "Environment variable ROBOT_CODE set to: " << this->robot_id << std::endl;
+  }
+  else
+  {
+    // Failure case - Default
+    this->robot_id = "Undefined";
+    std::cerr << "Environment variable ROBOT_CODE unspecified. Defaulting to 'Undefined'..." << std::endl;
+  }
+
+  // SITE_CODE
+  if(std::getenv("SITE_CODE"))
+  {
+    // Success case
+    this->site_id = std::getenv("SITE_CODE");
+    std::cout << "Environment variable SITE_CODE set to: " << this->site_id << std::endl;
+  }
+  else
+  {
+    // Failure case - Default
+    this->site_id = "Undefined";
+    std::cerr << "Environment variable SITE_CODE unspecified. Defaulting to 'Undefined'..." << std::endl;
+  }
+
+  // AGENT_ID
+  if(std::getenv("AGENT_ID"))
+  {
+    // Success case
+    this->agent_id = std::getenv("AGENT_ID");
+    std::cout << "Environment variable AGENT_ID set to: " << this->agent_id << std::endl;
+  }
+  else
+  {
+    // Failure case - Default
+    this->agent_id = "Undefined";
+    std::cerr << "Environment variable AGENT_ID unspecified. Defaulting to 'Undefined'..." << std::endl;
+  }  
+
+  // AGENT_MODE, AGENT_POST_API
+  if(std::getenv("AGENT_MODE"))
+  {
+    // Success case
+    this->agent_mode = std::getenv("AGENT_MODE");
+    std::cout << "Environment variable AGENT_MODE set to: " << this->agent_mode << std::endl;
+    // Specially handle POST_TEST case
+    if(this->agent_mode == "POST_TEST")
+    {
+      if(std::getenv("AGENT_POST_API"))
+      {
+        // Success case
+        this->agent_post_api = std::getenv("AGENT_POST_API");
+        std::cout << "Environment variable AGENT_POST_API set to: " << this->agent_post_api << std::endl;
+      }
+      else
+      {
+        // Failure case - Default
+        this->agent_mode = "JSON_TEST";
+        std::cerr << "Agent configured in POST_TEST mode but AGENT_POST_API environment variable is not configured. Defaulting back to JSON_TEST mode instead..." << std::endl;
+      }      
+    }
+  }
+  else
+  {
+    // Failure case - Default
+    this->agent_mode = "JSON_TEST";
+    std::cerr << "Environment variable AGENT_MODE unspecified. Defaulting to 'JSON_TEST'..." << std::endl;
+  }
+
+  std::cout << "=========================================================================" << std::endl;
+}
 pplx::task<void> BackendApi::post_event_log(json::value payload)
 {
   std::cout << "Posting" << std::endl;
