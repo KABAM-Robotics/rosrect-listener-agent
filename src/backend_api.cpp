@@ -403,7 +403,18 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   payload[lvlKey] = json::value::string(U(level));
   payload[modKey] = json::value::string(U(module));
   payload[srcKey] = json::value::string(U(source));
-  payload[cKey] = json::value::string(U(cflag));
+  if (cflag == "false")
+  {
+    payload[cKey] = json::value::boolean(U(false));
+  }
+  else if(cflag == "true")
+  {
+    payload[cKey] = json::value::boolean(U(true));
+  }
+  else
+  {
+    payload[cKey] = json::value::string(U("Null"));    
+  }
   payload[ticketKey] = json::value::boolean(U(ticketBool));
   payload[descKey] = json::value::string(U(description));
   payload[resKey] = json::value::string(U(resolution));
