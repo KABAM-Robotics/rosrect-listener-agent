@@ -1,4 +1,4 @@
-FROM osrf/ros:melodic-desktop-full
+FROM ros:melodic-ros-core
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends screen \
