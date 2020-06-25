@@ -16,41 +16,53 @@ BackendApi::BackendApi()
   this->check_environment();
 
   // File variables
+  this->log_dir = std::getenv("HOME");
   std::string run_id;
   bool check_id = ros::param::has("run_id");
-  std::string parent_dir = std::getenv("HOME");
+  this->log_dir.append("/.cognicept/agent/logs/");
+  std::string latest_log = this->log_dir + "latest_log_loc.txt";
+  std::string disp_dir = "/$HOME/.cognicept/agent/logs/";
+
   if (check_id)
   {
     ros::param::get("run_id", run_id);
-    parent_dir.append("/.cognicept/agent/logs/" + run_id);
+    this->log_dir.append(run_id);
+    disp_dir.append(run_id);
     std::cout << "ROS session detected" << std::endl;
   }
   else
   {
-    parent_dir.append("/.cognicept/agent/logs/unittest_logs");
+    this->log_dir.append("unittest_logs");
     std::cout << "NO ROS session detected" << std::endl;
   }
 
-  boost::filesystem::path dir2(parent_dir);
+  boost::filesystem::path dir2(this->log_dir);
   if (boost::filesystem::exists(dir2))
   {
-    std::cout << "Agent log directory already exists: " << parent_dir << std::endl;
+    std::cout << "Agent log directory already exists: " << disp_dir << std::endl;
   }
   else
   {
     if (boost::filesystem::create_directories(dir2))
     {
-      std::cout << "Agent log directory created: " << parent_dir << std::endl;
+      std::cout << "Agent log directory created: " << disp_dir << std::endl;
     }
   }
 
-  this->log_name = parent_dir + "/logData";
+  // Write to file
+  std::ofstream outfile;
+  outfile.open(latest_log);
+  outfile << std::setw(4) << disp_dir << std::endl;
+  outfile.close();
+  std::cout << "Updated latest log location in: " << latest_log << std::endl;
+
+  this->log_name = this->log_dir + "/logData";
   this->log_ext = ".json";
   this->log_id = 0;
 
   if (this->agent_mode != "PROD")
   {
-    std::cout << "TEST mode is ON. JSON Logs will be saved here: " << parent_dir << std::endl;
+    std::cout << "TEST mode is ON. JSON Logs will be saved here: " << this->log_dir << std::endl;
   }
 
   /* Error classification features in development below */
@@ -200,6 +212,7 @@ void BackendApi::check_environment()
 
   std::cout << "=========================================================================" << std::endl;
 }
+
 pplx::task<void> BackendApi::post_event_log(json::value payload)
 {
   std::cout << "Posting" << std::endl;

@@ -23,6 +23,7 @@ class BackendApi
   std::string agent_id;
   std::string agent_mode;
   std::string agent_type;
+  std::string log_dir;
   std::string log_name;
   std::string log_ext;
   int log_id;
