@@ -4,8 +4,11 @@ clear
 
 docker build -t cognicept_diagnostics_agent .
 
-sudo docker run -it \
---rm \
+docker stop cgs_diagnostics_agent
+
+docker rm cgs_diagnostics_agent 
+
+docker run -it \
 --env-file runtime.env \
 --network=host \
 --name=cgs_diagnostics_agent  \
