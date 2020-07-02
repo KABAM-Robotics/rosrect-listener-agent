@@ -54,7 +54,8 @@ BackendApi::BackendApi()
   outfile.open(latest_log);
   outfile << std::setw(4) << disp_dir << std::endl;
   outfile.close();
-  std::cout << "Updated latest log location in: " << latest_log << std::endl;
+  std::cout << "Updated latest log location in: "
+            << "/$HOME/.cognicept/agent/logs/latest_log_loc.txt" << std::endl;
 
   this->log_name = this->log_dir + "/logData";
   this->log_ext = ".json";
@@ -62,12 +63,12 @@ BackendApi::BackendApi()
 
   if (this->agent_mode != "PROD")
   {
-    std::cout << "TEST mode is ON. JSON Logs will be saved here: " << this->log_dir << std::endl;
+    std::cout << "TEST mode is ON. JSON Logs will be saved here: " << disp_dir << std::endl;
   }
 
   /* Error classification features in development below */
   // Error classification API variables
-  
+
   if ((this->agent_type == "ERT") || (this->agent_type == "DB"))
   {
     // This configures the endpoint to ERT queries. Must be used only for testing. Undocumented.
@@ -96,20 +97,20 @@ void BackendApi::check_environment()
   // Other environment variables
   std::cout << "=======================Environment variables setup======================" << std::endl;
   // AGENT_TYPE
-  if(std::getenv("AGENT_TYPE"))
+  if (std::getenv("AGENT_TYPE"))
   {
     // Success case
     this->agent_type = std::getenv("AGENT_TYPE");
     std::cout << "Environment variable AGENT_TYPE set to: " << this->agent_type << std::endl;
     // ECS_API, ECS_ROBOT_MODEL
-    if((this->agent_type == "DB") || (this->agent_type == "ERT") || (this->agent_type == "ECS"))
+    if ((this->agent_type == "DB") || (this->agent_type == "ERT") || (this->agent_type == "ECS"))
     {
-      if(std::getenv("ECS_API"))
+      if (std::getenv("ECS_API"))
       {
         // Success case
         this->ecs_api_host = std::getenv("ECS_API");
         std::cout << "Environment variable ECS_API set to: " << this->ecs_api_host << std::endl;
-        if(std::getenv("ECS_ROBOT_MODEL"))
+        if (std::getenv("ECS_ROBOT_MODEL"))
         {
           // Success case
           this->ecs_robot_model = std::getenv("ECS_ROBOT_MODEL");
@@ -121,14 +122,14 @@ void BackendApi::check_environment()
           std::cerr << "Agent configured in " << this->agent_type << " mode but ECS_ROBOT_MODEL environment variable is not configured. Defaulting back to ROS mode instead..." << std::endl;
           this->agent_type = "ROS";
           this->agent_type = "ROS";
-        } 
+        }
       }
       else
       {
         // Failure case - Default
         std::cerr << "Agent configured in " << this->agent_type << " mode but ECS_API environment variable is not configured. Defaulting back to ROS mode instead..." << std::endl;
         this->agent_type = "ROS";
-      }  
+      }
     }
   }
   else
@@ -139,7 +140,7 @@ void BackendApi::check_environment()
   }
 
   // ROBOT_CODE
-  if(std::getenv("ROBOT_CODE"))
+  if (std::getenv("ROBOT_CODE"))
   {
     // Success case
     this->robot_id = std::getenv("ROBOT_CODE");
@@ -153,7 +154,7 @@ void BackendApi::check_environment()
   }
 
   // SITE_CODE
-  if(std::getenv("SITE_CODE"))
+  if (std::getenv("SITE_CODE"))
   {
     // Success case
     this->site_id = std::getenv("SITE_CODE");
@@ -167,7 +168,7 @@ void BackendApi::check_environment()
   }
 
   // AGENT_ID
-  if(std::getenv("AGENT_ID"))
+  if (std::getenv("AGENT_ID"))
   {
     // Success case
     this->agent_id = std::getenv("AGENT_ID");
@@ -178,18 +179,18 @@ void BackendApi::check_environment()
     // Failure case - Default
     this->agent_id = "Undefined";
     std::cerr << "Environment variable AGENT_ID unspecified. Defaulting to 'Undefined'..." << std::endl;
-  }  
+  }
 
   // AGENT_MODE, AGENT_POST_API
-  if(std::getenv("AGENT_MODE"))
+  if (std::getenv("AGENT_MODE"))
   {
     // Success case
     this->agent_mode = std::getenv("AGENT_MODE");
     std::cout << "Environment variable AGENT_MODE set to: " << this->agent_mode << std::endl;
     // Specially handle POST_TEST case
-    if(this->agent_mode == "POST_TEST")
+    if (this->agent_mode == "POST_TEST")
     {
-      if(std::getenv("AGENT_POST_API"))
+      if (std::getenv("AGENT_POST_API"))
       {
         // Success case
         this->agent_post_api = std::getenv("AGENT_POST_API");
@@ -200,7 +201,7 @@ void BackendApi::check_environment()
         // Failure case - Default
         this->agent_mode = "JSON_TEST";
         std::cerr << "Agent configured in POST_TEST mode but AGENT_POST_API environment variable is not configured. Defaulting back to JSON_TEST mode instead..." << std::endl;
-      }      
+      }
     }
   }
   else
@@ -420,13 +421,13 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   {
     payload[cKey] = json::value::boolean(U(false));
   }
-  else if(cflag == "true")
+  else if (cflag == "true")
   {
     payload[cKey] = json::value::boolean(U(true));
   }
   else
   {
-    payload[cKey] = json::value::string(U("Null"));    
+    payload[cKey] = json::value::string(U("Null"));
   }
   payload[ticketKey] = json::value::boolean(U(ticketBool));
   payload[descKey] = json::value::string(U(description));
