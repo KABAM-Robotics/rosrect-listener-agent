@@ -8,8 +8,51 @@ cs_listener::cs_listener()
   // Constructor
 
   // Pulling environment variables
-  this->agent_type = std::getenv("AGENT_TYPE");
-  this->robot_code = std::getenv("ROBOT_CODE");
+  // AGENT_TYPE
+  if(std::getenv("AGENT_TYPE"))
+  {
+    // Success case
+    this->agent_type = std::getenv("AGENT_TYPE");
+    // See if configuration is correct otherwise default to ROS
+    if((this->agent_type == "DB") || (this->agent_type == "ERT") || (this->agent_type == "ECS"))
+    {
+      if(std::getenv("ECS_API"))
+      {
+        // Success case
+        if(std::getenv("ECS_ROBOT_MODEL"))
+        {
+          // Success case
+        }
+        else
+        {
+          // Failure case - Default
+          this->agent_type = "ROS";
+        } 
+      }
+      else
+      {
+        // Failure case - Default
+        this->agent_type = "ROS";
+      }     
+    }
+  }
+  else
+  {
+    // Failure case - Default
+    this->agent_type = "ROS";
+  }
+
+  // ROBOT_CODE
+  if(std::getenv("ROBOT_CODE"))
+  {
+    // Success case
+    this->robot_code = std::getenv("ROBOT_CODE");
+  }
+  else
+  {
+    // Failure case - Default
+    this->robot_code = "Undefined";
+  }
 
   // Depending on ENV variable, communicate to user
   if ((this->agent_type == "DB") || (this->agent_type == "ERT"))
@@ -137,11 +180,11 @@ void cs_listener::setup_telemetry(ros::NodeHandle nh)
       std::cout << "Pose topic found! Subscribing to " << info.name << " for telemetry." << std::endl;
       this->pose_sub =
           nh.subscribe(pose_topic, 1000, &cs_listener::pose_callback, this);
-    }    
+    }
   }
 
   // If subscribers are empty, prompt appropriately
-  if((this->odom_sub.getTopic().empty()) && (this->pose_sub.getTopic().empty()))
+  if ((this->odom_sub.getTopic().empty()) && (this->pose_sub.getTopic().empty()))
   {
     std::cout << "No relevant topics found for telemetry. It will be null. Consider starting the robot nodes first and relaunch this agent." << std::endl;
   }
