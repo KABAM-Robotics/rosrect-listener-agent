@@ -7,6 +7,7 @@
 
 class cs_listener
 {
+    // This class provides the ROS node interface for the agent.
 
     std::string agent_type;              // DB or ROS agent
     std::string robot_code;              // UUID supplied during setup

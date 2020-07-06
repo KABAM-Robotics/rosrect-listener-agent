@@ -10,7 +10,7 @@
 class RobotEvent
 {
 
-    // This class provides access to Robot Event for Cognicept's Listener Agent.
+    // This class provides access to Robot Event to manage event logs for the Agent.
 
     int queue_id;                                    // Each message has a queue ID
     std::vector<std::vector<std::string>> event_log; // Event log stored as a vector of vector of strings

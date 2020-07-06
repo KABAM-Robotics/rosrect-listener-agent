@@ -11,7 +11,7 @@
 class StateManager
 {
 
-    // This class provides access to State Manager for Cognicept's Listener Agent.
+    // This class provides access to State Manager which manages the current state/suppression of the agent.
 
     bool suppress_flag;                             // Boolean flag to decide whether to suppress a message or not
     float alert_timeout_limit;                      // Timeout parameter in minutes for alert timeout
