@@ -13,21 +13,11 @@ class StateManager
 
     // This class provides access to State Manager for Cognicept's Listener Agent.
 
-    // Boolean flag to decide whether to suppress a message or not
-    bool suppress_flag;
-
-    // Timeout parameter in minutes for alert timeout
-    float alert_timeout_limit;
-
-    // Dataframes to keep track of message suppression
-    // self.msg_data = pd.DataFrame(columns=['robot_code', 'msg_text', 'time'])
-    std::vector<std::vector<std::string>> msg_data;
-
-    // Error classification API
-    BackendApi api_instance;
-
-    // Event management
-    RobotEvent event_instance;
+    bool suppress_flag;                             // Boolean flag to decide whether to suppress a message or not
+    float alert_timeout_limit;                      // Timeout parameter in minutes for alert timeout
+    std::vector<std::vector<std::string>> msg_data; // Accumulated message for current event stored as vector of vector of strings
+    BackendApi api_instance;                        // Back end API instance
+    RobotEvent event_instance;                      // Robot event instance
 
 public:
     StateManager();
