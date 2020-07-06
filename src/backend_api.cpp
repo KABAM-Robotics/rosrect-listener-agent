@@ -375,8 +375,8 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   std::string message = last_log[idx++];
   std::string description = last_log[idx++];
   std::string resolution = last_log[idx++];
-  std::string event_id = last_log[idx++];
   std::string telemetry_str = last_log[idx++];
+  std::string event_id = last_log[idx++];
 
   bool ticketBool = false;
   if (((level == "8") || (level == "16")) && ((cflag == "false") || (cflag == "Null")))
