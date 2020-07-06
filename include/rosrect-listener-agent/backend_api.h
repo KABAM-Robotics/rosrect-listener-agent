@@ -18,22 +18,20 @@ class BackendApi
 {
   // This class provides access to Error Classification API and event log creation through C++.
 
-  std::string robot_id;
-  std::string site_id;
-  std::string agent_id;
-  std::string agent_mode;
-  std::string agent_type;
-  std::string log_dir;
-  std::string log_name;
-  std::string log_ext;
-  int log_id;
-  std::string msg_resp;
-  /* Error classification variables below */
-  std::string ecs_api_host;
-  std::string ecs_api_endpoint;
-  std::string ecs_robot_model;
-  /* Downstream push/post variables below */
-  std::string agent_post_api;
+  std::string robot_id;         // ENV variable/Undefined - identifies a robot uniquely, such as an UUID
+  std::string site_id;          // ENV variable/Undefined - identifies a site uniquely, such as an UUID
+  std::string agent_id;         // ENV variable/Undefined - identifies an agent uniquely, such as an UUID
+  std::string agent_mode;       // ENV variable JSON_TEST(default), POST_TEST - determines if the agent saves local JSON logs or passes it off to a configurable POST API endpoint
+  std::string agent_type;       // ENV variable ROS(default), DB - determines if the agent takes ROS messages directly or passes through Error Classification first
+  std::string log_dir;          // Stores the log directory location
+  std::string log_name;         // Stores the directory along with log name
+  std::string log_ext;          // Stores the log file extension type
+  int log_id;                   // Incremental log id #
+  std::string msg_resp;         // Stores the ECS response
+  std::string ecs_api_host;     // ENV variable that specifies the host for the ECS API
+  std::string ecs_api_endpoint; // Stores the endpoint for the ECS API. Based on AGENT_TYPE this is automatically configured.
+  std::string ecs_robot_model;  // ENV variable that specifies the type of robot. Currently use Turtlebot3 for any /move_base navigation stack.
+  std::string agent_post_api;   // Any valid POST API endpoint which the agent can directly submit data to in addition to creating local logs.
 
 public:
   BackendApi();

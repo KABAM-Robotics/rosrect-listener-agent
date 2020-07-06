@@ -66,7 +66,6 @@ BackendApi::BackendApi()
     std::cout << "TEST mode is ON. JSON Logs will be saved here: " << disp_dir << std::endl;
   }
 
-  /* Error classification features in development below */
   // Error classification API variables
 
   if ((this->agent_type == "ERT") || (this->agent_type == "DB"))
@@ -375,8 +374,8 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   std::string message = last_log[idx++];
   std::string description = last_log[idx++];
   std::string resolution = last_log[idx++];
-  std::string event_id = last_log[idx++];
   std::string telemetry_str = last_log[idx++];
+  std::string event_id = last_log[idx++];
 
   bool ticketBool = false;
   if (((level == "8") || (level == "16")) && ((cflag == "false") || (cflag == "Null")))
@@ -530,8 +529,6 @@ json::value BackendApi::create_event_log(std::vector<std::vector<std::string>> l
 
   return (event_log);
 }
-
-/* Error Classification Features in development below */
 
 pplx::task<void> BackendApi::query_error_classification(std::string msg_text)
 {
