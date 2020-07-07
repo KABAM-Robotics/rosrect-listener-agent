@@ -235,7 +235,14 @@ pplx::task<void> BackendApi::post_event_log(json::value payload)
            // Build request
            http_request req(methods::POST);
            // req.headers().add("Authorization", this->headers);
-           req.set_request_uri("/api/agentstream/putRecord");
+           if (this->agent_post_api == "https://postman-echo.com")
+           {
+             req.set_request_uri("/post");
+           }
+           else
+           {
+             req.set_request_uri("/api/agentstream/putRecord");
+           }
            req.set_body(payload);
 
            // Request ticket creation
