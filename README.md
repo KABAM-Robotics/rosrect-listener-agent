@@ -38,45 +38,34 @@ You can get access to the agent by cloning this repo. After this, there are a co
 
 2. Change to your `src` folder of the catkin workspace directory. Generally it is as follows:
     
-    ```
-    $ cd ~/catkin_ws/src
-    ```
-
+        $ cd ~/catkin_ws/src
+    
 3. Clone the repo:
     
-    ```git
-    $ git clone https://github.com/cognicept-admin/rosrect-listener-agent
-    ```
-
+        $ git clone https://github.com/cognicept-admin/rosrect-listener-agent
+    
 ### Building natively:
 
 You can use this approach if you are planning on running this on a system that has a working ROS installation. Steps are as follows:
 
-1.  Install Microsoft's [`C++ REST SDK`][6] for establishing the backend api for incident management using `apt-get`:
+1.  Install Microsoft's [`C++ REST SDK`][6] for establishing the backend api for using `apt-get`:
 
-    ```
-    $ sudo apt-get install libcpprest-dev
-    ```
-
+        $ sudo apt-get install libcpprest-dev
+    
 2. Change to your `catkin_ws` folder:
     
-    ```
-    $ cd ..
-    ``` 
+        $ cd ..
+     
 
 3. Issue `catkin_make` to build the ROS node:
     
-    ```
-    $ catkin_make
-    ```
-
+        $ catkin_make
+    
 4. Check if node has built correctly and registered using `rospack`:
     
-    ```
-    $ rospack list | grep rosrect
-      rosrect-listener-agent /home/swaroophs/catkin_ws/src/rosrect-listener-agent
-    ```
-
+        $ rospack list | grep rosrect
+        rosrect-listener-agent /home/swaroophs/catkin_ws/src/rosrect-listener-agent
+    
 That is it for the native installation! You can now jump to [Running tests](#running-tests) or [Syntax](#syntax).
 
 ### Building through Docker:
@@ -87,10 +76,8 @@ You can use this approach if you are planning on running the agent on a system t
 
 2. You can then build the `docker` image using `docker build` and the provided `Dockerfile`:
 
-    ```
-    $ docker build -t rosrect_agent .
-    ```
-
+        $ docker build -t rosrect_agent .
+    
 That is it for the Docker installation! You can now jump to [Running tests](#running-tests) or [Syntax](#syntax).
 
 ## Running tests
@@ -100,38 +87,30 @@ Optionally, you can run the unit and integration tests natively or using Docker,
 
 1. Open a new terminal and switch to the `catkin_ws` directory:
 
-    ```
-    $ cd ~/catkin_ws
-    ```
-
+        $ cd ~/catkin_ws
+    
 2. Run tests using `catkin_make run_tests` as shown below. Your terminal will show test results similar to the sample [here](#sample-test-results). Logs will be created in the `/$HOME/.cognicept/agent/logs` folder:
 
-    ```
-    $ catkin_make run_tests_rosrect-listener-agent
-    ```
-
+        $ catkin_make run_tests_rosrect-listener-agent
+    
 ### Using Docker
 
 1. Make sure that you have built the docker image by following the steps [here](#building-through-docker).
 
 2. Switch to the repository's folder or wherever you might be storing the `runtime.env` file.
 
-    ```
-    $ cd ~/catkin_ws/src/rosrect-listener-agent
-    ```
-
+        $ cd ~/catkin_ws/src/rosrect-listener-agent
+    
 3. You can run the tests by using the following `docker run` command. Your terminal will show test results similar to the sample [here](#sample-test-results). Logs will be created in the `/$HOME/.cognicept/agent/logs` folder:
 
-    ```
-    $ docker run -it \
-    --env-file runtime.env \
-    --network=host \
-    --name=agent  \
-    --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
-    rosrect_agent:latest  \
-    catkin_make run_tests rosrect-listener-agent
-    ```
-
+        $ docker run -it \
+        --env-file runtime.env \
+        --network=host \
+        --name=agent  \
+        --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
+        rosrect_agent:latest  \
+        catkin_make run_tests rosrect-listener-agent
+    
 ### Sample Test Results:
     
     .
@@ -351,6 +330,7 @@ Run the following `docker run` command:
     --name=agent  \
     --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
     rosrect_agent:latest  \
+    roslaunch rosrect-listener-agent listener-agent.launch 
 
  Apart from a few small differences, the agent prompts would look similar for both the types of launches. Sample is shown below:
 
@@ -610,7 +590,7 @@ These JSON logs can be consumed by REST APIs/data streams to connect to incident
     Pushing downstream...
     Response: {"args":{},"data":{"agent_id":"Undefined","compounding":"Null","create_ticket":false,"description":"Null","event_id":"Null","level":"Heartbeat","message":"Online","module":"Status","property_id":"Undefined","resolution":"Null","robot_id":"Undefined","source":"Null","telemetry":{"nav_pose":{"orientation":{"w":0.8208205559286543,"x":0,"y":0,"z":-0.5711861473853991},"position":{"x":0.1505633094520581,"y":-0.629678709870916,"z":0}},"odom_pose":{"orientation":{"w":-0.8886928803236448,"x":-0.0007289504086186572,"y":-0.0014158181483166026,"z":0.45850019471352105},"position":{"x":-1.5125549701444914,"y":-0.947599781078994,"z":-0.0010082941825314447}}},"timestamp":"2020-07-07T08:36:39.975229"},"files":{},"form":{},"headers":{"x-forwarded-proto":"https","x-forwarded-port":"443","host":"postman-echo.com","x-amzn-trace-id":"Root=1-5f043418-d87974782c3497f0c7d62698","content-length":"736","content-type":"application/json","user-agent":"cpprestsdk/2.10.2"},"json":{"agent_id":"Undefined","compounding":"Null","create_ticket":false,"description":"Null","event_id":"Null","level":"Heartbeat","message":"Online","module":"Status","property_id":"Undefined","resolution":"Null","robot_id":"Undefined","source":"Null","telemetry":{"nav_pose":{"orientation":{"w":0.8208205559286543,"x":0,"y":0,"z":-0.5711861473853991},"position":{"x":0.1505633094520581,"y":-0.629678709870916,"z":0}},"odom_pose":{"orientation":{"w":-0.8886928803236448,"x":-0.0007289504086186572,"y":-0.0014158181483166026,"z":0.45850019471352105},"position":{"x":-1.5125549701444914,"y":-0.947599781078994,"z":-0.0010082941825314447}}},"timestamp":"2020-07-07T08:36:39.975229"},"url":"https://postman-echo.com/post"}
 
-From the echo, you are able to see that the response has the same contents as the JSON logs generated. Configure this endpoint appropriately to get directly connect the agent to other systems such as incident management. Now, operators can monitor this incident management system to intervene robot operations to correct the errors to reduce downtime on the actual field.
+From the echo, you are able to see that the response has the same contents as the JSON logs generated. Configure this endpoint appropriately to directly connect the agent to other systems such as incident management. Now, operators can monitor this incident management system to intervene robot operations to correct the errors to reduce downtime on the actual field.
 
 ## Related Pages
 For more related information, refer to:
