@@ -42,6 +42,9 @@ The figure below shows the agent architecture in more detail:
 ![alt text](/docs/images/LowLevelSWArch.png "In-depth software architecture")
 
 The Agent establishes a unidirectional communication with the robot to just subscribe to important topics such as `rosout` that can ascertain the status of the robot. The agent does it with the following utility classes:
+
 1. `State_Manager` - This is responsible for handling the message and deciding whether it needs to be suppressed or not. It has custom suppression algorithms implemented for varying severity levels. It also handles event logging and pushing JSON files by using Robot_Event and Backend_Api classes respectively as discussed below.
+
 2. `Robot_Event` - This is responsible for grouping events based on an "event_id". If a current "event_id" is not available, the class randomly creates one.
+
 3. `Backend_Api` - This is responsible for anything that the agent needs to communicate with the outside world. Specifically, creating JSON files in the local file system and communicating with the ECS. Optionally, the api also allows "POST"-ing the generated JSON to a configurable POST REST API endpoint.
