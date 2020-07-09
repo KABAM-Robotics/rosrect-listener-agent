@@ -1,5 +1,7 @@
 # rosrect Listener Agent Documentation 
 
+Hello there! Thanks for checking out the agent documentation. This particular document is a user's guide. If you are more interested in what the agent is designed for, and the architecture, please take a look at the introduction document [here][7]!
+
 This project adheres to the Contributor Covenant [code of conduct](https://github.com/cognicept-admin/rosrect/blob/master/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [info@cognicept.systems](mailto:info@cognicept.systems). If you are interested in contributing, please refer to the guidelines [here](https://github.com/cognicept-admin/rosrect/blob/master/CONTRIBUTING.md).  
 
 - [Description](#description)
@@ -601,6 +603,7 @@ For more related information, refer to:
 * [ROS logging documentation][4]
 * [Microsoft C++ REST SDK][5]
 * [Docker Installation][6]
+* [Agent Intro Document][7]
 
 [1]: http://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/#virtual-navigation-with-turtlebot3
 [2]: http://emanual.robotis.com/docs/en/platform/turtlebot3/pc_setup/#install-dependent-ros-packages
@@ -608,3 +611,4 @@ For more related information, refer to:
 [4]: http://wiki.ros.org/roscpp/Overview/Logging
 [5]: https://github.com/microsoft/cpprestsdk
 [6]: https://docs.docker.com/engine/install/ubuntu/
+[7]: /docs/AGENT_INTRO.md
