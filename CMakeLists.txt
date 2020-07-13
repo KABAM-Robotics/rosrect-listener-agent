@@ -119,10 +119,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_library(rosrect-listener-agent-lib src/backend_api.cpp src/robot_event.cpp src/state_manager.cpp)
-target_link_libraries(rosrect-listener-agent-lib
-  ${catkin_LIBRARIES}
-)
-target_link_libraries(rosrect-listener-agent-lib PRIVATE cpprestsdk::cpprest)
+target_link_libraries(rosrect-listener-agent-lib ${catkin_LIBRARIES} cpprestsdk::cpprest)
 add_executable(rosrect-listener-agent src/listener_agent.cpp )
 target_link_libraries(rosrect-listener-agent
   ${catkin_LIBRARIES}
