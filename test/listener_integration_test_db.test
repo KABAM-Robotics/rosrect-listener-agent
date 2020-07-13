@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <env name="AGENT_TYPE" value="DB"/>
+    <env name="AGENT_MODE" value="JSON_TEST"/>
     <node pkg="rosrect-listener-agent" type="rosrect-listener-agent" name="rosrect_listener_agent_node"  output="screen"/>
     <test test-name="listeneragent_test_node_db" pkg="rosrect-listener-agent" type="listeneragent_test_node_db"/>
 </launch>
