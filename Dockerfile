@@ -2,7 +2,9 @@ FROM ros:melodic-ros-core
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends screen \
-    libcpprest-dev
+    libcpprest-dev \
+    g++ \
+    make
 
 RUN apt-get update && \
     apt-get install -y  && \
