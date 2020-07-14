@@ -92,23 +92,23 @@ json::value cs_listener::odom_to_json(const nav_msgs::Odometry::ConstPtr &rosmsg
   json::value position = json::value::object();
 
   // Create keys
-  utility::string_t oKey(U("orientation"));
-  utility::string_t pKey(U("position"));
-  utility::string_t wKey(U("w"));
-  utility::string_t xKey(U("x"));
-  utility::string_t yKey(U("y"));
-  utility::string_t zKey(U("z"));
+  utility::string_t oKey(utility::conversions::to_string_t("orientation"));
+  utility::string_t pKey(utility::conversions::to_string_t("position"));
+  utility::string_t wKey(utility::conversions::to_string_t("w"));
+  utility::string_t xKey(utility::conversions::to_string_t("x"));
+  utility::string_t yKey(utility::conversions::to_string_t("y"));
+  utility::string_t zKey(utility::conversions::to_string_t("z"));
 
   // Assign orientation key-value
-  orientation[wKey] = json::value::number(U(rosmsg->pose.pose.orientation.w));
-  orientation[xKey] = json::value::number(U(rosmsg->pose.pose.orientation.x));
-  orientation[yKey] = json::value::number(U(rosmsg->pose.pose.orientation.y));
-  orientation[zKey] = json::value::number(U(rosmsg->pose.pose.orientation.z));
+  orientation[wKey] = json::value::number(rosmsg->pose.pose.orientation.w);
+  orientation[xKey] = json::value::number(rosmsg->pose.pose.orientation.x);
+  orientation[yKey] = json::value::number(rosmsg->pose.pose.orientation.y);
+  orientation[zKey] = json::value::number(rosmsg->pose.pose.orientation.z);
 
   // Assign position key-value
-  position[xKey] = json::value::number(U(rosmsg->pose.pose.position.x));
-  position[yKey] = json::value::number(U(rosmsg->pose.pose.position.y));
-  position[zKey] = json::value::number(U(rosmsg->pose.pose.position.z));
+  position[xKey] = json::value::number(rosmsg->pose.pose.position.x);
+  position[yKey] = json::value::number(rosmsg->pose.pose.position.y);
+  position[zKey] = json::value::number(rosmsg->pose.pose.position.z);
 
   // Assign odom key-value
   odom_json[oKey] = orientation;
@@ -125,23 +125,23 @@ json::value cs_listener::pose_to_json(const geometry_msgs::PoseWithCovarianceSta
   json::value position = json::value::object();
 
   // Create keys
-  utility::string_t oKey(U("orientation"));
-  utility::string_t pKey(U("position"));
-  utility::string_t wKey(U("w"));
-  utility::string_t xKey(U("x"));
-  utility::string_t yKey(U("y"));
-  utility::string_t zKey(U("z"));
+  utility::string_t oKey(utility::conversions::to_string_t("orientation"));
+  utility::string_t pKey(utility::conversions::to_string_t("position"));
+  utility::string_t wKey(utility::conversions::to_string_t("w"));
+  utility::string_t xKey(utility::conversions::to_string_t("x"));
+  utility::string_t yKey(utility::conversions::to_string_t("y"));
+  utility::string_t zKey(utility::conversions::to_string_t("z"));
 
   // Assign orientation key-value
-  orientation[wKey] = json::value::number(U(rosmsg->pose.pose.orientation.w));
-  orientation[xKey] = json::value::number(U(rosmsg->pose.pose.orientation.x));
-  orientation[yKey] = json::value::number(U(rosmsg->pose.pose.orientation.y));
-  orientation[zKey] = json::value::number(U(rosmsg->pose.pose.orientation.z));
+  orientation[wKey] = json::value::number(rosmsg->pose.pose.orientation.w);
+  orientation[xKey] = json::value::number(rosmsg->pose.pose.orientation.x);
+  orientation[yKey] = json::value::number(rosmsg->pose.pose.orientation.y);
+  orientation[zKey] = json::value::number(rosmsg->pose.pose.orientation.z);
 
   // Assign position key-value
-  position[xKey] = json::value::number(U(rosmsg->pose.pose.position.x));
-  position[yKey] = json::value::number(U(rosmsg->pose.pose.position.y));
-  position[zKey] = json::value::number(U(rosmsg->pose.pose.position.z));
+  position[xKey] = json::value::number(rosmsg->pose.pose.position.x);
+  position[yKey] = json::value::number(rosmsg->pose.pose.position.y);
+  position[zKey] = json::value::number(rosmsg->pose.pose.position.z);
 
   // Assign odom key-value
   pose_json[oKey] = orientation;
@@ -209,7 +209,7 @@ void cs_listener::odom_callback(const nav_msgs::Odometry::ConstPtr &rosmsg)
   json::value odom_data = this->odom_to_json(rosmsg);
 
   // Create key
-  utility::string_t odomKey(U("odom_pose"));
+  utility::string_t odomKey(utility::conversions::to_string_t("odom_pose"));
 
   // Assign key-value
   this->telemetry[odomKey] = odom_data;
@@ -224,7 +224,7 @@ void cs_listener::pose_callback(const geometry_msgs::PoseWithCovarianceStamped::
   json::value pose_data = this->pose_to_json(rosmsg);
 
   // Create key
-  utility::string_t poseKey(U("nav_pose"));
+  utility::string_t poseKey(utility::conversions::to_string_t("nav_pose"));
 
   // Assign key-value
   this->telemetry[poseKey] = pose_data;

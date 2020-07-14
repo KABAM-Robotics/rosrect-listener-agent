@@ -1,6 +1,9 @@
 #include <cpprest/http_client.h>
 #include <cpprest/filestream.h>
 #include <cpprest/json.h>
+#include <cpprest/containerstream.h>
+#include <cpprest/producerconsumerstream.h>
+#undef U
 #include <string>
 #include <vector>
 #include <iostream>
@@ -8,8 +11,6 @@
 #include <fstream>
 #include <iomanip>
 #include <algorithm>
-#include <cpprest/containerstream.h>
-#include <cpprest/producerconsumerstream.h>
 #include <ros/ros.h>
 #include <boost/filesystem.hpp>
 #include <boost/date_time.hpp>

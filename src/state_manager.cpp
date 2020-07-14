@@ -72,9 +72,9 @@ void StateManager::check_message_ecs(std::string robot_code, const rosgraph_msgs
         // std::cout << "JSON parsed";
         // msg_info = msg_info[0];
 
-        int error_level = (msg_info.at(U("severity"))).as_integer();
+        int error_level = (msg_info.at(utility::conversions::to_string_t("severity"))).as_integer();
         // std::cout << "Level: " << error_level << std::endl;
-        std::string error_msg = (msg_info.at(U("error_text"))).as_string();
+        std::string error_msg = (msg_info.at(utility::conversions::to_string_t("error_text"))).as_string();
         // std::cout << "Text: " << error_msg << std::endl;
 
         if ((error_level == 8) || (error_level == 16))
@@ -112,7 +112,7 @@ void StateManager::check_message_ecs(std::string robot_code, const rosgraph_msgs
             this->api_instance.push_event_log(this->event_instance.get_log());
 
             // Get compounding flag
-            bool cflag = (msg_info.at(U("compounding_flag"))).as_bool();
+            bool cflag = (msg_info.at(utility::conversions::to_string_t("compounding_flag"))).as_bool();
 
             if (cflag == true)
             {
@@ -161,9 +161,9 @@ void StateManager::check_message_ert(std::string robot_code, const rosgraph_msgs
         // std::cout << "JSON parsed";
         // msg_info = msg_info[0];
 
-        int error_level = (msg_info.at(U("error_level"))).as_integer();
+        int error_level = (msg_info.at(utility::conversions::to_string_t("error_level"))).as_integer();
         // std::cout << "Level: " << error_level << std::endl;
-        std::string error_msg = (msg_info.at(U("error_text"))).as_string();
+        std::string error_msg = (msg_info.at(utility::conversions::to_string_t("error_text"))).as_string();
         // std::cout << "Text: " << error_msg << std::endl;
 
         if (error_level == 8)
@@ -201,7 +201,7 @@ void StateManager::check_message_ert(std::string robot_code, const rosgraph_msgs
             this->api_instance.push_event_log(this->event_instance.get_log());
 
             // Get compounding flag
-            bool cflag = (msg_info.at(U("compounding_flag"))).as_bool();
+            bool cflag = (msg_info.at(utility::conversions::to_string_t("compounding_flag"))).as_bool();
 
             if (cflag == true)
             {

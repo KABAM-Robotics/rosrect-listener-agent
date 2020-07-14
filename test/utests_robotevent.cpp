@@ -136,14 +136,14 @@ TEST(RobotEventTestSuite, updateLogDBTest)
   std::vector<std::string> currentRow;
 
   // Create keys
-  utility::string_t codeKey(U("error_code"));
-  utility::string_t lvlKey(U("error_level"));
-  utility::string_t cfKey(U("compounding_flag"));
-  utility::string_t modKey(U("error_module"));
-  utility::string_t srcKey(U("error_source"));
-  utility::string_t txtKey(U("error_text"));
-  utility::string_t descKey(U("error_description"));
-  utility::string_t resKey(U("error_resolution"));
+  utility::string_t codeKey(utility::conversions::to_string_t("error_code"));
+  utility::string_t lvlKey(utility::conversions::to_string_t("error_level"));
+  utility::string_t cfKey(utility::conversions::to_string_t("compounding_flag"));
+  utility::string_t modKey(utility::conversions::to_string_t("error_module"));
+  utility::string_t srcKey(utility::conversions::to_string_t("error_source"));
+  utility::string_t txtKey(utility::conversions::to_string_t("error_text"));
+  utility::string_t descKey(utility::conversions::to_string_t("error_description"));
+  utility::string_t resKey(utility::conversions::to_string_t("error_resolution"));
 
   // Assign key-value
   msgInfo[codeKey] = json::value::string("Null");

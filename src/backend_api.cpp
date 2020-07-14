@@ -294,35 +294,35 @@ void BackendApi::push_status(bool status, json::value telemetry)
   json::value payload = json::value::object();
 
   // Create keys
-  utility::string_t agentKey(U("agent_id"));
-  utility::string_t roboKey(U("robot_id"));
-  utility::string_t propKey(U("property_id"));
-  utility::string_t eventidKey(U("event_id"));
-  utility::string_t timeKey(U("timestamp"));
-  utility::string_t msgKey(U("message"));
-  utility::string_t lvlKey(U("level"));
-  utility::string_t modKey(U("module"));
-  utility::string_t srcKey(U("source"));
-  utility::string_t cKey(U("compounding"));
-  utility::string_t ticketKey(U("create_ticket"));
-  utility::string_t descKey(U("description"));
-  utility::string_t resKey(U("resolution"));
-  utility::string_t telKey(U("telemetry"));
+  utility::string_t agentKey(utility::conversions::to_string_t("agent_id"));
+  utility::string_t roboKey(utility::conversions::to_string_t("robot_id"));
+  utility::string_t propKey(utility::conversions::to_string_t("property_id"));
+  utility::string_t eventidKey(utility::conversions::to_string_t("event_id"));
+  utility::string_t timeKey(utility::conversions::to_string_t("timestamp"));
+  utility::string_t msgKey(utility::conversions::to_string_t("message"));
+  utility::string_t lvlKey(utility::conversions::to_string_t("level"));
+  utility::string_t modKey(utility::conversions::to_string_t("module"));
+  utility::string_t srcKey(utility::conversions::to_string_t("source"));
+  utility::string_t cKey(utility::conversions::to_string_t("compounding"));
+  utility::string_t ticketKey(utility::conversions::to_string_t("create_ticket"));
+  utility::string_t descKey(utility::conversions::to_string_t("description"));
+  utility::string_t resKey(utility::conversions::to_string_t("resolution"));
+  utility::string_t telKey(utility::conversions::to_string_t("telemetry"));
 
   // Assign key-value
-  payload[agentKey] = json::value::string(U(this->agent_id));
-  payload[roboKey] = json::value::string(U(this->robot_id));
-  payload[propKey] = json::value::string(U(this->site_id));
-  payload[eventidKey] = json::value::string(U(event_id));
-  payload[timeKey] = json::value::string(U(timestr));
-  payload[msgKey] = json::value::string(U(message));
-  payload[lvlKey] = json::value::string(U(level));
-  payload[modKey] = json::value::string(U(module));
-  payload[srcKey] = json::value::string(U(source));
-  payload[cKey] = json::value::string(U(cflag));
-  payload[ticketKey] = json::value::boolean(U(ticketBool));
-  payload[descKey] = json::value::string(U(description));
-  payload[resKey] = json::value::string(U(resolution));
+  payload[agentKey] = json::value::string(utility::conversions::to_string_t(this->agent_id));
+  payload[roboKey] = json::value::string(utility::conversions::to_string_t(this->robot_id));
+  payload[propKey] = json::value::string(utility::conversions::to_string_t(this->site_id));
+  payload[eventidKey] = json::value::string(utility::conversions::to_string_t(event_id));
+  payload[timeKey] = json::value::string(utility::conversions::to_string_t(timestr));
+  payload[msgKey] = json::value::string(utility::conversions::to_string_t(message));
+  payload[lvlKey] = json::value::string(utility::conversions::to_string_t(level));
+  payload[modKey] = json::value::string(utility::conversions::to_string_t(module));
+  payload[srcKey] = json::value::string(utility::conversions::to_string_t(source));
+  payload[cKey] = json::value::string(utility::conversions::to_string_t(cflag));
+  payload[ticketKey] = json::value::boolean(ticketBool);
+  payload[descKey] = json::value::string(utility::conversions::to_string_t(description));
+  payload[resKey] = json::value::string(utility::conversions::to_string_t(resolution));
   payload[telKey] = telemetry;
 
   if (this->agent_mode == "JSON_TEST")
@@ -398,47 +398,47 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   json::value payload = json::value::object();
 
   // Create keys
-  utility::string_t agentKey(U("agent_id"));
-  utility::string_t roboKey(U("robot_id"));
-  utility::string_t propKey(U("property_id"));
-  utility::string_t eventidKey(U("event_id"));
-  utility::string_t timeKey(U("timestamp"));
-  utility::string_t msgKey(U("message"));
-  utility::string_t lvlKey(U("level"));
-  utility::string_t modKey(U("module"));
-  utility::string_t srcKey(U("source"));
-  utility::string_t cKey(U("compounding"));
-  utility::string_t ticketKey(U("create_ticket"));
-  utility::string_t descKey(U("description"));
-  utility::string_t resKey(U("resolution"));
-  utility::string_t telKey(U("telemetry"));
+  utility::string_t agentKey(utility::conversions::to_string_t("agent_id"));
+  utility::string_t roboKey(utility::conversions::to_string_t("robot_id"));
+  utility::string_t propKey(utility::conversions::to_string_t("property_id"));
+  utility::string_t eventidKey(utility::conversions::to_string_t("event_id"));
+  utility::string_t timeKey(utility::conversions::to_string_t("timestamp"));
+  utility::string_t msgKey(utility::conversions::to_string_t("message"));
+  utility::string_t lvlKey(utility::conversions::to_string_t("level"));
+  utility::string_t modKey(utility::conversions::to_string_t("module"));
+  utility::string_t srcKey(utility::conversions::to_string_t("source"));
+  utility::string_t cKey(utility::conversions::to_string_t("compounding"));
+  utility::string_t ticketKey(utility::conversions::to_string_t("create_ticket"));
+  utility::string_t descKey(utility::conversions::to_string_t("description"));
+  utility::string_t resKey(utility::conversions::to_string_t("resolution"));
+  utility::string_t telKey(utility::conversions::to_string_t("telemetry"));
 
   // Assign key-value
-  payload[agentKey] = json::value::string(U(this->agent_id));
-  payload[roboKey] = json::value::string(U(this->robot_id));
-  payload[propKey] = json::value::string(U(this->site_id));
-  payload[eventidKey] = json::value::string(U(event_id));
-  payload[timeKey] = json::value::string(U(timestr));
-  payload[msgKey] = json::value::string(U(message));
-  payload[lvlKey] = json::value::string(U(level));
-  payload[modKey] = json::value::string(U(module));
-  payload[srcKey] = json::value::string(U(source));
+  payload[agentKey] = json::value::string(utility::conversions::to_string_t(this->agent_id));
+  payload[roboKey] = json::value::string(utility::conversions::to_string_t(this->robot_id));
+  payload[propKey] = json::value::string(utility::conversions::to_string_t(this->site_id));
+  payload[eventidKey] = json::value::string(utility::conversions::to_string_t(event_id));
+  payload[timeKey] = json::value::string(utility::conversions::to_string_t(timestr));
+  payload[msgKey] = json::value::string(utility::conversions::to_string_t(message));
+  payload[lvlKey] = json::value::string(utility::conversions::to_string_t(level));
+  payload[modKey] = json::value::string(utility::conversions::to_string_t(module));
+  payload[srcKey] = json::value::string(utility::conversions::to_string_t(source));
   if (cflag == "false")
   {
-    payload[cKey] = json::value::boolean(U(false));
+    payload[cKey] = json::value::boolean(false);
   }
   else if (cflag == "true")
   {
-    payload[cKey] = json::value::boolean(U(true));
+    payload[cKey] = json::value::boolean(true);
   }
   else
   {
-    payload[cKey] = json::value::string(U("Null"));
+    payload[cKey] = json::value::string(utility::conversions::to_string_t("Null"));
   }
-  payload[ticketKey] = json::value::boolean(U(ticketBool));
-  payload[descKey] = json::value::string(U(description));
-  payload[resKey] = json::value::string(U(resolution));
-  payload[telKey] = json::value::parse(U(telemetry_str));
+  payload[ticketKey] = json::value::boolean(ticketBool);
+  payload[descKey] = json::value::string(utility::conversions::to_string_t(description));
+  payload[resKey] = json::value::string(utility::conversions::to_string_t(resolution));
+  payload[telKey] = json::value::parse(utility::conversions::to_string_t(telemetry_str));
 
   if (this->agent_mode == "JSON_TEST")
   {
@@ -490,16 +490,16 @@ json::value BackendApi::create_event_log(std::vector<std::vector<std::string>> l
   json::value event_log = json::value::array();
 
   // Create keys
-  utility::string_t cKey(U("Compounding"));
-  utility::string_t timeKey(U("Date/Time"));
-  utility::string_t descKey(U("Description"));
-  utility::string_t lvlKey(U("Level"));
-  utility::string_t msgKey(U("Message"));
-  utility::string_t modKey(U("Module"));
-  utility::string_t qidKey(U("QID"));
-  utility::string_t resKey(U("Resolution"));
-  utility::string_t eidKey(U("RobotEvent_ID"));
-  utility::string_t srcKey(U("Source"));
+  utility::string_t cKey(utility::conversions::to_string_t("Compounding"));
+  utility::string_t timeKey(utility::conversions::to_string_t("Date/Time"));
+  utility::string_t descKey(utility::conversions::to_string_t("Description"));
+  utility::string_t lvlKey(utility::conversions::to_string_t("Level"));
+  utility::string_t msgKey(utility::conversions::to_string_t("Message"));
+  utility::string_t modKey(utility::conversions::to_string_t("Module"));
+  utility::string_t qidKey(utility::conversions::to_string_t("QID"));
+  utility::string_t resKey(utility::conversions::to_string_t("Resolution"));
+  utility::string_t eidKey(utility::conversions::to_string_t("RobotEvent_ID"));
+  utility::string_t srcKey(utility::conversions::to_string_t("Source"));
 
   // std::cout << "Creating JSON log" << std::endl;
   for (int queue_id = 0; queue_id < log.size(); queue_id++)
@@ -522,16 +522,16 @@ json::value BackendApi::create_event_log(std::vector<std::vector<std::string>> l
     std::string qidstr = std::to_string(queue_id);
 
     // Assign key-value
-    event_log[queue_id][timeKey] = json::value::string(U(timestr));
-    event_log[queue_id][lvlKey] = json::value::string(U(level));
-    event_log[queue_id][cKey] = json::value::string(U(cflag));
-    event_log[queue_id][modKey] = json::value::string(U(module));
-    event_log[queue_id][srcKey] = json::value::string(U(source));
-    event_log[queue_id][msgKey] = json::value::string(U(message));
-    event_log[queue_id][descKey] = json::value::string(U(description));
-    event_log[queue_id][resKey] = json::value::string(U(resolution));
-    event_log[queue_id][eidKey] = json::value::string(U(event_id));
-    event_log[queue_id][qidKey] = json::value::string(U(qidstr));
+    event_log[queue_id][timeKey] = json::value::string(utility::conversions::to_string_t(timestr));
+    event_log[queue_id][lvlKey] = json::value::string(utility::conversions::to_string_t(level));
+    event_log[queue_id][cKey] = json::value::string(utility::conversions::to_string_t(cflag));
+    event_log[queue_id][modKey] = json::value::string(utility::conversions::to_string_t(module));
+    event_log[queue_id][srcKey] = json::value::string(utility::conversions::to_string_t(source));
+    event_log[queue_id][msgKey] = json::value::string(utility::conversions::to_string_t(message));
+    event_log[queue_id][descKey] = json::value::string(utility::conversions::to_string_t(description));
+    event_log[queue_id][resKey] = json::value::string(utility::conversions::to_string_t(resolution));
+    event_log[queue_id][eidKey] = json::value::string(utility::conversions::to_string_t(event_id));
+    event_log[queue_id][qidKey] = json::value::string(utility::conversions::to_string_t(qidstr));
   }
 
   return (event_log);
@@ -586,7 +586,7 @@ json::value BackendApi::check_error_classification(std::string msg_text)
   try
   {
     // std::cout << "Trying to get data..." << std::endl;
-    response_data = response.at(U("data"));
+    response_data = response.at(utility::conversions::to_string_t("data"));
 
     // // Write the current JSON value to a stream with the native platform character width
     // utility::stringstream_t stream;

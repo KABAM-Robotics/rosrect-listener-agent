@@ -41,8 +41,8 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
         // std::cout << "Populating from ECS!" << std::endl;
         // This is the ECS case
         // Get all the data from the JSON object
-        level = (msg_info.at(U("severity"))).as_integer();
-        bool cflag_bool = (msg_info.at(U("compounding_flag"))).as_bool();
+        level = (msg_info.at(utility::conversions::to_string_t("severity"))).as_integer();
+        bool cflag_bool = (msg_info.at(utility::conversions::to_string_t("compounding_flag"))).as_bool();
         if (cflag_bool)
         {
             cflag = "true";
@@ -51,21 +51,21 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
         {
             cflag = "false";
         }
-        module = (msg_info.at(U("error_module"))).as_string();
-        source = (msg_info.at(U("error_source"))).as_string();
+        module = (msg_info.at(utility::conversions::to_string_t("error_module"))).as_string();
+        source = (msg_info.at(utility::conversions::to_string_t("error_source"))).as_string();
         message = data->msg;
         // Setting description to stored error_text. Needs to be set appropriately later
-        description = (msg_info.at(U("error_text"))).as_string();
+        description = (msg_info.at(utility::conversions::to_string_t("error_text"))).as_string();
         // Resolution needs to be set appropriately later.
-        // resolution = (msg_info.at(U("error_resolution"))).as_string();
+        // resolution = (msg_info.at(utility::conversions::to_string_t("error_resolution"))).as_string();
     }
     else if ((agent_type == "ERT") || (agent_type == "DB"))
     {
         // std::cout << "Populating from ERT!" << std::endl;
         // This is the ERT case
         // Get all the data from the JSON object
-        level = (msg_info.at(U("error_level"))).as_integer();
-        bool cflag_bool = (msg_info.at(U("compounding_flag"))).as_bool();
+        level = (msg_info.at(utility::conversions::to_string_t("error_level"))).as_integer();
+        bool cflag_bool = (msg_info.at(utility::conversions::to_string_t("compounding_flag"))).as_bool();
         if (cflag_bool)
         {
             cflag = "true";
@@ -74,11 +74,11 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
         {
             cflag = "false";
         }
-        module = (msg_info.at(U("error_module"))).as_string();
-        source = (msg_info.at(U("error_source"))).as_string();
+        module = (msg_info.at(utility::conversions::to_string_t("error_module"))).as_string();
+        source = (msg_info.at(utility::conversions::to_string_t("error_source"))).as_string();
         message = data->msg;
-        description = (msg_info.at(U("error_description"))).as_string();
-        resolution = (msg_info.at(U("error_resolution"))).as_string();
+        description = (msg_info.at(utility::conversions::to_string_t("error_description"))).as_string();
+        resolution = (msg_info.at(utility::conversions::to_string_t("error_resolution"))).as_string();
     }
     else
     {

@@ -1,10 +1,11 @@
+#include <cpprest/json.h>
+#undef U
 #include <string>
 #include <vector>
 #include <iostream>
 #include <sstream>
 #include <ctime>
 #include <rosgraph_msgs/Log.h>
-#include <cpprest/json.h>
 #include <rosrect-listener-agent/backend_api.h>
 #include <rosrect-listener-agent/robot_event.h>
 
