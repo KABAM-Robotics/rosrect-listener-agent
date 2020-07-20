@@ -1,5 +1,7 @@
 # rosrect Listener Agent Documentation 
 
+[![Build Status](https://jenkins.cognicept.systems/buildStatus/icon?job=cognicept-agent-pipeline)](https://jenkins.cognicept.systems/job/cognicept-agent-pipeline/)  [![Coverage Status](http://34.87.43.72:5000/coverage/cognicept-agent-pipeline)](http://34.87.43.72:5000/coverage/cognicept-agent-pipeline)
+
 Hello there! Thanks for checking out the agent documentation. This particular document is a user's guide. If you are more interested in what the agent is designed for, and the architecture, please take a look at the introduction document [here][7]!
 
 This project adheres to the Contributor Covenant [code of conduct](https://github.com/cognicept-admin/rosrect/blob/master/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [info@cognicept.systems](mailto:info@cognicept.systems). If you are interested in contributing, please refer to the guidelines [here](https://github.com/cognicept-admin/rosrect/blob/master/CONTRIBUTING.md).  
