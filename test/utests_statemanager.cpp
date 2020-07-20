@@ -3,8 +3,8 @@
 #include <fstream>
 #include <rosrect-listener-agent/state_manager.h>
 
-using namespace web::json;                  // JSON features
-using namespace web;                        // Common features like URIs.
+using namespace web::json; // JSON features
+using namespace web;       // Common features like URIs.
 
 // Log file settings
 std::string run_id;
@@ -12,23 +12,6 @@ std::string parent_dir = std::getenv("HOME");
 std::string log_name = parent_dir.append("/.cognicept/agent/logs/unittest_logs") + "/logData";
 std::string log_ext = ".json";
 int log_id = 0;
-
-// Utility function to clean up log files
-void logCleanup()
-{
-  bool fileRemoveError = false;
-
-  while (!fileRemoveError)
-  {
-    // Get filename
-    log_id++;
-    std::string filename = log_name + std::to_string(log_id) + log_ext;
-    // std::cout << "Trying to remove file: " << filename << std::endl;
-    // Remove file
-    fileRemoveError = remove(filename.c_str());
-  }
-  log_id = 0;
-}
 
 // Create test object
 StateManager state_manager_instance;
@@ -38,6 +21,9 @@ std::string errorMessage = "Aborting because a valid control could not be found.
 std::string warningMessage = "DWA Planner failed to produce path.";
 std::string infoMessage = "Got new plan";
 std::string infoEndMessage = "Goal reached";
+
+// Sample telemetry
+json::value telemetry = json::value::parse("{ \"pose\" : 42 }");
 
 // Sample log
 std::vector<std::string> found;
@@ -52,7 +38,7 @@ TEST(StateManagerTestSuite, existTest)
   found = state_manager_instance.does_exist(sampleRobotCode, sampleMsgText);
 
   // Expecting a null return since no messages are seen before this
-  ASSERT_TRUE(found[0].empty()); 
+  ASSERT_TRUE(found[0].empty());
 
   // Clear state manager
   state_manager_instance.clear();
@@ -68,11 +54,11 @@ TEST(StateManagerTestSuite, checkErrorTest)
   found = state_manager_instance.does_exist(sampleRobotCode, sampleMsgText);
 
   // Expecting a null return since no messages are seen before this
-  ASSERT_TRUE(found[0].empty()); 
+  ASSERT_TRUE(found[0].empty());
 
   // Call check_warning
   state_manager_instance.check_error(sampleRobotCode, sampleMsgText);
-  
+
   // See if error message exists in internal data structure
   found = state_manager_instance.does_exist(sampleRobotCode, sampleMsgText);
   int sizeFirstCheck = found.size();
@@ -105,11 +91,11 @@ TEST(StateManagerTestSuite, checkWarningTest)
   found = state_manager_instance.does_exist(sampleRobotCode, sampleMsgText);
 
   // Expecting a null return since no messages are seen before this
-  ASSERT_TRUE(found[0].empty()); 
+  ASSERT_TRUE(found[0].empty());
 
   // Call check_warning
   state_manager_instance.check_warning(sampleRobotCode, sampleMsgText);
-  
+
   // See if error message exists in internal data structure
   found = state_manager_instance.does_exist(sampleRobotCode, sampleMsgText);
   int sizeFirstCheck = found.size();
@@ -142,11 +128,11 @@ TEST(StateManagerTestSuite, checkInfoTest)
   found = state_manager_instance.does_exist(sampleRobotCode, sampleMsgText);
 
   // Expecting a null return since no messages are seen before this
-  ASSERT_TRUE(found[0].empty()); 
+  ASSERT_TRUE(found[0].empty());
 
   // Call check_warning
   state_manager_instance.check_info(sampleRobotCode, sampleMsgText);
-  
+
   // See if error message exists in internal data structure
   found = state_manager_instance.does_exist(sampleRobotCode, sampleMsgText);
   int sizeFirstCheck = found.size();
@@ -180,27 +166,27 @@ TEST(StateManagerTestSuite, checkMessageROSErrorTest)
   rosgraph_msgs::Log::ConstPtr rosmsg(new rosgraph_msgs::Log(data));
 
   // Call check_message_ros
-  state_manager_instance.check_message_ros(sampleRobotCode, rosmsg);
+  state_manager_instance.check_message_ros(sampleRobotCode, rosmsg, telemetry);
 
   // Check if log is created
   log_id++;
   std::string filename = log_name + std::to_string(log_id) + log_ext;
-  std::cout << "Checking: " << filename << std::endl; 
+  std::cout << "Checking: " << filename << std::endl;
   // Check if file exists
   std::ifstream infile1(filename);
-  bool fileflag = infile1.good();  
+  bool fileflag = infile1.good();
   ASSERT_TRUE(fileflag);
 
   // Call check_message_ros again with the same message
-  state_manager_instance.check_message_ros(sampleRobotCode, rosmsg);
+  state_manager_instance.check_message_ros(sampleRobotCode, rosmsg, telemetry);
 
   // Check if log is created
   log_id++;
   filename = log_name + std::to_string(log_id) + log_ext;
-  
+
   // Check if file exists
   std::ifstream infile2(filename);
-  fileflag = infile2.good();  
+  fileflag = infile2.good();
   ASSERT_TRUE(fileflag);
 
   // Clear state manager
@@ -218,17 +204,17 @@ TEST(StateManagerTestSuite, checkMessageROSWarningTest)
   rosgraph_msgs::Log::ConstPtr rosmsg(new rosgraph_msgs::Log(data));
 
   // Call check_message_ros
-  state_manager_instance.check_message_ros(sampleRobotCode, rosmsg);
+  state_manager_instance.check_message_ros(sampleRobotCode, rosmsg, telemetry);
 
   // Check if log is created
   log_id++;
   std::string filename = log_name + std::to_string(log_id) + log_ext;
-  
+
   // Check if file exists
   std::ifstream infile1(filename);
-  bool fileflag = infile1.good();  
+  bool fileflag = infile1.good();
   ASSERT_TRUE(fileflag);
-  
+
   // Clear state manager
   state_manager_instance.clear();
 }
@@ -244,15 +230,15 @@ TEST(StateManagerTestSuite, checkMessageROSInfoTest)
   rosgraph_msgs::Log::ConstPtr rosmsg1(new rosgraph_msgs::Log(data));
 
   // Call check_message_ros
-  state_manager_instance.check_message_ros(sampleRobotCode, rosmsg1);
+  state_manager_instance.check_message_ros(sampleRobotCode, rosmsg1, telemetry);
 
   // Check if log is created
   log_id++;
   std::string filename = log_name + std::to_string(log_id) + log_ext;
-  
+
   // Check if file DOES NOT exist, since for info, the listener waits to push
   std::ifstream infile1(filename);
-  bool fileflag = infile1.good();  
+  bool fileflag = infile1.good();
   ASSERT_TRUE(fileflag);
 
   // Change message to an INFO end
@@ -260,13 +246,13 @@ TEST(StateManagerTestSuite, checkMessageROSInfoTest)
   rosgraph_msgs::Log::ConstPtr rosmsg2(new rosgraph_msgs::Log(data));
 
   // Call check_message_ros
-  state_manager_instance.check_message_ros(sampleRobotCode, rosmsg2);
+  state_manager_instance.check_message_ros(sampleRobotCode, rosmsg2, telemetry);
 
   // Check if file exists, since for info end, the state manager pushes
   log_id++;
   filename = log_name + std::to_string(log_id) + log_ext;
   std::ifstream infile2(filename);
-  fileflag = infile2.good();  
+  fileflag = infile2.good();
   ASSERT_TRUE(fileflag);
 
   // Clear state manager
@@ -279,9 +265,9 @@ TEST(StateManagerTestSuite, clearTest)
   std::string sampleRobotCode = "SampleRobotCode";
   std::string sampleMsgText = "This is a sample error text";
 
-    // Call check_error
+  // Call check_error
   state_manager_instance.check_error(sampleRobotCode, sampleMsgText);
-  
+
   // See if error message exists in internal data structure
   found = state_manager_instance.does_exist(sampleRobotCode, sampleMsgText);
   int sizeFirstCheck = found.size();
@@ -296,7 +282,7 @@ TEST(StateManagerTestSuite, clearTest)
   found = state_manager_instance.does_exist(sampleRobotCode, sampleMsgText);
 
   // Check if result is empty
-  ASSERT_EQ(found[0],"");
+  ASSERT_EQ(found[0], "");
 }
 
 // TEST(StateManagerTestSuite, checkMessageDBErrorTest)
@@ -315,10 +301,10 @@ TEST(StateManagerTestSuite, clearTest)
 //   // Check if log is created
 //   log_id++;
 //   std::string filename = log_name + std::to_string(log_id) + log_ext;
-  
+
 //   // Check if file exists
 //   std::ifstream infile1(filename);
-//   bool fileflag = infile1.good();  
+//   bool fileflag = infile1.good();
 //   ASSERT_TRUE(fileflag);
 
 //   // Call check_message_db again with the same message
@@ -327,10 +313,10 @@ TEST(StateManagerTestSuite, clearTest)
 //   // Check if log is created
 //   log_id++;
 //   filename = log_name + std::to_string(log_id) + log_ext;
-  
+
 //   // Check if file exists
 //   std::ifstream infile2(filename);
-//   fileflag = infile2.good();  
+//   fileflag = infile2.good();
 //   ASSERT_TRUE(fileflag);
 
 //   // Clear state manager

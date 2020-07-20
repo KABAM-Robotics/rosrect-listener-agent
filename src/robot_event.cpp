@@ -9,7 +9,7 @@ RobotEvent::RobotEvent()
     this->event_id_str = "";
 }
 
-void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::value msg_info, std::string agent_type)
+void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::value msg_info, json::value telemetry, std::string agent_type)
 {
     // std::cout << "Event log updating..." << std::endl;
     // Each message has a queue id
@@ -22,7 +22,7 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
     // Event log order
     // 'QID', 'Date/Time', 'Level', 'Compounding',
     // 'Module', 'Source', 'Message', 'Description',
-    // 'Resolution', 'RobotEvent_ID'
+    // 'Resolution', 'RobotEvent_ID', 'Telemetry'
     int level = 8;
     std::string cflag = "Null";
     std::string module = "Null";
@@ -31,13 +31,18 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
     std::string description = "Null";
     std::string resolution = "Null";
 
+    utility::stringstream_t stream;
+    telemetry.serialize(stream);
+    // std::cout << "Event telemetry: " << stream.str() << std::endl;
+    std::string telemetry_str = stream.str();
+
     if (agent_type == "ECS")
     {
         // std::cout << "Populating from ECS!" << std::endl;
         // This is the ECS case
         // Get all the data from the JSON object
-        level = (msg_info.at(U("severity"))).as_integer();
-        bool cflag_bool = (msg_info.at(U("compounding_flag"))).as_bool();
+        level = (msg_info.at(utility::conversions::to_string_t("severity"))).as_integer();
+        bool cflag_bool = (msg_info.at(utility::conversions::to_string_t("compounding_flag"))).as_bool();
         if (cflag_bool)
         {
             cflag = "true";
@@ -46,21 +51,21 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
         {
             cflag = "false";
         }
-        module = (msg_info.at(U("error_module"))).as_string();
-        source = (msg_info.at(U("error_source"))).as_string();
+        module = (msg_info.at(utility::conversions::to_string_t("error_module"))).as_string();
+        source = (msg_info.at(utility::conversions::to_string_t("error_source"))).as_string();
         message = data->msg;
         // Setting description to stored error_text. Needs to be set appropriately later
-        description = (msg_info.at(U("error_text"))).as_string();
+        description = (msg_info.at(utility::conversions::to_string_t("error_text"))).as_string();
         // Resolution needs to be set appropriately later.
-        // resolution = (msg_info.at(U("error_resolution"))).as_string();
+        // resolution = (msg_info.at(utility::conversions::to_string_t("error_resolution"))).as_string();
     }
     else if ((agent_type == "ERT") || (agent_type == "DB"))
     {
         // std::cout << "Populating from ERT!" << std::endl;
         // This is the ERT case
         // Get all the data from the JSON object
-        level = (msg_info.at(U("error_level"))).as_integer();
-        bool cflag_bool = (msg_info.at(U("compounding_flag"))).as_bool();
+        level = (msg_info.at(utility::conversions::to_string_t("error_level"))).as_integer();
+        bool cflag_bool = (msg_info.at(utility::conversions::to_string_t("compounding_flag"))).as_bool();
         if (cflag_bool)
         {
             cflag = "true";
@@ -69,11 +74,11 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
         {
             cflag = "false";
         }
-        module = (msg_info.at(U("error_module"))).as_string();
-        source = (msg_info.at(U("error_source"))).as_string();
+        module = (msg_info.at(utility::conversions::to_string_t("error_module"))).as_string();
+        source = (msg_info.at(utility::conversions::to_string_t("error_source"))).as_string();
         message = data->msg;
-        description = (msg_info.at(U("error_description"))).as_string();
-        resolution = (msg_info.at(U("error_resolution"))).as_string();
+        description = (msg_info.at(utility::conversions::to_string_t("error_description"))).as_string();
+        resolution = (msg_info.at(utility::conversions::to_string_t("error_resolution"))).as_string();
     }
     else
     {
@@ -101,6 +106,7 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
     event_details.push_back(message);
     event_details.push_back(description);
     event_details.push_back(resolution);
+    event_details.push_back(telemetry_str);
     event_details.push_back(this->event_id_str);
 
     // Push to log
