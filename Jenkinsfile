@@ -17,7 +17,8 @@ pipeline{
     }
     stage ("--Extract test results--") {
     steps {
-    //cobertura coberturaReportFile: 'coverage.xml'
+      echo 'skipping code coverage'
+      //cobertura coberturaReportFile: 'coverage.xml'
     }
     }
   }
