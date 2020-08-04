@@ -9,17 +9,17 @@ cs_listener::cs_listener()
 
   // Pulling environment variables
   // AGENT_TYPE
-  if(std::getenv("AGENT_TYPE"))
+  if (std::getenv("AGENT_TYPE"))
   {
     // Success case
     this->agent_type = std::getenv("AGENT_TYPE");
     // See if configuration is correct otherwise default to ROS
-    if((this->agent_type == "DB") || (this->agent_type == "ERT") || (this->agent_type == "ECS"))
+    if ((this->agent_type == "DB") || (this->agent_type == "ERT") || (this->agent_type == "ECS"))
     {
-      if(std::getenv("ECS_API"))
+      if (std::getenv("ECS_API"))
       {
         // Success case
-        if(std::getenv("ECS_ROBOT_MODEL"))
+        if (std::getenv("ECS_ROBOT_MODEL"))
         {
           // Success case
         }
@@ -27,13 +27,13 @@ cs_listener::cs_listener()
         {
           // Failure case - Default
           this->agent_type = "ROS";
-        } 
+        }
       }
       else
       {
         // Failure case - Default
         this->agent_type = "ROS";
-      }     
+      }
     }
   }
   else
@@ -43,7 +43,7 @@ cs_listener::cs_listener()
   }
 
   // ROBOT_CODE
-  if(std::getenv("ROBOT_CODE"))
+  if (std::getenv("ROBOT_CODE"))
   {
     // Success case
     this->robot_code = std::getenv("ROBOT_CODE");
@@ -193,11 +193,14 @@ void cs_listener::setup_telemetry(ros::NodeHandle nh)
 void cs_listener::log_callback(const rosgraph_msgs::Log::ConstPtr &rosmsg)
 {
 
-  // To debug this callback function
-  std::cout << "Message received: " << rosmsg->msg << std::endl;
+  if (rosmsg->name == "/agent_translator_node")
+  {
+    // To debug this callback function
+    std::cout << "Message received: " << rosmsg->msg << std::endl;
 
-  // Callback that hands over message to State Manager
-  this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+    // Callback that hands over message to State Manager
+    this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+  }
 }
 
 void cs_listener::odom_callback(const nav_msgs::Odometry::ConstPtr &rosmsg)

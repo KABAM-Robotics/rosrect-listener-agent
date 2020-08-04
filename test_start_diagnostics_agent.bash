@@ -2,18 +2,18 @@
 
 clear
 
-docker build -t rosrect_agent_ros .
+docker build -t cognicept_diagnostics_agent:jeff .
 
-docker stop agent
+docker stop cgs_diagnostics_agent
 
-docker rm agent 
+docker rm cgs_diagnostics_agent 
 
 docker run -it \
 --env-file runtime.env \
 --network=host \
---name=agent  \
+--name=cgs_diagnostics_agent  \
 --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
-rosrect_agent_ros:latest  \
+cognicept_diagnostics_agent:jeff  \
 roslaunch rosrect-listener-agent listener-agent.launch 
 
 # --env="ROS_MASTER_URI=http://localhost:11311" \
