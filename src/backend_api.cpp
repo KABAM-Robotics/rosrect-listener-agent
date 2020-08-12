@@ -362,7 +362,14 @@ void BackendApi::push_status(bool status, json::value telemetry)
     outfile.close();
 
     // Post downstream
-    this->post_event_log(payload).wait();
+    try
+    {
+      this->post_event_log(payload).wait();
+    }
+    catch (const http::http_exception &e)
+    {
+      ROS_ERROR_STREAM("POST API error: " << e.what() << ". Agent will retry API connection at: " << this->agent_post_api);
+    }
   }
 }
 
@@ -479,7 +486,14 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
     outfile.close();
 
     // Post downstream
-    this->post_event_log(payload).wait();
+    try
+    {
+      this->post_event_log(payload).wait();
+    }
+    catch (const http::http_exception &e)
+    {
+      ROS_ERROR_STREAM("POST API error: " << e.what() << ". Agent will retry API connection at: " << this->agent_post_api);
+    }
   }
 }
 
@@ -577,11 +591,19 @@ pplx::task<void> BackendApi::query_error_classification(std::string msg_text)
 
 json::value BackendApi::check_error_classification(std::string msg_text)
 {
+  json::value response = json::value::null();
+  json::value response_data = json::value::null();
 
-  this->query_error_classification(msg_text).wait();
-  std::string temp_msg = this->msg_resp;
-  json::value response = json::value::parse(temp_msg);
-  json::value response_data;
+  try
+  {
+    this->query_error_classification(msg_text).wait();
+    std::string temp_msg = this->msg_resp;
+    response = json::value::parse(temp_msg);
+  }
+  catch (const http::http_exception &e)
+  {
+    ROS_ERROR_STREAM("ECS API error: " << e.what() << ". Agent will retry API connection at: " << this->ecs_api_host + this->ecs_api_endpoint);
+  }
 
   try
   {
@@ -600,7 +622,7 @@ json::value BackendApi::check_error_classification(std::string msg_text)
   {
     // const std::exception& e
     // std::cout << " Can't get data, returning null" << std::endl;
-    response_data = json::value::null();
+    // response_data = json::value::null();
     return response_data;
   }
 }
