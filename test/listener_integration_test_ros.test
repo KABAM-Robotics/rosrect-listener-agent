@@ -2,6 +2,8 @@
 <launch>
     <env name="AGENT_TYPE" value="ROS"/>
     <env name="AGENT_MODE" value="JSON_TEST"/>
+    <env name="ECS_ROBOT_MODEL" value="Turtlebot3"/>
+    <env name="ECS_API" value="http://0.0.0.0:8000"/>
     <node pkg="rosrect-listener-agent" type="rosrect-listener-agent" name="rosrect_listener_agent_node"  output="screen"/>
     <test test-name="listeneragent_test_node_ros" pkg="rosrect-listener-agent" type="listeneragent_test_node_ros"/>
 </launch>
