@@ -69,6 +69,8 @@ You can use this approach if you are planning on running this on a system that h
     
         $ rospack list | grep rosrect
         rosrect-listener-agent /home/swaroophs/catkin_ws/src/rosrect-listener-agent
+
+5. Additionally, follow the appropriate installation steps for installing the `ECS API Server` [here][8].
     
 That is it for the native installation! You can now jump to [Running tests](#running-tests) or [Syntax](#syntax).
 
@@ -81,6 +83,8 @@ You can use this approach if you are planning on running the agent on a system t
 2. You can then build the `docker` image using `docker build` and the provided `Dockerfile`:
 
         $ docker build -t rosrect_agent .
+
+3. Additionally, follow the appropriate installation steps for installing the `ECS API Server` [here][8].
     
 That is it for the Docker installation! You can now jump to [Running tests](#running-tests) or [Syntax](#syntax).
 
@@ -88,6 +92,8 @@ That is it for the Docker installation! You can now jump to [Running tests](#run
 Optionally, you can run the unit and integration tests natively or using Docker, based on the installation method you chose in the previous section. 
 
 ### Native
+
+**NOTE: Before running tests, makes sure the `ECS API Server` is running either natively or using Docker. Take a look at the relevant documentation [here][9]. Failure to have the API server will result in some failed tests that require connection to ECS.**
 
 1. Open a new terminal and switch to the `catkin_ws` directory:
 
@@ -258,6 +264,8 @@ The agent can be configured using the following environment variables:
 | `ECS_API`         | REST API Endpoint String   | Not applicable | If the `AGENT_TYPE` is set to `DB`, this variable MUST be configured to a valid REST API endpoint. If not specified, the agent will default back to `ROS` mode. If API endpoint is not available to connect, agent will error out.                                                                                                                                                                                                                                                                       |
 | `ECS_ROBOT_MODEL` | Valid Robot Model          | Not applicable | If the `AGENT_TYPE` is set to `DB`, this variable MUST be configured to a valid robot model. If not specified, the agent will default back to `ROS` mode. For ROS 1 navigation stack, just use `Turtlebot3`.                                                                                                                                                                                                                                                                                             |
 
+**NOTE: To run the agent in the `DB` mode, `ECS API Server` should be running either natively or using Docker. Take a look at the relevant documentation [here][9]. Failure to have the API server will result in the agent not able to find a valid API endpoint and result in a `ROS ERROR`.**
+
 Based on the type of installation, you can configure these variables by different methods as follows.
 
 ### Configure and Run for native installations
@@ -313,7 +321,7 @@ Then, open a second terminal and launch the `turtlebot3_navigation` launch file:
 
 At the end of this step, you would need to see something that looks like the following. Notice that the robot is mislocalized (i.e. the scan doesn't match the map) :
 
-![alt text](/docs/images/Mislocalized.png "Turtlebot mislocalized")
+![alt text](docs/images/Mislocalized.png "Turtlebot mislocalized")
 
 ### Start rosrect Listener Agent
 We are ready to start listening to robot errors. Based on your installation type, you can start the agent in one of 2 ways:
@@ -449,7 +457,7 @@ If you keep the agent running, you should be able to see the `Status Logged: Onl
 ### Generate a navigation error
 Now, use `rviz` to provide a `2D Nav Goal` for the robot. 
 
-![alt text](/docs/images/NavGoal.png "Navigation Goal in rviz")
+![alt text](docs/images/NavGoal.png "Navigation Goal in rviz")
 
 Because the robot is mislocalized, chances are high that it will be unable to reach its goal, generating an error. When that happens, the terminal window running the simulation will show something like the following:
 
@@ -599,6 +607,8 @@ From the echo, you are able to see that the response has the same contents as th
 ## Related Pages
 For more related information, refer to:
 
+* [ECS API Installation][8]
+* [ECS API Syntax][9]
 * [Virtual Navigation with Turtlebot3][1]
 * [Turtlebot3 installing packages][2]
 * [rosgraph_msgs documentation][3]
@@ -614,3 +624,5 @@ For more related information, refer to:
 [5]: https://github.com/microsoft/cpprestsdk
 [6]: https://docs.docker.com/engine/install/ubuntu/
 [7]: /docs/AGENT_INTRO.md
+[8]: https://github.com/cognicept-admin/rosrect_ecs_api_server/src/develop/#installation
+[9]: https://bitbucket.org/cognicept/open_ecs_api_server/src/develop/#syntax
