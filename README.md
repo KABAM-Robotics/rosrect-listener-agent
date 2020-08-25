@@ -91,9 +91,9 @@ That is it for the Docker installation! You can now jump to [Running tests](#run
 ## Running tests
 Optionally, you can run the unit and integration tests natively or using Docker, based on the installation method you chose in the previous section. 
 
-### Native
-
 **NOTE: Before running tests, makes sure the `ECS API Server` is running either natively or using Docker. Take a look at the relevant documentation [here][9]. Failure to have the API server will result in some failed tests that require connection to ECS.**
+
+### Native
 
 1. Open a new terminal and switch to the `catkin_ws` directory:
 
@@ -624,5 +624,5 @@ For more related information, refer to:
 [5]: https://github.com/microsoft/cpprestsdk
 [6]: https://docs.docker.com/engine/install/ubuntu/
 [7]: /docs/AGENT_INTRO.md
-[8]: https://github.com/cognicept-admin/rosrect_ecs_api_server/src/develop/#installation
-[9]: https://bitbucket.org/cognicept/open_ecs_api_server/src/develop/#syntax
+[8]: https://github.com/cognicept-admin/rosrect-ecs-api-server#installation
+[9]: https://github.com/cognicept-admin/rosrect-ecs-api-server#syntax
