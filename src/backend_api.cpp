@@ -71,12 +71,12 @@ BackendApi::BackendApi()
   if ((this->agent_type == "ERT") || (this->agent_type == "DB"))
   {
     // This configures the endpoint to ERT queries. Must be used only for testing. Undocumented.
-    this->ecs_api_endpoint = "/api/ert/getErrorData/";
+    this->ecs_api_endpoint = "/ert/error-data/";
   }
   else if (this->agent_type == "ECS")
   {
     // This configures the endpoint to ECS queries. Production version.
-    this->ecs_api_endpoint = "/api/ecs/getErrorData/";
+    this->ecs_api_endpoint = "/ecs/error-data/";
   }
   else
   {
