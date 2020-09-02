@@ -177,6 +177,70 @@ TEST(RobotEventTestSuite, updateLogDBTest)
   event_details.clear();
 }
 
+TEST(RobotEventTestSuite, updateLogECSTest)
+{
+  // Sample message
+  rosgraph_msgs::Log data;
+  data.level = 8;
+  data.name = source;
+  data.msg = message;
+  rosgraph_msgs::Log::ConstPtr rosmsg(new rosgraph_msgs::Log(data));
+
+  // For DB test, need for ECS, manually construct an ECS response so we don't rely on ECS connection
+  json::value msgInfo = json::value::object();
+  // For DB, cflag is NOT Null
+  cflag = "false";
+  event_details.push_back(std::to_string(16));
+  event_details.push_back(cflag);
+  event_details.push_back("Navigation");
+  event_details.push_back(source);
+  event_details.push_back(message);
+  event_details.push_back(message);
+  event_details.push_back("Null");
+  event_details.push_back(telemetry_str);
+
+  // Declare log variable
+  std::vector<std::vector<std::string>> updatedLog;
+  std::vector<std::string> currentRow;
+
+  // Create keys
+  utility::string_t codeKey(utility::conversions::to_string_t("cognicept_error_code"));
+  utility::string_t lvlKey(utility::conversions::to_string_t("severity"));
+  utility::string_t cfKey(utility::conversions::to_string_t("compounding_flag"));
+  utility::string_t modKey(utility::conversions::to_string_t("error_module"));
+  utility::string_t srcKey(utility::conversions::to_string_t("error_source"));
+  utility::string_t txtKey(utility::conversions::to_string_t("error_text"));
+
+  // Assign key-value
+  msgInfo[codeKey] = json::value::string("NAV-SW-16-R-2");
+  msgInfo[lvlKey] = json::value::number(16);
+  msgInfo[cfKey] = json::value::boolean(false);
+  msgInfo[modKey] = json::value::string("Navigation");
+  msgInfo[srcKey] = json::value::string("/move_base");
+  msgInfo[txtKey] = json::value::string(message);
+  
+  // For testing, telemetry is set to a constant
+  json::value telemetry = json::value::string(telemetry_str);
+
+  // Update log
+  event_instance.update_log(rosmsg, msgInfo, telemetry, "ECS");
+
+  // Get log
+  updatedLog = event_instance.get_log();
+  currentRow = updatedLog[0];
+
+  // Check if content is equal
+  for (int idx = 1; idx < currentRow.size() - 2; idx++)
+  {
+    ASSERT_EQ(event_details[idx-1], currentRow[idx]);
+  }
+
+  // Clear event
+  event_instance.clear();
+  // Clear expected log
+  event_details.clear();
+}
+
 TEST(RobotEventTestSuite, updateEventIdTest)
 {
   // Sample message
