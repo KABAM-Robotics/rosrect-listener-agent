@@ -5,10 +5,10 @@
 #include <rosrect-listener-agent/tester_talker.h>
 
 // Utility function to broadcast log messages
-void TesterTalker::talk(std::vector<std::string> msg_list, std::vector<std::string> sev_list)
+void TesterTalker::talk_log(std::vector<std::string> msg_list, std::vector<std::string> sev_list)
 {
   ros::NodeHandle nh;
-  this->pub = nh.advertise<rosgraph_msgs::Log>("rosout_agg", 1);
+  this->rosout_pub = nh.advertise<rosgraph_msgs::Log>("rosout_agg", 1);
 
   ros::Rate looprate(2);
   rosgraph_msgs::Log rosmsg;
@@ -35,7 +35,7 @@ void TesterTalker::talk(std::vector<std::string> msg_list, std::vector<std::stri
       // ROS_INFO("%s", msg.c_str());
       rosmsg.level = 2;
     }
-    this->pub.publish(rosmsg);
+    this->rosout_pub.publish(rosmsg);
     ros::spinOnce();
     looprate.sleep();
   }
@@ -97,7 +97,7 @@ TEST(ListenerAgentTestSuite, errorSuppressionTest)
           "E", "W", "W", "W", "W", "E",
           "I", "W", "W", "W", "E"};
 
-  talker_instance.talk(msg_list, sev_list);
+  talker_instance.talk_log(msg_list, sev_list);
 
   // Check if log is created
   int expected_logs = 16;
@@ -130,7 +130,7 @@ TEST(ListenerAgentTestSuite, infoSuppressionTest)
       {
           "I", "I", "I", "I", "I", "I"};
 
-  talker_instance.talk(msg_list, sev_list);
+  talker_instance.talk_log(msg_list, sev_list);
 
   // Check if log is created
   int expected_logs = 2;
@@ -184,7 +184,7 @@ TEST(ListenerAgentTestSuite, warningSuppressionTest)
           "W", "I", "W", "I", "W", "I",
           "W", "I", "W", "W", "I", "I"};
 
-  talker_instance.talk(msg_list, sev_list);
+  talker_instance.talk_log(msg_list, sev_list);
 
   // Check if log is created
   int expected_logs = 5;
@@ -203,7 +203,7 @@ TEST(ListenerAgentTestSuite, warningSuppressionTest)
 
 int main(int argc, char **argv)
 {
-  // Wait for 5 seconds to run the listener test
+  // Wait for a few seconds to run the listener test
   std::cout << "Listener test will wait 5 seconds for other tests to finish..." << std::endl;
   sleep(5);
 
