@@ -186,69 +186,6 @@ TEST(BackEndApiTestSuite, statusFalseTest)
   infile.close();
 }
 
-TEST(BackEndApiTestSuite, ecsHitTest)
-{
-  // Sample message
-  std::string msgText = "Rotate recovery can't rotate in place because there is a potential collision. Cost: -1.00";
-
-  // Check with ecs
-  json::value msgInfo;
-  msgInfo = api_instance.check_error_classification(msgText);
-
-  // Check if it has the right fields according to schema
-  bool fieldFlag = true;
-  // List all field names
-  std::vector<std::string> fieldNames;
-  fieldNames.push_back("error_code");
-  fieldNames.push_back("error_level");
-  fieldNames.push_back("compounding_flag");
-  fieldNames.push_back("error_module");
-  fieldNames.push_back("error_source");
-  fieldNames.push_back("error_text");
-  fieldNames.push_back("error_description");
-  fieldNames.push_back("error_resolution");
-
-  // Loop through field names to see if they exist with the correct data type
-  for (int idx = 0; idx < fieldNames.size(); idx++)
-  {
-    if (fieldNames[idx] == "compounding_flag")
-    {
-      fieldFlag = msgInfo.has_boolean_field(fieldNames[idx]);
-      // std::cout << idx << ", " << fieldNames[idx] << ", " << fieldFlag << std::endl;
-    }
-    else if (fieldNames[idx] == "error_level")
-    {
-      fieldFlag = msgInfo.has_integer_field(fieldNames[idx]);
-      // std::cout << idx << ", " << fieldNames[idx] << ", " << fieldFlag << std::endl;
-    }
-    else
-    {
-      fieldFlag = msgInfo.has_string_field(fieldNames[idx]);
-      // std::cout << idx << ", " << fieldNames[idx] << ", " << fieldFlag << std::endl;
-    }
-
-    if (fieldFlag == false)
-    {
-      break;
-    }
-  }
-  ASSERT_TRUE(fieldFlag);
-}
-
-TEST(BackEndApiTestSuite, ecsMissTest)
-{
-  // Sample message
-  std::string msgText = "Dummy message. Won't be available in ECS.";
-
-  // Check with ecs
-  json::value msgInfo;
-  msgInfo = api_instance.check_error_classification(msgText);
-
-  // Check if null value is returned
-  bool nullFlag = msgInfo.is_null();
-  ASSERT_TRUE(nullFlag);
-}
-
 int main(int argc, char **argv)
 {
 
