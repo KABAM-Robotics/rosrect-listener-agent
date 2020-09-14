@@ -1,6 +1,10 @@
 sudo: required 
-dist: melodic 
+dist: bionic 
 language: generic 
+branches:
+  only:
+  - travis-ci
+
 compiler:
   - gcc
 notifications:
@@ -15,13 +19,15 @@ env:
     - USE_DEB=true  
       ROS_DISTRO="melodic" 
       ROS_REPOSITORY_PATH=http://packages.ros.org/ros-shadow-fixed/ubuntu
+    - CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"
+    - AFTER_SCRIPT="./.ci-test.sh"
 
 before_install:
   #installing microsoft libcpprest dependency
   - sudo apt-get install libcpprest-dev
 
 install:
-  - git clone https://github.com/ros-industrial/industrial_ci.git .ci_config
+  - git clone https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
 
 script:
-  - ci-test.sh
+  - source ./.ci-test.sh && .industrial_ci/travis.sh
