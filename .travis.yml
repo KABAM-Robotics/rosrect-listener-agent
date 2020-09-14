@@ -15,10 +15,7 @@ env:
   matrix:
     - USE_DEB=true  
       ROS_DISTRO="melodic" 
-      ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu
-    - USE_DEB=true  
-      ROS_DISTRO="melodic" 
-      ROS_REPOSITORY_PATH=http://packages.ros.org/ros-shadow-fixed/ubuntu
+      ROS_REPOSITORY_PATH=https://github.com/cognicept-admin/rosrect-listener-agent
     - CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"
     - AFTER_SCRIPT="./.ci-test.sh"
 
