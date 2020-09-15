@@ -43,6 +43,7 @@ before_script:
   - sudo apt-get install python3-pip
   - sudo apt-get install python3-setuptools
   - pip3 install sanic
+  - pip install databases
   - export ECS_API=http://0.0.0.0:8000
   - export AGENT_POST_API=https://postman-echo.com
   - python3 rosrect-ecs-api-server/src/ecs_endpoint.py  
