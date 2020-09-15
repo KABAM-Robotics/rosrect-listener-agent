@@ -1,6 +1,6 @@
 #Rewriting the test file
 
-. /opt/ros/melodic/setup.sh
+source /opt/ros/melodic/setup.bash
 
 # git clone the folder here 
 
