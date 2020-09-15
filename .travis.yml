@@ -16,7 +16,7 @@ env:
     - USE_DEB=true  
       ROS_DISTRO="melodic" 
       ROS_REPOSITORY_PATH=https://github.com/cognicept-admin/rosrect-listener-agent
-    - CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"
+      CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"
 
 before_install:
   #installing microsoft libcpprest dependency
