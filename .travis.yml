@@ -53,6 +53,6 @@ before_script:
   - export AGENT_POST_API=https://postman-echo.com
   - export ECS_DB_LOC=rosrect-ecs-api-server/ecs.db
   - chmod +x rosrect-ecs-api-server/src/ecs_endpoint.py
-  - python3 rosrect-ecs-api-server/src/ecs_endpoint.py &
+  - nohup python3 rosrect-ecs-api-server/src/ecs_endpoint.py &
 script:
   - source .industrial_ci/travis.sh
