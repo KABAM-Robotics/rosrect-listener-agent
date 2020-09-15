@@ -1,6 +1,8 @@
 sudo: required 
 dist: bionic 
-language: generic 
+language: generic
+services:
+  - docker 
 branches:
   only:
   - travis-ci
@@ -17,7 +19,11 @@ env:
       ROS_DISTRO="melodic" 
       ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu
       CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"
+      
 
+allow_failures:
+    - env: ROS_DISTRO="melodic"  PRERELEASE=true
+    
 before_install:
   #installing microsoft libcpprest dependency
   - sudo apt-get install libcpprest-dev
