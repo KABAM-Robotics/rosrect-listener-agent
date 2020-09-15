@@ -4,13 +4,13 @@
 
 # git clone the folder here 
 
-mkdir -p catkin_test/src
-cd catkin_test/src
-git init 
-git clone https://github.com/cognicept-admin/rosrect-listener-agent.git
-cd rosrect-listener-agent
-git fetch && git checkout travis-ci
-cd ..
+# mkdir -p catkin_test/src
+# cd catkin_test/src
+# git init 
+# git clone https://github.com/cognicept-admin/rosrect-listener-agent.git
+# cd rosrect-listener-agent
+# git fetch && git checkout travis-ci
+# cd ..
 
 #Troubleshooting
 export ECS_API=http://0.0.0.0:8000

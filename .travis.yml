@@ -28,3 +28,5 @@ install:
 script:
   #source ./.ci-test.sh && .industrial_ci/travis.sh
   - ls -la
+  - chmod +x ci-test.sh
+  - ./ci-test.sh
