@@ -25,11 +25,10 @@ env:
   matrix:
     - USE_DEB=true  
       ROS_DISTRO="melodic" 
-      ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu
-    - ROS_DISTRO="melodic" ABICHECK_URL='github:cognicept-admin/rosrect-listener-agent
+      ROS_REPO=ros
 
 allow_failures:
-    - env: ROS_DISTRO="melodic" ABICHECK_URL='github:cognicept-admin/rosrect-listener-agent ADDITIONAL_DEBS="libcpprest-dev"
+    - env: ROS_DISTRO="melodic" ROS_REPO=ros  ADDITIONAL_DEBS="libcpprest-dev"
 
 before_install:
   #installing microsoft libcpprest dependency
