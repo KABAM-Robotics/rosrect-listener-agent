@@ -35,8 +35,3 @@ install:
 
 script:
   - source .industrial_ci/travis.sh
-#  - ls -la
-#  - chmod +x ci-test.sh
-#  - ./ci-test.sh
-#  - source /opt/ros/melodic/setup.bash
-#  - catkin_make
