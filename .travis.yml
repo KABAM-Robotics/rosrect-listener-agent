@@ -40,6 +40,8 @@ install:
   - git clone https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
 
 before_script:
+  - sudo apt-get install python3-pip
+  - pip3 install sanic
   - export ECS_API=http://0.0.0.0:8000
   - export AGENT_POST_API=https://postman-echo.com
   - python3 rosrect-ecs-api-server/src/ecs_endpoint.py  
