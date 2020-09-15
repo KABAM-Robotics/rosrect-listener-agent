@@ -15,7 +15,7 @@ env:
   matrix:
     - USE_DEB=true  
       ROS_DISTRO="melodic" 
-      ROS_REPOSITORY_PATH=https://github.com/cognicept-admin/rosrect-listener-agent
+      ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu
       CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"
 
 before_install:
@@ -28,5 +28,5 @@ install:
 script:
   #source ./.ci-test.sh && .industrial_ci/travis.sh
   - ls -la
-  - chmod +x ci-test.sh
-  - ./ci-test.sh
+  #- chmod +x ci-test.sh
+  #- ./ci-test.sh
