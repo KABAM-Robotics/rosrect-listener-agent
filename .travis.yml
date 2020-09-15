@@ -30,3 +30,5 @@ script:
   - ls -la
   - chmod +x ci-test.sh
   - ./ci-test.sh
+  - catkin_make
+  - catkin_make run_tests

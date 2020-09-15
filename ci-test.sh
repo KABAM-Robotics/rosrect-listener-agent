@@ -20,5 +20,5 @@ echo $ECS_API
 
 # move back a folder for catkin_make
 cd ..
-catkin_make
-catkin_make run_tests
+# catkin_make
+# catkin_make run_tests
