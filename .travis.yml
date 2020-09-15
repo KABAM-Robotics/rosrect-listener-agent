@@ -47,7 +47,7 @@ before_script:
   - pip3 install databases
   - export ECS_API=http://0.0.0.0:8000
   - export AGENT_POST_API=https://postman-echo.com
-  - export ECS_DB_LOC= rosrect-ecs-api-server/ecs.db
+  - export ECS_DB_LOC=rosrect-ecs-api-server/ecs.db
   - chmod +x rosrect-ecs-api-server/src/ecs_endpoint.py
   - nohup python3 rosrect-ecs-api-server/src/ecs_endpoint.py &
 script:
