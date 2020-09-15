@@ -27,4 +27,4 @@ install:
 
 script:
   #source ./.ci-test.sh && .industrial_ci/travis.sh
-  - source .industrial_ci/travis.sh
+  - ls -la
