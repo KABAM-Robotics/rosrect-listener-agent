@@ -26,4 +26,5 @@ install:
   - git clone https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
 
 script:
-  - source ./.ci-test.sh && .industrial_ci/travis.sh
+  #source ./.ci-test.sh && .industrial_ci/travis.sh
+  - source .industrial_ci/travis.sh
