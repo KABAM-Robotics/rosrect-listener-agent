@@ -41,7 +41,7 @@ install:
 
 before_script:
   - sudo apt-get install python3-pip
-  - pip3 install -U pip3 setuptools
+  - sudo apt-get install python3-setuptools
   - pip3 install sanic
   - export ECS_API=http://0.0.0.0:8000
   - export AGENT_POST_API=https://postman-echo.com
