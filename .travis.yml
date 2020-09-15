@@ -47,5 +47,5 @@ script:
 #  - ./ci-test.sh
 #  - source /opt/ros/melodic/setup.bash
 #  - catkin_make
-after_succes:
+after_success:
   - codecov
