@@ -26,6 +26,7 @@ env:
     - USE_DEB=true  
       ROS_DISTRO="melodic" 
       ROS_REPO=ros
+      ADDITIONAL_DEBS="libcpprest-dev"
 
 allow_failures:
     - env: ROS_DISTRO="melodic" ROS_REPO=ros  ADDITIONAL_DEBS="libcpprest-dev"
