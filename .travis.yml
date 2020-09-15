@@ -40,6 +40,7 @@ install:
   - git clone https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
 
 before_script:
+  - sudo apt-get update
   - sudo apt-get install python3-pip
   - sudo apt-get install python3-setuptools
   - sudo apt-get install nohup
