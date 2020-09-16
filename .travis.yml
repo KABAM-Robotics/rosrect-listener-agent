@@ -30,6 +30,7 @@ env:
       ROS_DISTRO="melodic" 
       ROS_REPO=ros
       ADDITIONAL_DEBS="libcpprest-dev"
+      CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"
 
 allow_failures:
     - env: ROS_DISTRO="melodic" ROS_REPO=ros  ADDITIONAL_DEBS="libcpprest-dev"
@@ -47,6 +48,7 @@ before_script:
   - sudo apt-get update
   - sudo apt-get install python3-pip
   - sudo apt-get install python3-setuptools
+  - sudo apt install gcovr
   - pip3 install sanic
   - pip3 install databases
   - pip3 install aiosqlite
@@ -57,7 +59,6 @@ before_script:
   - nohup python3 rosrect-ecs-api-server/src/ecs_endpoint.py &
 script:
   - source .industrial_ci/travis.sh
-  - catkin_make -DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug rosrect-listener-agent_coverage_report
   - gcovr -r . --exclude-directories test --xml-pretty -o coverage.xml
 
 after_success:
