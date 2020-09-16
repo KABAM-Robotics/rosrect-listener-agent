@@ -37,7 +37,7 @@ allow_failures:
 before_install:
   #installing microsoft libcpprest dependency
   - sudo apt-get install libcpprest-dev
-  - pip3 install --user cpp-coveralls
+  - pip install --user cpp-coveralls
 
 install:
   - git clone https://github.com/cognicept-admin/rosrect-ecs-api-server.git  
