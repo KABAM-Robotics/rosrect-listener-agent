@@ -57,10 +57,11 @@ before_script:
   - export ECS_DB_LOC=rosrect-ecs-api-server/ecs.db
   - chmod +x ci-test.sh
   - ./ci-test.sh
+  - sleep 2
 script:
   - source .industrial_ci/travis.sh
   - gcovr -r . --exclude-directories test
 
 after_success:
   - coveralls --gcov-options '\-lp'
-  - kill $APP_PID
+
