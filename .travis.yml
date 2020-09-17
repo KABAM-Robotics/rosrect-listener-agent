@@ -29,7 +29,7 @@ env:
     - USE_DEB=true  
       ROS_DISTRO="melodic" 
       ROS_REPO=ros
-      ADDITIONAL_DEBS="libcpprest-dev"
+      ADDITIONAL_DEBS="libcpprest-dev curl"
       CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"
 
 allow_failures:
