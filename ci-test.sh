@@ -13,7 +13,6 @@ echo $ECS_API
 # python3 rosrect-ecs-api-server/src/ecs_endpoint.py &
 # APP_PID=$!
 
-/etc/apache2/ports.conf
 
 cd rosrect-ecs-api-server
 docker build -t rosrect_ecs_api_server .
@@ -23,6 +22,7 @@ docker run -it \
 -p 8000:8000 \
 --name=ecs_api_server  \
 --volume="${HOME}/rosrect-ecs-api-server/ecs.db:/root/.cognicept/ecs.db" \
+-- bind 0.0.0.0
 rosrect_ecs_api_server:latest  \
 ecs_api_server/ecs_endpoint.py
 
