@@ -63,3 +63,4 @@ script:
 
 after_success:
   - coveralls --gcov-options '\-lp'
+  - kill $APP_PID

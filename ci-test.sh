@@ -9,4 +9,5 @@ echo "Checking ECS API Val"
 echo $ECS_API
 
 
-python3 rosrect-ecs-api-server/src/ecs_endpoint.py
+python3 rosrect-ecs-api-server/src/ecs_endpoint.py &
+APP_PID=$!
