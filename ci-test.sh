@@ -9,5 +9,6 @@ echo "Checking ECS API Val"
 echo $ECS_API
 
 
+pip3 install -r requirements.txt
 python3 rosrect-ecs-api-server/src/ecs_endpoint.py &
 APP_PID=$!
