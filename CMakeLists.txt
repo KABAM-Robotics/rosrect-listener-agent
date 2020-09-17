@@ -194,14 +194,14 @@ if(CATKIN_ENABLE_TESTING)
 
   # Integration test for listener agent node as rostest
   add_rostest_gtest(listeneragent_test_node_ros test/listener_integration_test_ros.test test/itest_listeneragent_ros.cpp)
-  #add_rostest_gtest(listeneragent_test_node_db test/listener_integration_test_db.test test/itest_listeneragent_db.cpp)
+  add_rostest_gtest(listeneragent_test_node_db test/listener_integration_test_db.test test/itest_listeneragent_db.cpp)
   add_rostest_gtest(listeneragent_test_node_telemetry test/listener_integration_test_telemetry.test test/itest_listeneragent_telemetry.cpp)
 
   target_link_libraries(backend_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest)
   target_link_libraries(robotevent_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest)
   target_link_libraries(statemanager_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest)
   target_link_libraries(listeneragent_test_node_ros ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest)
-  #target_link_libraries(listeneragent_test_node_db ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest)
+  target_link_libraries(listeneragent_test_node_db ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest)
   target_link_libraries(listeneragent_test_node_telemetry ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest)
 
   if(ENABLE_COVERAGE_TESTING)
