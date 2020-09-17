@@ -6,6 +6,7 @@
 #include <sstream>
 #include <ctime>
 #include <rosgraph_msgs/Log.h>
+#include <diagnostic_msgs/DiagnosticArray.h>
 #include <rosrect-listener-agent/backend_api.h>
 #include <rosrect-listener-agent/robot_event.h>
 
@@ -19,6 +20,7 @@ class StateManager
     std::vector<std::vector<std::string>> msg_data; // Accumulated message for current event stored as vector of vector of strings
     BackendApi api_instance;                        // Back end API instance
     RobotEvent event_instance;                      // Robot event instance
+    std::vector<std::vector<std::string>> diag_data;// Accumulated diagnostics stored as vector of vector of strings
 
 public:
     StateManager();
@@ -32,5 +34,8 @@ public:
     void check_warning(std::string, std::string);                                                         // Check warning suppression
     void check_info(std::string, std::string);                                                            // Check info suppression
     void check_heartbeat(bool, web::json::value);                                                         // Performs heartbeat check and pushes appropriate data
+    void check_diagnostic(std::string, std::vector<diagnostic_msgs::DiagnosticStatus>, web::json::value); // State management for diagnostics
+    void check_diag_data(std::string, std::string, std::string);                                          // Check diagnostic suppression
+    std::vector<std::string> does_diag_exist(std::string, std::string, std::string);                      // Check if message already logged with this robot
     void clear();                                                                                         // Clearing all states
 };

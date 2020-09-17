@@ -420,6 +420,161 @@ void StateManager::check_heartbeat(bool status, json::value telemetry)
     this->api_instance.push_status(status, telemetry);
 }
 
+void StateManager::check_diagnostic(std::string robot_code, std::vector<diagnostic_msgs::DiagnosticStatus> current_diag, json::value telemetry)
+{
+    // Check diagnostic data and if not suppressed, push it to the event
+
+    // Variables to store diagnostic info for state management
+    std::string diag_str;
+    int diag_level;
+
+    for (unsigned int idx = 0; idx < current_diag.size(); idx++)
+    {
+        // Store diagnostics name+hardware_id in a single string for quick search    
+        diag_str = current_diag[idx].name + "_" + current_diag[idx].hardware_id;
+        // Diagnostics level. Main determination for state suppression
+        diag_level = static_cast<int>(current_diag[idx].level);
+        // Check if diagnostic needs to be suppressed. All diagnostics with the same str
+        // and no change in level are suppressed. We process only when there is change in levels.
+        this->check_diag_data(robot_code, diag_str, std::to_string(diag_level));
+
+        if (this->suppress_flag)
+        {
+            // If suppressed, do nothing
+            // std::cout << "Suppressed!" << std::endl;
+        }
+        else
+        {
+            // std::cout << "Not suppressed! " << diag_str << std::endl;
+            // If not suppressed, send it to event to update
+
+            // Construct ROS log equivalent of diag
+            rosgraph_msgs::Log rosmsg;
+            rosmsg.name = diag_str;
+            rosmsg.msg = current_diag[idx].message;
+
+            if (diag_level == 2)
+            {
+                rosmsg.level = rosmsg.ERROR;
+            }
+            else if ((diag_level == 1) || (diag_level == 3))
+            {
+                rosmsg.level = rosmsg.WARN;
+            }
+            else
+            {
+                rosmsg.level = rosmsg.INFO;
+            }
+
+            rosgraph_msgs::Log::ConstPtr data(new rosgraph_msgs::Log(rosmsg));
+
+            this->event_instance.update_log(data, json::value::null(), telemetry, "ROS");
+
+            // Push log
+            this->api_instance.push_event_log(this->event_instance.get_log());
+
+            // if (data->level == 8)
+            // {
+            //     // Clear everything, end of event
+            //     this->clear();
+            // }
+            // else
+            // {
+            //     // Clear only log
+            //     this->event_instance.clear_log();
+            // }
+        }
+    }
+}
+
+void StateManager::check_diag_data(std::string robot_code, std::string diag_str, std::string level)
+{
+    // Check if diagnostic already reported
+    std::vector<std::string> found = this->does_diag_exist(robot_code, diag_str, level);
+    bool exist;
+
+    if (found[0] == "")
+    {
+        exist = false;
+    }
+    else
+    {
+        exist = true;
+    }
+
+    if (exist)
+    {
+        // Found, suppress
+        this->suppress_flag = true;
+    }
+    else
+    {
+        // Not found, add to data
+
+        std::vector<std::string> diag_details;
+
+        // Get current time
+        time_t now;
+        time(&now);
+        char buf[sizeof "2011-10-08T07:07:09Z"];
+        strftime(buf, sizeof buf, "%FT%TZ", gmtime(&now));
+        std::string time_str = std::string(buf);
+
+        // Push details to data
+        diag_details.push_back(robot_code);
+        diag_details.push_back(diag_str);
+        diag_details.push_back(level);
+        diag_details.push_back(time_str);
+        this->diag_data.push_back(diag_details);
+
+        // Do not suppress
+        this->suppress_flag = false;
+    }
+}
+
+std::vector<std::string> StateManager::does_diag_exist(std::string robot_code, std::string diag_str, std::string level)
+{
+
+    // Find if diagnostic is already recorded for the given robot code at the given level
+    std::vector<std::vector<std::string>>::const_iterator row;
+    std::vector<std::vector<std::vector<std::string>>::const_iterator> erase_list;
+
+    for (row = this->diag_data.begin(); row != this->diag_data.end(); row++)
+    {
+        auto found_name = find(row->begin(), row->end(), diag_str);
+
+        if (found_name != row->end())
+        {
+            // Found name, check for other parameters
+            if ((find(row->begin(), row->end(), level) != row->end()) &&
+                (find(row->begin(), row->end(), robot_code) != row->end()))
+            {
+                // Found level as well, just return the row since it is already reported
+                return *(row);
+            }
+            else
+            {
+                // Level not found but name is. This means state has changed.
+                // Add row to erase list.
+                // Will add a new row with this name downstream.
+                erase_list.push_back(row);
+            }
+        }
+    }
+
+    // Erase elements
+    for (auto element : erase_list)
+    {
+        this->diag_data.erase(element);
+    }
+
+    // Return empty string if no match
+    std::vector<std::string> emptyString;
+    emptyString.push_back("");
+
+    return emptyString;
+}
+
 void StateManager::clear()
 {
     // Clears the state manager data for a new session

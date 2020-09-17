@@ -74,6 +74,10 @@ cs_listener::cs_listener()
   // Telemetry
   // Create JSON object
   this->telemetry = json::value::object();
+
+  // Diagnostics
+  this->num_diag_samples = 15;
+  this->curr_diag_sample = INT_MIN;
 }
 
 cs_listener::~cs_listener()
@@ -190,6 +194,13 @@ void cs_listener::setup_telemetry(ros::NodeHandle nh)
   }
 }
 
+void cs_listener::setup_diagnostics(ros::NodeHandle nh)
+{
+  // Subscribe to diagnostics_agg topic
+  this->diag_sub =
+      nh.subscribe("diagnostics_agg", 1000, &cs_listener::diag_callback, this);
+}
+
 void cs_listener::log_callback(const rosgraph_msgs::Log::ConstPtr &rosmsg)
 {
 
@@ -233,6 +244,36 @@ void cs_listener::pose_callback(const geometry_msgs::PoseWithCovarianceStamped::
   this->telemetry[poseKey] = pose_data;
 }
 
+void cs_listener::diag_callback(const diagnostic_msgs::DiagnosticArray::ConstPtr &rosmsg)
+{
+  // Process diagnostics information
+
+  // Check if current diagnostic sample index is less than prescribed number
+  // If yes, ignore sample until prescribed number is reached. Just a simple downsample
+  if(this->curr_diag_sample < this->num_diag_samples)
+  {
+    // Handle special case of if the current sample index is INT_MIN then it is the first ever sample, so we process.
+    if (this->curr_diag_sample == INT_MIN)
+    {
+      this->state_manager_instance.check_diagnostic(this->robot_code, rosmsg->status, this->telemetry);
+      this->curr_diag_sample = 0;
+    }
+    else
+    {
+      // General case to ignore current sample
+      this->curr_diag_sample++;
+    }
+  }
+  else
+  {
+    // General case to process current sample if index > prescribed number
+    this->state_manager_instance.check_diagnostic(this->robot_code, rosmsg->status, this->telemetry);
+    // Reset index back to 0 to restart sampling loop again
+    this->curr_diag_sample = 0;
+  }
+
+}
+
 void cs_listener::heartbeat_start(ros::NodeHandle nh)
 {
   // Records heartbeat online status when node is started. Future status is pushed by timer bound callback
@@ -271,6 +312,9 @@ int main(int argc, char **argv)
 
   // Setup telemetry
   cs_agent.setup_telemetry(nh);
+
+  // Setup diagnostics
+  cs_agent.setup_diagnostics(nh);
 
   // Create /rosout_agg subscriber
   ros::Subscriber rosout_agg_sub =
