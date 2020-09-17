@@ -13,6 +13,8 @@ echo $ECS_API
 # python3 rosrect-ecs-api-server/src/ecs_endpoint.py &
 # APP_PID=$!
 
+/etc/apache2/ports.conf
+
 cd rosrect-ecs-api-server
 docker build -t rosrect_ecs_api_server .
 
@@ -24,4 +26,4 @@ docker run -it \
 rosrect_ecs_api_server:latest  \
 ecs_api_server/ecs_endpoint.py
 
-curl 'http://localhost:8000/ping'
+curl 'http://127.0.0.1:8000/ping'
