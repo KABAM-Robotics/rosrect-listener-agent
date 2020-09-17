@@ -1,7 +1,5 @@
 sudo: required 
-dist: bionic
-services:
-  - docker 
+dist: bionic 
 language: generic
 branches:
   only:
