@@ -56,9 +56,10 @@ before_script:
   - export AGENT_POST_API=https://postman-echo.com
   - export ECS_DB_LOC=rosrect-ecs-api-server/ecs.db
   - chmod +x ci-test.sh
+
+script:
   - ./ci-test.sh
   - sleep 2
-script:
   - source .industrial_ci/travis.sh
   - gcovr -r . --exclude-directories test
 
