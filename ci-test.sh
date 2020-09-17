@@ -3,7 +3,7 @@
 #chmod +x rosrect-ecs-api-server/src/ecs_endpoint.pynohup python3 rosrect-ecs-api-server/src/ecs_endpoint.py &
 
 #Troubleshooting
-export ECS_API=http://0.0.0.0:8000
+export ECS_API=http://127.0.0.1:8000
 export AGENT_POST_API=https://postman-echo.com
 echo "Checking ECS API Val"
 echo $ECS_API

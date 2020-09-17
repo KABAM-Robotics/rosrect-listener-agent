@@ -20,7 +20,7 @@ env:
    - ROS_REPO=ros
    - NOT_TEST_INSTALL=true
    - CCACHE_DIR=$HOME/.ccache  
-   - ECS_API=http://0.0.0.0:8000
+   - ECS_API=http://127.0.0.1:8000
    - AGENT_POST_API=https://postman-echo.com
    - ECS_DB_LOC=rosrect-ecs-api-server/ecs.db
   matrix:
@@ -50,7 +50,7 @@ before_script:
   - pip3 install sanic
   - pip3 install databases
   - pip3 install aiosqlite
-  - export ECS_API=http://0.0.0.0:8000
+  - export ECS_API=http://127.0.0.1:8000
   - export AGENT_POST_API=https://postman-echo.com
   - export ECS_DB_LOC=rosrect-ecs-api-server/ecs.db
   - chmod +x ci-test.sh
