@@ -24,3 +24,5 @@ docker run -it \
 --volume="${HOME}/rosrect-ecs-api-server/ecs.db:/root/.cognicept/ecs.db" \
 rosrect_ecs_api_server:latest  \
 ecs_api_server/ecs_endpoint.py
+
+curl 'http://localhost:8000/ping'
