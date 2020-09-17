@@ -59,7 +59,8 @@ before_script:
 
 script:
   - ./ci-test.sh
-  - sleep 2
+  - sleep 10
+  - curl 'http://127.0.0.1:8000/ping'
   - source .industrial_ci/travis.sh
   - gcovr -r . --exclude-directories test
 
