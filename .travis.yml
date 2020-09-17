@@ -55,6 +55,7 @@ before_script:
   - export ECS_API=http://0.0.0.0:8000
   - export AGENT_POST_API=https://postman-echo.com
   - export ECS_DB_LOC=rosrect-ecs-api-server/ecs.db
+  - chmod +x ci-test.sh
   - ./ci-test.sh
 script:
   - source .industrial_ci/travis.sh
