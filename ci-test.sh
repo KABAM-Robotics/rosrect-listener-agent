@@ -22,7 +22,7 @@ docker run -it \
 -p 8000:8000 \
 --name=ecs_api_server  \
 --volume="${HOME}/rosrect-ecs-api-server/ecs.db:/root/.cognicept/ecs.db" \
--- network=host \
+--network=host \
 rosrect_ecs_api_server:latest  \
 ecs_api_server/ecs_endpoint.py
 
