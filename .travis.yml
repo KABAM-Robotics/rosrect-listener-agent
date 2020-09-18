@@ -54,13 +54,15 @@ before_script:
   - export AGENT_POST_API=https://postman-echo.com
   - export ECS_DB_LOC=rosrect-ecs-api-server/ecs.db
   - chmod +x ci-test.sh
-
-script:
   - ./ci-test.sh
   - sleep 10
+
+script:
   - curl 'http://127.0.0.1:8000/ping'
   - source .industrial_ci/travis.sh
   - gcovr -r . --exclude-directories test
+  - curl 'http://127.0.0.1:8000/ping'
+
 
 after_success:
   - coveralls --gcov-options '\-lp'
