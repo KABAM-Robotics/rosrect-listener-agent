@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <fstream>
 #include <cstdlib>
-#include <rosrect-listener-agent/backend_api.h>
+#include <error_resolution_diagnoser/backend_api.h>
 
 using namespace utility;              // Common utilities like string conversions
 using namespace web;                  // Common features like URIs.

@@ -1,4 +1,4 @@
-#include <rosrect-listener-agent/listener_agent.h>
+#include <error_resolution_diagnoser/listener_agent.h>
 
 using namespace web::json; // JSON features
 using namespace web;       // Common features like URIs.
@@ -267,7 +267,7 @@ int main(int argc, char **argv)
 {
 
   // Initialize node
-  ros::init(argc, argv, "rosrect_listener_agent_node");
+  ros::init(argc, argv, "error_resolution_diagnoser");
   ros::NodeHandle nh;
   ros::Rate looprate(10);
 

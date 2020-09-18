@@ -7,7 +7,7 @@
 #include <fstream>
 #include <ros/console.h>
 #include <boost/date_time.hpp>
-#include <rosrect-listener-agent/tester_talker.h>
+#include <error_resolution_diagnoser/tester_talker.h>
 
 using namespace web;       // Common features like URIs.
 using namespace web::json; // JSON features

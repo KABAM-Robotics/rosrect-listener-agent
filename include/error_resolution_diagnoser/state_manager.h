@@ -6,8 +6,8 @@
 #include <sstream>
 #include <ctime>
 #include <rosgraph_msgs/Log.h>
-#include <rosrect-listener-agent/backend_api.h>
-#include <rosrect-listener-agent/robot_event.h>
+#include <error_resolution_diagnoser/backend_api.h>
+#include <error_resolution_diagnoser/robot_event.h>
 
 class StateManager
 {
