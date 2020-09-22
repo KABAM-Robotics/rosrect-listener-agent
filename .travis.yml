@@ -26,7 +26,7 @@ env:
   matrix:
     - USE_DEB=true  
       ROS_DISTRO="melodic" 
-      ROS_REPO=ros
+      ROS_REPO=ros-shadow-fixed
       DOCKER_BUILD_OPTS="--net=host"
       DOCKER_RUN_OPTS=--privileged
       ADDITIONAL_DEBS="libcpprest-dev curl"
