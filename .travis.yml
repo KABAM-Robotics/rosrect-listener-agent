@@ -29,8 +29,8 @@ env:
       ROS_REPO=ros
       DOCKER_BUILD_OPTS="--net=host"
       DOCKER_RUN_OPTS=--privileged
-      ADDITIONAL_DEBS="libcpprest-dev curl"
-      ADDITIONAL_CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"
+      ADDITIONAL_DEBS="libcpprest-dev curl apt-utils"
+      CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"      
 
 allow_failures:
     - env: ROS_DISTRO="melodic" ROS_REPO=ros  ADDITIONAL_DEBS="apt-utils libcpprest-dev"
@@ -64,6 +64,7 @@ script:
   - curl 'http://127.0.0.1:8000/ping'
   - source .industrial_ci/travis.sh
   - gcovr -r . --exclude-directories test
+  - curl 'http://127.0.0.1:8000/ert/error-data/'
   - curl 'http://127.0.0.1:8000/ping'
 
 
