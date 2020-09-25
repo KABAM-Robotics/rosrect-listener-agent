@@ -56,6 +56,7 @@ before_script:
   - export AGENT_POST_API=https://postman-echo.com
   - export ECS_DB_LOC=rosrect-ecs-api-server/ecs.db
   - chmod +x ci-test.sh
+  - chmod +x .coverage.sh
   - ./ci-test.sh
   - ./.coverage.sh
   - sleep 10
