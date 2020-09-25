@@ -3,7 +3,7 @@ dist: bionic
 language: generic
 branches:
   only:
-  - travis-ci
+  - fix/package-renaming
 
 cache:
   directories:
@@ -22,7 +22,7 @@ env:
    - CCACHE_DIR=$HOME/.ccache  
    - ECS_API=http://127.0.0.1:8000
    - AGENT_POST_API=https://postman-echo.com
-   - ECS_DB_LOC=rosrect-ecs-api-server/ecs.db
+   - ECS_DB_LOC=error_classification_server/ecs.db
   matrix:
     - USE_DEB=true  
       ROS_DISTRO="melodic" 
@@ -30,41 +30,44 @@ env:
       ADDITIONAL_DEBS="libcpprest-dev curl"
       CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"
       DOCKER_RUN_OPTS="--net=host -e ECS_API=http://127.0.0.1:8000 -e AGENT_POST_API=https://postman-echo.com"
-
+      #AFTER_SCRIPT="./.coverage.sh"
 allow_failures:
-    - env: ROS_DISTRO="melodic" ROS_REPO=ros  ADDITIONAL_DEBS="libcpprest-dev"
-
+    - env: ROS_DISTRO="melodic" ROS_REPO=ros  ADDITIONAL_DEBS="apt-utils libcpprest-dev"
 before_install:
   #installing microsoft libcpprest dependency
   - sudo apt-get install libcpprest-dev
   - pip install --user cpp-coveralls
 
 install:
-  - git clone https://github.com/cognicept-admin/rosrect-ecs-api-server.git  
+  - git clone https://github.com/cognicept-admin/error_classification_server.git  
   - git clone https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
 
 before_script:
   - sudo apt-get update
   - sudo apt-get install python3-pip
   - sudo apt-get install python3-setuptools
+  - sudo apt-get install apt-utils libcpprest-dev
   - sudo apt install gcovr
   - pip3 install sanic
   - pip3 install databases
   - pip3 install aiosqlite
   - export ECS_API=http://127.0.0.1:8000
   - export AGENT_POST_API=https://postman-echo.com
-  - export ECS_DB_LOC=rosrect-ecs-api-server/ecs.db
+  - export ECS_DB_LOC=error_classification_server/ecs.db
   - chmod +x ci-test.sh
+  #- chmod +x .coverage.sh
   - ./ci-test.sh
   - sleep 10
 
 script:
   - curl 'http://127.0.0.1:8000/ping'
   - source .industrial_ci/travis.sh
-  - gcovr -r . --exclude-directories test
+  #- ./.coverage.sh
+#  - gcovr -r . --exclude-directories test
+  - curl 'http://127.0.0.1:8000/ert/error-data/'
   - curl 'http://127.0.0.1:8000/ping'
 
 
-after_success:
-  - coveralls --gcov-options '\-lp'
+# after_success:
+#   - coveralls --exclude lib --exclude tests --gcov-options '\-lp'
 
