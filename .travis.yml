@@ -62,7 +62,7 @@ before_script:
 script:
   - curl 'http://127.0.0.1:8000/ping'
   - source .industrial_ci/travis.sh
-  - gcovr -r rosrect-listener-agent/ --exclude-directories test
+#  - gcovr -r . --exclude-directories test
   - curl 'http://127.0.0.1:8000/ert/error-data/'
   - curl 'http://127.0.0.1:8000/ping'
 
