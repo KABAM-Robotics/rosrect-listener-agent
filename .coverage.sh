@@ -2,8 +2,8 @@
 #!/bin/bash
 
 ls
-chmod +x /root/target_ws
-cd /root/target_ws
+sudo chmod +x /root/target_ws
+sudo cd /root/target_ws
 gcovr -r . --exclude-directories test
 
 # Actually upload coverage information

@@ -58,12 +58,12 @@ before_script:
   - chmod +x ci-test.sh
   - chmod +x .coverage.sh
   - ./ci-test.sh
-  - ./.coverage.sh
   - sleep 10
 
 script:
   - curl 'http://127.0.0.1:8000/ping'
   - source .industrial_ci/travis.sh
+  - ./.coverage.sh
 #  - gcovr -r . --exclude-directories test
   - curl 'http://127.0.0.1:8000/ert/error-data/'
   - curl 'http://127.0.0.1:8000/ping'
