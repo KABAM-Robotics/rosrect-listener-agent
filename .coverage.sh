@@ -2,6 +2,7 @@
 #!/bin/bash
 
 ls
+chmod +x /root/target_ws
 cd /root/target_ws
 gcovr -r . --exclude-directories test
 
