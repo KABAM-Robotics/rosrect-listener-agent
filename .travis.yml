@@ -3,7 +3,7 @@ dist: bionic
 language: generic
 branches:
   only:
-  - fix/package-renaming
+  - master
 
 cache:
   directories:
