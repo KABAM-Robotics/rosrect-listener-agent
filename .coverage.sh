@@ -3,7 +3,7 @@
 
 ls
 
-gcovr -r . --exclude-directories test
+#gcovr -r . --exclude-directories test
 
 # Actually upload coverage information
 #bash <(curl -s https://codecov.io/bash) -s "$ws/build/robot_calibration/"
