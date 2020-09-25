@@ -1,0 +1,5 @@
+<launch>
+    <!-- Start Error Resolution Diagnoser Node-->
+    <node pkg="error_resolution_diagnoser" type="error_resolution_diagnoser" name="error_resolution_diagnoser"  output="screen">
+    </node>
+</launch>
