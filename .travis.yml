@@ -30,7 +30,7 @@ env:
       ADDITIONAL_DEBS="libcpprest-dev curl"
       CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"
       DOCKER_RUN_OPTS="--net=host -e ECS_API=http://127.0.0.1:8000 -e AGENT_POST_API=https://postman-echo.com"
-      AFTER_SCRIPT="./.coverage.sh"
+      #AFTER_SCRIPT="./.coverage.sh"
 allow_failures:
     - env: ROS_DISTRO="melodic" ROS_REPO=ros  ADDITIONAL_DEBS="apt-utils libcpprest-dev"
 
@@ -62,7 +62,7 @@ before_script:
 script:
   - curl 'http://127.0.0.1:8000/ping'
   - source .industrial_ci/travis.sh
-  #- gcovr -r . --exclude-directories test
+  - gcovr -r rosrect-listener-agent/ --exclude-directories test
   - curl 'http://127.0.0.1:8000/ert/error-data/'
   - curl 'http://127.0.0.1:8000/ping'
 
