@@ -29,7 +29,7 @@ env:
       ROS_REPO=ros
       ADDITIONAL_DEBS="libcpprest-dev curl"
       CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"
-      DOCKER_RUN_OPTS="--net=host -e ECS_API=http://127.0.0.1:8000 -e AGENT_POST_API=https://postman-echo.com bash <(curl -s https://raw.githubusercontent.com/rarrais/ros_coverage/master/ros_coverage.sh)"
+      DOCKER_RUN_OPTS="--net=host -e ECS_API=http://127.0.0.1:8000 -e AGENT_POST_API=https://postman-echo.com"
       #AFTER_SCRIPT="./.coverage.sh"
 allow_failures:
     - env: ROS_DISTRO="melodic" ROS_REPO=ros  ADDITIONAL_DEBS="apt-utils libcpprest-dev"
