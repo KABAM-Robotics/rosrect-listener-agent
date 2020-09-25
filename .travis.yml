@@ -29,6 +29,7 @@ env:
       ROS_REPO=ros
       ADDITIONAL_DEBS="libcpprest-dev curl"
       CMAKE_ARGS="-DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug"
+      DOCKER_RUN_OPTS="--net=host"
 
 allow_failures:
     - env: ROS_DISTRO="melodic" ROS_REPO=ros  ADDITIONAL_DEBS="libcpprest-dev"
