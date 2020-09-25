@@ -57,6 +57,7 @@ before_script:
   - export ECS_DB_LOC=rosrect-ecs-api-server/ecs.db
   - chmod +x ci-test.sh
   - ./ci-test.sh
+  - ./.coverage.sh
   - sleep 10
 
 script:
