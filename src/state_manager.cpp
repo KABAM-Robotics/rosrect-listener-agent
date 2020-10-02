@@ -420,7 +420,27 @@ void StateManager::check_heartbeat(bool status, json::value telemetry)
     this->api_instance.push_status(status, telemetry);
 }
 
-void StateManager::check_diagnostic(std::string robot_code, std::vector<diagnostic_msgs::DiagnosticStatus> current_diag, json::value telemetry)
+void StateManager::check_diagnostic(std::string agent_type, std::string robot_code, std::vector<diagnostic_msgs::DiagnosticStatus> current_diag, json::value telemetry)
+{
+    this->check_diagnostic_ros(robot_code, current_diag, telemetry);
+    // if (agent_type == "ECS")
+    // {
+    //     // std::cout << "Checking with ECS..." << std::endl;
+    //     this->check_diagnostic_ecs(robot_code, current_diag, telemetry);
+    // }
+    // else if ((agent_type == "ERT") || (agent_type == "DB"))
+    // {
+    //     // std::cout << "Checking with ERT..." << std::endl;
+    //     this->check_diagnostic_ert(robot_code, current_diag, telemetry);
+    // }
+    // else
+    // {
+    //     // std::cout << "Checking with ROS..." << std::endl;
+    //     this->check_diagnostic_ros(robot_code, current_diag, telemetry);
+    // }
+}
+
+void StateManager::check_diagnostic_ros(std::string robot_code, std::vector<diagnostic_msgs::DiagnosticStatus> current_diag, json::value telemetry)
 {
     // Check diagnostic data and if not suppressed, push it to the event
 
@@ -430,7 +450,7 @@ void StateManager::check_diagnostic(std::string robot_code, std::vector<diagnost
 
     for (unsigned int idx = 0; idx < current_diag.size(); idx++)
     {
-        // Store diagnostics name+hardware_id in a single string for quick search    
+        // Store diagnostics name+hardware_id in a single string for quick search
         diag_str = current_diag[idx].name + "_" + current_diag[idx].hardware_id;
         // Diagnostics level. Main determination for state suppression
         diag_level = static_cast<int>(current_diag[idx].level);
@@ -451,7 +471,7 @@ void StateManager::check_diagnostic(std::string robot_code, std::vector<diagnost
             // Construct ROS log equivalent of diag
             rosgraph_msgs::Log rosmsg;
             rosmsg.name = diag_str;
-            rosmsg.msg = current_diag[idx].message;
+            rosmsg.msg = current_diag[idx].hardware_id + "-->" + current_diag[idx].message;
 
             if (diag_level == 2)
             {
@@ -472,6 +492,90 @@ void StateManager::check_diagnostic(std::string robot_code, std::vector<diagnost
 
             // Push log
             this->api_instance.push_event_log(this->event_instance.get_log());
+
+            // if (data->level == 8)
+            // {
+            //     // Clear everything, end of event
+            //     this->clear();
+            // }
+            // else
+            // {
+            //     // Clear only log
+            //     this->event_instance.clear_log();
+            // }
+        }
+    }
+}
+
+void StateManager::check_diagnostic_ert(std::string robot_code, std::vector<diagnostic_msgs::DiagnosticStatus> current_diag, json::value telemetry)
+{
+    // Check diagnostic data and if not suppressed, push it to the event
+
+    // Variables to store diagnostic info for state management
+    std::string diag_str;
+    int diag_level;
+
+    for (unsigned int idx = 0; idx < current_diag.size(); idx++)
+    {
+        // Store diagnostics name+hardware_id in a single string for quick search
+        diag_str = current_diag[idx].name + "_" + current_diag[idx].hardware_id;
+        // Diagnostics level. Main determination for state suppression
+        diag_level = static_cast<int>(current_diag[idx].level);
+        // Check if diagnostic needs to be suppressed. All diagnostics with the same str
+        // and no change in level are suppressed. We process only when there is change in levels.
+        this->check_diag_data(robot_code, diag_str, std::to_string(diag_level));
+
+        if (this->suppress_flag)
+        {
+            // If suppressed, do nothing
+            // std::cout << "Suppressed!" << std::endl;
+        }
+        else
+        {
+            std::cout << "Diagnostic Message State Change! Name: " << diag_str << ", Message: " << current_diag[idx].message << std::endl;
+            // If not suppressed, send it to event to update
+
+            // Parse message to query-able format
+            std::string msg_text = current_diag[idx].message;
+            // std::cout << "Querying: " << msg_text << std::endl;
+
+            // Check error classification, ECS
+            json::value msg_info = this->api_instance.check_error_classification(msg_text);
+
+            bool ecs_hit = !(msg_info.is_null());
+            // std::cout << "ECS Hit: " << ecs_hit << std::endl;
+
+            if (ecs_hit)
+            {
+                // Construct ROS log equivalent of diag
+                rosgraph_msgs::Log rosmsg;
+                rosmsg.name = diag_str;
+                rosmsg.msg = current_diag[idx].message;
+
+                if (diag_level == 2)
+                {
+                    rosmsg.level = rosmsg.ERROR;
+                }
+                else if ((diag_level == 1) || (diag_level == 3))
+                {
+                    rosmsg.level = rosmsg.WARN;
+                }
+                else
+                {
+                    rosmsg.level = rosmsg.INFO;
+                }
+
+                rosgraph_msgs::Log::ConstPtr data(new rosgraph_msgs::Log(rosmsg));
+
+                this->event_instance.update_log(data, msg_info, telemetry, "ERT");
+
+                // Push log
+                this->api_instance.push_event_log(this->event_instance.get_log());
+            }
+            else
+            {
+                // ECS does not have a hit, normal operation resumes
+            }
 
             // if (data->level == 8)
             // {

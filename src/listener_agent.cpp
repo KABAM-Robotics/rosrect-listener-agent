@@ -255,7 +255,7 @@ void cs_listener::diag_callback(const diagnostic_msgs::DiagnosticArray::ConstPtr
     // Handle special case of if the current sample index is INT_MIN then it is the first ever sample, so we process.
     if (this->curr_diag_sample == INT_MIN)
     {
-      this->state_manager_instance.check_diagnostic(this->robot_code, rosmsg->status, this->telemetry);
+      this->state_manager_instance.check_diagnostic(this->agent_type, this->robot_code, rosmsg->status, this->telemetry);
       this->curr_diag_sample = 0;
     }
     else
@@ -267,7 +267,7 @@ void cs_listener::diag_callback(const diagnostic_msgs::DiagnosticArray::ConstPtr
   else
   {
     // General case to process current sample if index > prescribed number
-    this->state_manager_instance.check_diagnostic(this->robot_code, rosmsg->status, this->telemetry);
+    this->state_manager_instance.check_diagnostic(this->agent_type, this->robot_code, rosmsg->status, this->telemetry);
     // Reset index back to 0 to restart sampling loop again
     this->curr_diag_sample = 0;
   }
