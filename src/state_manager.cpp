@@ -445,7 +445,7 @@ void StateManager::check_diagnostic(std::string robot_code, std::vector<diagnost
         }
         else
         {
-            // std::cout << "Not suppressed! " << diag_str << std::endl;
+            std::cout << "Diagnostic Message State Change! Name: " << diag_str << ", Message: " << current_diag[idx].message << std::endl;
             // If not suppressed, send it to event to update
 
             // Construct ROS log equivalent of diag
