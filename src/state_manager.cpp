@@ -447,6 +447,7 @@ void StateManager::check_diagnostic_ros(std::string robot_code, std::vector<diag
     // Variables to store diagnostic info for state management
     std::string diag_str;
     int diag_level;
+    std::string diag_ident;
 
     for (unsigned int idx = 0; idx < current_diag.size(); idx++)
     {
@@ -465,13 +466,25 @@ void StateManager::check_diagnostic_ros(std::string robot_code, std::vector<diag
         }
         else
         {
+            std::string diag_name = current_diag[idx].name;
+            std::string diag_hwid = current_diag[idx].hardware_id;
+
+            if (!diag_name.empty())
+            {
+                diag_ident = diag_name;
+            }
+            else if (!diag_hwid.empty())
+            {
+                diag_ident = diag_hwid;
+            }
+
             std::cout << "Diagnostic Message State Change! Name: " << diag_str << ", Message: " << current_diag[idx].message << std::endl;
             // If not suppressed, send it to event to update
 
             // Construct ROS log equivalent of diag
             rosgraph_msgs::Log rosmsg;
             rosmsg.name = diag_str;
-            rosmsg.msg = current_diag[idx].hardware_id + "-->" + current_diag[idx].message;
+            rosmsg.msg = diag_ident + "-->" + current_diag[idx].message;
 
             if (diag_level == 2)
             {
