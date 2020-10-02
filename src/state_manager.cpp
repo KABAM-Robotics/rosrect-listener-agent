@@ -484,7 +484,14 @@ void StateManager::check_diagnostic_ros(std::string robot_code, std::vector<diag
             // Construct ROS log equivalent of diag
             rosgraph_msgs::Log rosmsg;
             rosmsg.name = diag_str;
-            rosmsg.msg = diag_ident + "-->" + current_diag[idx].message;
+            if (!diag_ident.empty())
+            {
+                rosmsg.msg = diag_ident + "-->" + current_diag[idx].message;
+            }
+            else
+            {
+                rosmsg.msg = current_diag[idx].message;
+            }
 
             if (diag_level == 2)
             {
