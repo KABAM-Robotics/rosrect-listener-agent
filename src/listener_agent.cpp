@@ -3,6 +3,13 @@
 using namespace web::json; // JSON features
 using namespace web;       // Common features like URIs.
 
+enum class RobotStatus
+{
+  INIT,
+  RUNNING,
+  MASTER_DISCONNECTED
+};
+
 cs_listener::cs_listener()
 {
   // Constructor
@@ -250,7 +257,7 @@ void cs_listener::diag_callback(const diagnostic_msgs::DiagnosticArray::ConstPtr
 
   // Check if current diagnostic sample index is less than prescribed number
   // If yes, ignore sample until prescribed number is reached. Just a simple downsample
-  if(this->curr_diag_sample < this->num_diag_samples)
+  if (this->curr_diag_sample < this->num_diag_samples)
   {
     // Handle special case of if the current sample index is INT_MIN then it is the first ever sample, so we process.
     if (this->curr_diag_sample == INT_MIN)
@@ -271,7 +278,6 @@ void cs_listener::diag_callback(const diagnostic_msgs::DiagnosticArray::ConstPtr
     // Reset index back to 0 to restart sampling loop again
     this->curr_diag_sample = 0;
   }
-
 }
 
 void cs_listener::heartbeat_start(ros::NodeHandle nh)
@@ -286,7 +292,7 @@ void cs_listener::heartbeat_start(ros::NodeHandle nh)
 void cs_listener::heartbeat_log(const ros::WallTimerEvent &timer_event)
 {
   // A timer bound method that periodically checks the ROS connection status and passes it to the state manager.
-  bool status = ros::ok;
+  bool status = ros::master::check();
   this->state_manager_instance.check_heartbeat(status, this->telemetry);
 }
 
@@ -320,10 +326,63 @@ int main(int argc, char **argv)
   ros::Subscriber rosout_agg_sub =
       nh.subscribe("rosout_agg", 1000, &cs_listener::log_callback, &cs_agent);
 
+  // ROS Master reconnection parameters
+  RobotStatus status = RobotStatus::RUNNING;
+  std::string session_id;
+  nh.param<std::string>("/run_id", session_id, "unknown");
+  int loop_counter;
+  ROS_INFO("AGENT:: STATUS:: OK");
+
   while (ros::ok())
   {
     ros::spinOnce();
     looprate.sleep();
+
+    // ROS Master Connection/Reconnection
+    bool master_status = ros::master::check();
+    if (!master_status && status == RobotStatus::RUNNING)
+    {
+      // If ROS master is unavailable and robot status was running, disconnect.
+      ROS_ERROR_STREAM("AGENT:: ROS master with session id `" << session_id << "` disconnected.");
+      ROS_INFO("AGENT:: STATUS:: MASTER_DISCONNECTED");
+      status = RobotStatus::MASTER_DISCONNECTED;
+    }
+    else if (master_status && status == RobotStatus::MASTER_DISCONNECTED)
+    {
+      // If ROS master is available and robot status was disconnected, connect.
+      std::string new_session_id;
+      nh.param<std::string>("/run_id", new_session_id, "unknown");
+      ROS_INFO_STREAM("AGENT:: ROS master is back online with session id `" << session_id << "`.");
+      status = RobotStatus::RUNNING;
+      if (new_session_id != session_id)
+      {
+        // If ROS master is new, restart agent.
+        ROS_ERROR("AGENT:: New ROS master detected. Restarting agent.");
+        ROS_INFO("AGENT:: STATUS:: OFFLINE");
+        break;
+      }
+    }
+    else if (!master_status && status == RobotStatus::MASTER_DISCONNECTED)
+    {
+      // If ROS master is not available and robot was disconnected, do nothing.
+    }
+    else
+    {
+      // Normal case
+      status = RobotStatus::RUNNING;
+    }
+
+    if (loop_counter % 6000 == 0)
+    {
+      if (status == RobotStatus::RUNNING)
+      {
+        ROS_INFO("AGENT:: STATUS:: OK");
+      }
+      else if (status == RobotStatus::MASTER_DISCONNECTED)
+      {
+        ROS_INFO("AGENT:: STATUS:: MASTER_DISCONNECTED");
+      }
+    }
   }
 
   return 0;
