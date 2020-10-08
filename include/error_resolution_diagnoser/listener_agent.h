@@ -4,7 +4,7 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <diagnostic_msgs/DiagnosticArray.h>
 #include <iostream>
-#include <rosrect-listener-agent/state_manager.h>
+#include <error_resolution_diagnoser/state_manager.h>
 
 class cs_listener
 {

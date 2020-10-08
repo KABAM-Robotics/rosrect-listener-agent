@@ -17,7 +17,10 @@ pipeline{
     }
     stage ("--Extract test results--") {
     steps {
-    cobertura coberturaReportFile: 'coverage.xml'
+            sh '''
+            sh coverage.sh
+            '''
+      cobertura coberturaReportFile: 'coverage.xml'
     }
     }
   }

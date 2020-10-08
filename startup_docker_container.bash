@@ -2,7 +2,7 @@
 
 # clear
 
-docker build -t cognicept_diagnostics_agent:jeff .
+docker build -t error_resolution_diagnoser .
 
 docker stop cgs_diagnostics_agent
 
@@ -14,5 +14,7 @@ docker run -d \
 --network=host \
 --name=cgs_diagnostics_agent  \
 --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
-cognicept_diagnostics_agent:jeff  \
-rosrun rosrect-listener-agent rosrect-listener-agent
+error_resolution_diagnoser:latest  \
+rosrun error_resolution_diagnoser error_resolution_diagnoser 
+
+# --env="ROS_MASTER_URI=http://localhost:11311" \
