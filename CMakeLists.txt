@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(rosrect-listener-agent)
+project(error_resolution_diagnoser)
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
 ## Find catkin macros and libraries
@@ -94,7 +94,7 @@ find_package(cpprestsdk REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES rosrect-listener-agent-lib
+  LIBRARIES error_resolution_diagnoser_lib
   CATKIN_DEPENDS roscpp std_msgs rosgraph_msgs
 #  DEPENDS system_lib
 )
@@ -109,7 +109,7 @@ include_directories(
 )
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/rosrect-listener-agent.cpp
+#   src/${PROJECT_NAME}/error_resolution_diagnoser.cpp
 # )
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -118,15 +118,15 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_library(rosrect-listener-agent-lib src/backend_api.cpp src/robot_event.cpp src/state_manager.cpp)
-target_link_libraries(rosrect-listener-agent-lib ${catkin_LIBRARIES} cpprestsdk::cpprest)
-add_executable(rosrect-listener-agent src/listener_agent.cpp )
-target_link_libraries(rosrect-listener-agent
+add_library(error_resolution_diagnoser_lib src/backend_api.cpp src/robot_event.cpp src/state_manager.cpp)
+target_link_libraries(error_resolution_diagnoser_lib ${catkin_LIBRARIES} cpprestsdk::cpprest)
+add_executable(error_resolution_diagnoser src/listener_agent.cpp )
+target_link_libraries(error_resolution_diagnoser
   ${catkin_LIBRARIES}
-  rosrect-listener-agent-lib
+  error_resolution_diagnoser_lib
   cpprestsdk::cpprest
 )
-add_dependencies(rosrect-listener-agent ${rosrect-listener-agent_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(error_resolution_diagnoser ${error_resolution_diagnoser_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -173,7 +173,7 @@ add_dependencies(rosrect-listener-agent ${rosrect-listener-agent_EXPORTED_TARGET
 ## Testing ##
 #############
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_rosrect-listener-agent.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_error_resolution_diagnoser.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
@@ -194,13 +194,15 @@ if(CATKIN_ENABLE_TESTING)
 
   # Integration test for listener agent node as rostest
   add_rostest_gtest(listeneragent_test_node_ros test/listener_integration_test_ros.test test/itest_listeneragent_ros.cpp)
-  # add_rostest_gtest(listeneragent_test_node_db test/listener_integration_test_db.test test/itest_listeneragent_db.cpp)
+  add_rostest_gtest(listeneragent_test_node_db test/listener_integration_test_db.test test/itest_listeneragent_db.cpp)
+  add_rostest_gtest(listeneragent_test_node_telemetry test/listener_integration_test_telemetry.test test/itest_listeneragent_telemetry.cpp)
 
-  target_link_libraries(backend_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest)
-  target_link_libraries(robotevent_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest)
-  target_link_libraries(statemanager_test_node ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest)
-  target_link_libraries(listeneragent_test_node_ros ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest)
-  # target_link_libraries(listeneragent_test_node_db ${catkin_LIBRARIES} rosrect-listener-agent-lib cpprestsdk::cpprest)
+  target_link_libraries(backend_test_node ${catkin_LIBRARIES} error_resolution_diagnoser_lib cpprestsdk::cpprest)
+  target_link_libraries(robotevent_test_node ${catkin_LIBRARIES} error_resolution_diagnoser_lib cpprestsdk::cpprest)
+  target_link_libraries(statemanager_test_node ${catkin_LIBRARIES} error_resolution_diagnoser_lib cpprestsdk::cpprest)
+  target_link_libraries(listeneragent_test_node_ros ${catkin_LIBRARIES} error_resolution_diagnoser_lib cpprestsdk::cpprest)
+  target_link_libraries(listeneragent_test_node_db ${catkin_LIBRARIES} error_resolution_diagnoser_lib cpprestsdk::cpprest)
+  target_link_libraries(listeneragent_test_node_telemetry ${catkin_LIBRARIES} error_resolution_diagnoser_lib cpprestsdk::cpprest)
 
   if(ENABLE_COVERAGE_TESTING)
     set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*" "*/${PROJECT_NAME}/include/${PROJECT_NAME}/*.h")

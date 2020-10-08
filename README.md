@@ -1,10 +1,12 @@
-# rosrect Listener Agent Documentation 
+# error_resolution_diagnoser Documentation 
 
-[![Build Status](https://jenkins.cognicept.systems/buildStatus/icon?job=cognicept-agent-pipeline)](https://jenkins.cognicept.systems/job/cognicept-agent-pipeline/)  [![Coverage Status](http://34.87.43.72:5000/coverage/cognicept-agent-pipeline)](http://34.87.43.72:5000/coverage/cognicept-agent-pipeline)
+[![Build Status](https://jenkins.cognicept.systems/buildStatus/icon?job=cognicept-agent-pipeline)](https://jenkins.cognicept.systems/job/cognicept-agent-pipeline/)  [![Coverage Status](http://34.87.159.179:5000/coverage/cognicept-agent-pipeline)](http://34.87.159.179:5000/coverage/cognicept-agent-pipeline)
+[![license - bsd 3 clause](https://img.shields.io/:license-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![support level: vendor](https://img.shields.io/badge/support%20level-vendor-brightgreen.svg)](https://cognicept.systems)
 
-Hello there! Thanks for checking out the agent documentation. This particular document is a user's guide. If you are more interested in what the agent is designed for, and the architecture, please take a look at the introduction document [here][7]!
+Hello there! Thanks for checking out the documentation. This particular document is a user's guide. If you are more interested in what the `error_resolution_diagnoser` is designed for, and the architecture, please take a look at the introduction document [here][7]!
 
-This project adheres to the Contributor Covenant [code of conduct](https://github.com/cognicept-admin/rosrect/blob/master/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [info@cognicept.systems](mailto:info@cognicept.systems). If you are interested in contributing, please refer to the guidelines [here](https://github.com/cognicept-admin/rosrect/blob/master/CONTRIBUTING.md).  
+This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [info@cognicept.systems](mailto:info@cognicept.systems). If you are interested in contributing, please refer to the guidelines [here](CONTRIBUTING.md).  
 
 - [Description](#description)
 - [Overview](#overview)
@@ -21,15 +23,15 @@ This project adheres to the Contributor Covenant [code of conduct](https://githu
 - [Example-Application](#example-application)
     * [Catching Navigation Errors from /move_base](#catching-navigation-errors-from-/move_base)
     * [Start Simulation](#start-simulation)
-    * [Start rosrect Listener Agent](#start-rosrect-listener-agent)
+    * [Start error_resolution_diagnoser](#start-error_resolution_diagnoser)
     * [Generate a navigation error](#generate-a-navigation-error)
 - [Related-Pages](#related-pages)
 
 ## Description
-This article explains how to run the `rosrect Listener Agent` ROS node.
+This article explains how to run the  `error_resolution_diagnoser` ROS node. For the rest of the documentation, the term `agent` will be used as a shorthand to refer to the `error_resolution_diagnoser`.
 
 ## Overview
-This article shows how to start the `rosrect Listener Agent`. By the end of this, you will be able to start the agent, run a simulation and test the listener agent to listen to navigation errors.
+This article shows how to start the `error_resolution_diagnoser`. By the end of this, you will be able to start the agent, run a simulation and test the listener agent to listen to navigation errors.
 
 ## Prerequisites
 Some knowledge of ROS and robotics is necessary.
@@ -46,7 +48,7 @@ You can get access to the agent by cloning this repo. After this, there are a co
     
 3. Clone the repo:
     
-        $ git clone https://github.com/cognicept-admin/rosrect-listener-agent
+        $ git clone https://github.com/cognicept-admin/error_resolution_diagnoser
     
 ### Building natively:
 
@@ -67,8 +69,10 @@ You can use this approach if you are planning on running this on a system that h
     
 4. Check if node has built correctly and registered using `rospack`:
     
-        $ rospack list | grep rosrect
-        rosrect-listener-agent /home/swaroophs/catkin_ws/src/rosrect-listener-agent
+        $ rospack list | grep error_resolution_diagnoser
+        error_resolution_diagnoser /home/swaroophs/catkin_ws/src/error_resolution_diagnoser
+
+5. Additionally, follow the appropriate installation steps for installing the `ECS API Server` [here][8].
     
 That is it for the native installation! You can now jump to [Running tests](#running-tests) or [Syntax](#syntax).
 
@@ -80,12 +84,16 @@ You can use this approach if you are planning on running the agent on a system t
 
 2. You can then build the `docker` image using `docker build` and the provided `Dockerfile`:
 
-        $ docker build -t rosrect_agent .
+        $ docker build -t error_resolution_diagnoser .
+
+3. Additionally, follow the appropriate installation steps for installing the `ECS API Server` [here][8].
     
 That is it for the Docker installation! You can now jump to [Running tests](#running-tests) or [Syntax](#syntax).
 
 ## Running tests
 Optionally, you can run the unit and integration tests natively or using Docker, based on the installation method you chose in the previous section. 
+
+**NOTE: Before running tests, makes sure the `ECS API Server` is running either natively or using Docker. Take a look at the relevant documentation [here][9]. Failure to have the API server will result in some failed tests that require connection to ECS.**
 
 ### Native
 
@@ -95,7 +103,7 @@ Optionally, you can run the unit and integration tests natively or using Docker,
     
 2. Run tests using `catkin_make run_tests` as shown below. Your terminal will show test results similar to the sample [here](#sample-test-results). Logs will be created in the `/$HOME/.cognicept/agent/logs` folder:
 
-        $ catkin_make run_tests_rosrect-listener-agent
+        $ catkin_make run_tests_error_resolution_diagnoser
     
 ### Using Docker
 
@@ -103,7 +111,7 @@ Optionally, you can run the unit and integration tests natively or using Docker,
 
 2. Switch to the repository's folder or wherever you might be storing the `runtime.env` file.
 
-        $ cd ~/catkin_ws/src/rosrect-listener-agent
+        $ cd ~/catkin_ws/src/error_resolution_diagnoser
     
 3. You can run the tests by using the following `docker run` command. Your terminal will show test results similar to the sample [here](#sample-test-results). Logs will be created in the `/$HOME/.cognicept/agent/logs` folder:
 
@@ -112,8 +120,8 @@ Optionally, you can run the unit and integration tests natively or using Docker,
         --network=host \
         --name=agent  \
         --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
-        rosrect_agent:latest  \
-        catkin_make run_tests rosrect-listener-agent
+        error_resolution_diagnoser:latest  \
+        catkin_make run_tests error_resolution_diagnoser
     
 ### Sample Test Results:
     
@@ -215,9 +223,9 @@ Optionally, you can run the unit and integration tests natively or using Docker,
 
     [ROSTEST]-----------------------------------------------------------------------
 
-    [rosrect-listener-agent.rosunit-listeneragent_test_node_ros/errorSuppressionTest][passed]
-    [rosrect-listener-agent.rosunit-listeneragent_test_node_ros/infoSuppressionTest][passed]
-    [rosrect-listener-agent.rosunit-listeneragent_test_node_ros/warningSuppressionTest][passed]
+    [error_resolution_diagnoser.rosunit-listeneragent_test_node_ros/errorSuppressionTest][passed]
+    [error_resolution_diagnoser.rosunit-listeneragent_test_node_ros/infoSuppressionTest][passed]
+    [error_resolution_diagnoser.rosunit-listeneragent_test_node_ros/warningSuppressionTest][passed]
 
     SUMMARY
     * RESULT: SUCCESS
@@ -232,11 +240,11 @@ Optionally, you can run the unit and integration tests natively or using Docker,
 
     [ROSTEST]-----------------------------------------------------------------------
 
-    [rosrect-listener-agent.rosunit-listeneragent_test_node_db/errorSuppressionTest][passed]
-    [rosrect-listener-agent.rosunit-listeneragent_test_node_db/infoSuppressionTest][passed]
-    [rosrect-listener-agent.rosunit-listeneragent_test_node_db/warningSuppressionTest][passed]
-    [rosrect-listener-agent.rosunit-listeneragent_test_node_db/compoundingErrorTest][passed]
-    [rosrect-listener-agent.rosunit-listeneragent_test_node_db/noncompoundingErrorTest][passed]
+    [error_resolution_diagnoser.rosunit-listeneragent_test_node_db/errorSuppressionTest][passed]
+    [error_resolution_diagnoser.rosunit-listeneragent_test_node_db/infoSuppressionTest][passed]
+    [error_resolution_diagnoser.rosunit-listeneragent_test_node_db/warningSuppressionTest][passed]
+    [error_resolution_diagnoser.rosunit-listeneragent_test_node_db/compoundingErrorTest][passed]
+    [error_resolution_diagnoser.rosunit-listeneragent_test_node_db/noncompoundingErrorTest][passed]
 
     SUMMARY
     * RESULT: SUCCESS
@@ -258,6 +266,8 @@ The agent can be configured using the following environment variables:
 | `ECS_API`         | REST API Endpoint String   | Not applicable | If the `AGENT_TYPE` is set to `DB`, this variable MUST be configured to a valid REST API endpoint. If not specified, the agent will default back to `ROS` mode. If API endpoint is not available to connect, agent will error out.                                                                                                                                                                                                                                                                       |
 | `ECS_ROBOT_MODEL` | Valid Robot Model          | Not applicable | If the `AGENT_TYPE` is set to `DB`, this variable MUST be configured to a valid robot model. If not specified, the agent will default back to `ROS` mode. For ROS 1 navigation stack, just use `Turtlebot3`.                                                                                                                                                                                                                                                                                             |
 
+**NOTE: To run the agent in the `DB` mode, `ECS API Server` should be running either natively or using Docker. Take a look at the relevant documentation [here][9]. Failure to have the API server will result in the agent not able to find a valid API endpoint and result in an error thrown.**
+
 Based on the type of installation, you can configure these variables by different methods as follows.
 
 ### Configure and Run for native installations
@@ -274,7 +284,7 @@ In case of a native installation, you can create them using the `export` command
 
 Now, you can run the listener agent using the provided launch file and `roslaunch`:
 
-    $ roslaunch rosrect-listener-agent listener-agent.launch 
+    $ roslaunch error_resolution_diagnoser error_resolution_diagnoser.launch 
 
 **NOTE: Just launching the ROS node will start a new ROS master if one is not found. If you would like to connect to a ROS network that is not localhost and has a different `ROS_IP` and `ROS_URI`. Specify these as environment variables as well.**
 
@@ -286,8 +296,8 @@ In case of a Docker installation, you can simply use the [`runtime.env`](runtime
     --network=host \
     --name=agent  \
     --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
-    rosrect_agent:latest  \
-    roslaunch rosrect-listener-agent listener-agent.launch 
+    error_resolution_diagnoser:latest  \
+    roslaunch error_resolution_diagnoser error_resolution_diagnoser.launch 
 
 **NOTE: Just launching the ROS node will start a new ROS master if one is not found. If you would like to connect to a ROS network that is not localhost and has a different `ROS_IP` and `ROS_URI`. Specify these as environment variables as well.**
 
@@ -313,16 +323,16 @@ Then, open a second terminal and launch the `turtlebot3_navigation` launch file:
 
 At the end of this step, you would need to see something that looks like the following. Notice that the robot is mislocalized (i.e. the scan doesn't match the map) :
 
-![alt text](/docs/images/Mislocalized.png "Turtlebot mislocalized")
+![alt text](docs/images/Mislocalized.png "Turtlebot mislocalized")
 
-### Start rosrect Listener Agent
+### Start error_resolution_diagnoser
 We are ready to start listening to robot errors. Based on your installation type, you can start the agent in one of 2 ways:
 
 **Running natively**
 
 Simply launch the agent ROS node using the launch file:
 
-    $ roslaunch rosrect-listener-agent listener-agent.launch
+    $ roslaunch error_resolution_diagnoser error_resolution_diagnoser.launch
     
 **Running using Docker**
 
@@ -333,8 +343,8 @@ Run the following `docker run` command:
     --network=host \
     --name=agent  \
     --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
-    rosrect_agent:latest  \
-    roslaunch rosrect-listener-agent listener-agent.launch 
+    error_resolution_diagnoser:latest  \
+    roslaunch error_resolution_diagnoser error_resolution_diagnoser.launch 
 
  Apart from a few small differences, the agent prompts would look similar for both the types of launches. Sample is shown below:
 
@@ -354,11 +364,11 @@ Run the following `docker run` command:
 
     NODES
     /
-        rosrect_listener_agent_node (rosrect-listener-agent/rosrect-listener-agent)
+        error_resolution_diagnoser (error_resolution_diagnoser/error_resolution_diagnoser)
 
     ROS_MASTER_URI=http://localhost:11311
 
-    process[rosrect_listener_agent_node-1]: started with pid [18843]
+    process[error_resolution_diagnoser-1]: started with pid [18843]
     =======================Environment variables setup======================
     Environment variable AGENT_TYPE unspecified. Defaulting to ROS mode...
     Environment variable ROBOT_CODE unspecified. Defaulting to 'Undefined'...
@@ -449,7 +459,7 @@ If you keep the agent running, you should be able to see the `Status Logged: Onl
 ### Generate a navigation error
 Now, use `rviz` to provide a `2D Nav Goal` for the robot. 
 
-![alt text](/docs/images/NavGoal.png "Navigation Goal in rviz")
+![alt text](docs/images/NavGoal.png "Navigation Goal in rviz")
 
 Because the robot is mislocalized, chances are high that it will be unable to reach its goal, generating an error. When that happens, the terminal window running the simulation will show something like the following:
 
@@ -599,13 +609,15 @@ From the echo, you are able to see that the response has the same contents as th
 ## Related Pages
 For more related information, refer to:
 
+* [ECS API Installation][8]
+* [ECS API Syntax][9]
 * [Virtual Navigation with Turtlebot3][1]
 * [Turtlebot3 installing packages][2]
 * [rosgraph_msgs documentation][3]
 * [ROS logging documentation][4]
 * [Microsoft C++ REST SDK][5]
 * [Docker Installation][6]
-* [Agent Intro Document][7]
+* [Intro Document][7]
 
 [1]: http://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/#virtual-navigation-with-turtlebot3
 [2]: http://emanual.robotis.com/docs/en/platform/turtlebot3/pc_setup/#install-dependent-ros-packages
@@ -613,4 +625,11 @@ For more related information, refer to:
 [4]: http://wiki.ros.org/roscpp/Overview/Logging
 [5]: https://github.com/microsoft/cpprestsdk
 [6]: https://docs.docker.com/engine/install/ubuntu/
-[7]: /docs/AGENT_INTRO.md
+[7]: docs/INTRO.md
+[8]: https://github.com/cognicept-admin/error_classification_server#installation
+[9]: https://github.com/cognicept-admin/error_classification_server#syntax
+
+## Acknowledgements
+We would like to acknowledge the Singapore government for their vision and support to start this ambitious research and development project, *"Accelerating Open Source Technologies for Cross Domain Adoption through the Robot Operating System"*. The project is supported by Singapore National Robotics Programme (NRP).
+
+Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not reflect the views of the NR2PO.

@@ -1,4 +1,4 @@
-#include <rosrect-listener-agent/listener_agent.h>
+#include <error_resolution_diagnoser/listener_agent.h>
 
 using namespace web::json; // JSON features
 using namespace web;       // Common features like URIs.
@@ -164,23 +164,34 @@ void cs_listener::setup_telemetry(ros::NodeHandle nh)
 
   for (ros::master::V_TopicInfo::iterator it = all_topics.begin(); it != all_topics.end(); it++)
   {
-    const ros::master::TopicInfo &info = *it;
-    if (info.datatype == odom_msg_type)
-    {
-      // If odom type is found, subscribe
-      odom_topic = info.name;
-      std::cout << "Odom topic found! Subscribing to " << info.name << " for telemetry." << std::endl;
-      this->odom_sub =
+    // Find topics relevant to telemetry info and subscribe
+    std::string odom_topic = "odom";
+    std::string pose_topic = "amcl_pose";
+
+    this->odom_sub =
           nh.subscribe(odom_topic, 1000, &cs_listener::odom_callback, this);
-    }
-    else if ((info.datatype == pose_msg_type) && (info.name != "/initialpose"))
-    {
-      // If pose type is found, subscribe
-      pose_topic = info.name;
-      std::cout << "Pose topic found! Subscribing to " << info.name << " for telemetry." << std::endl;
-      this->pose_sub =
+    
+    this->pose_sub =
           nh.subscribe(pose_topic, 1000, &cs_listener::pose_callback, this);
-    }
+
+    // // Example for optional subscription
+    // const ros::master::TopicInfo &info = *it;
+    // if (info.datatype == odom_msg_type)
+    // {
+    //   // If odom type is found, subscribe
+    //   odom_topic = info.name;
+    //   std::cout << "Odom topic found! Subscribing to " << info.name << " for telemetry." << std::endl;
+    //   this->odom_sub =
+    //       nh.subscribe(odom_topic, 1000, &cs_listener::odom_callback, this);
+    // }
+    // else if ((info.datatype == pose_msg_type) && (info.name != "/initialpose"))
+    // {
+    //   // If pose type is found, subscribe
+    //   pose_topic = info.name;
+    //   std::cout << "Pose topic found! Subscribing to " << info.name << " for telemetry." << std::endl;
+    //   this->pose_sub =
+    //       nh.subscribe(pose_topic, 1000, &cs_listener::pose_callback, this);
+    // }
   }
 
   // If subscribers are empty, prompt appropriately
@@ -259,7 +270,7 @@ int main(int argc, char **argv)
 {
 
   // Initialize node
-  ros::init(argc, argv, "rosrect_listener_agent_node");
+  ros::init(argc, argv, "error_resolution_diagnoser");
   ros::NodeHandle nh;
   ros::Rate looprate(10);
 

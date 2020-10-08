@@ -1,4 +1,4 @@
-#include <rosrect-listener-agent/backend_api.h>
+#include <error_resolution_diagnoser/backend_api.h>
 
 using namespace utility;              // Common utilities like string conversions
 using namespace web;                  // Common features like URIs.
@@ -71,12 +71,12 @@ BackendApi::BackendApi()
   if ((this->agent_type == "ERT") || (this->agent_type == "DB"))
   {
     // This configures the endpoint to ERT queries. Must be used only for testing. Undocumented.
-    this->ecs_api_endpoint = "/api/ert/getErrorData/";
+    this->ecs_api_endpoint = "/ert/error-data/";
   }
   else if (this->agent_type == "ECS")
   {
     // This configures the endpoint to ECS queries. Production version.
-    this->ecs_api_endpoint = "/api/ecs/getErrorData/";
+    this->ecs_api_endpoint = "/ecs/error-data/";
   }
   else
   {
@@ -368,7 +368,7 @@ void BackendApi::push_status(bool status, json::value telemetry)
     }
     catch (const http::http_exception &e)
     {
-      ROS_ERROR_STREAM("POST API error: " << e.what() << ". Agent will retry API connection at: " << this->agent_post_api);
+      std::cerr << "POST API error: " << e.what() << ". Agent will retry API connection at: " << this->agent_post_api  << std::endl;
     }
   }
 }
@@ -492,7 +492,7 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
     }
     catch (const http::http_exception &e)
     {
-      ROS_ERROR_STREAM("POST API error: " << e.what() << ". Agent will retry API connection at: " << this->agent_post_api);
+      std::cerr << "POST API error: " << e.what() << ". Agent will retry API connection at: " << this->agent_post_api << std::endl;
     }
   }
 }
@@ -602,7 +602,7 @@ json::value BackendApi::check_error_classification(std::string msg_text)
   }
   catch (const http::http_exception &e)
   {
-    ROS_ERROR_STREAM("ECS API error: " << e.what() << ". Agent will retry API connection at: " << this->ecs_api_host + this->ecs_api_endpoint);
+    std::cerr << "ECS API error: " << e.what() << ". Agent will retry API connection at: " << this->ecs_api_host + this->ecs_api_endpoint << std::endl;
   }
 
   try
