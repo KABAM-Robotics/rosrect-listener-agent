@@ -8,8 +8,8 @@ docker stop cgs_diagnostics_agent
 
 docker rm cgs_diagnostics_agent 
 
-docker run -d \
---env-file ~/.cognicept/runtime.env \
+docker run -it \
+--env-file runtime.env \
 --restart unless-stopped \
 --network=host \
 --name=cgs_diagnostics_agent  \
