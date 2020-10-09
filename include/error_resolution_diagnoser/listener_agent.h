@@ -4,6 +4,7 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <diagnostic_msgs/DiagnosticArray.h>
 #include <iostream>
+#include <vector>
 #include <error_resolution_diagnoser/state_manager.h>
 
 class cs_listener
@@ -22,6 +23,7 @@ class cs_listener
     bool telemetry_ok;                   // Used to check if telemetry subs have been setup
     int num_diag_samples;                // Down sample factor for diagnostics
     int curr_diag_sample;                // Keeps track of sample index received
+    std::vector<std::string> node_list;  // List of nodes to filter messages by
 
 public:
     cs_listener();                                                                             // Constructor to set up listener object

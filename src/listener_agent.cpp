@@ -75,6 +75,22 @@ cs_listener::cs_listener()
     std::cout << "Subscribed to Listener Agent with direct rosout..." << std::endl;
   }
 
+  // SET node list if specified
+  if (std::getenv("LOG_NODE_LIST"))
+  {
+    // Get env variable
+    std::string log_node_list_env = std::getenv("LOG_NODE_LIST");
+    // Split it by ; delimiter
+    boost::split(this->node_list, log_node_list_env, [](char c) { return c == ';'; });
+    // Print info
+    std::cout << "Node pre-filtering ON:";
+    for (std::string node_str : this->node_list)
+    {
+      std::cout << " " << node_str;
+    }
+    std::cout << std::endl;
+  }
+
   // Heartbeat parameters
   this->heartrate = ros::WallDuration(15.0);
 
@@ -163,53 +179,35 @@ json::value cs_listener::pose_to_json(const geometry_msgs::PoseWithCovarianceSta
 
 void cs_listener::setup_telemetry(ros::NodeHandle nh)
 {
-  // Get all topics
-  ros::master::V_TopicInfo all_topics;
-  ros::master::getTopics(all_topics);
 
-  // Find topics relevant to telemetry info and dynamically subscribe
-  std::string odom_msg_type = "nav_msgs/Odometry";
-  std::string pose_msg_type = "geometry_msgs/PoseWithCovarianceStamped";
-  std::string odom_topic;
-  std::string pose_topic;
+  // Find topics relevant to telemetry info and subscribe
+  std::string odom_topic = "odom";
+  std::string pose_topic = "amcl_pose";
 
-  for (ros::master::V_TopicInfo::iterator it = all_topics.begin(); it != all_topics.end(); it++)
-  {
-    // Find topics relevant to telemetry info and subscribe
-    std::string odom_topic = "odom";
-    std::string pose_topic = "amcl_pose";
+  this->odom_sub =
+      nh.subscribe(odom_topic, 1000, &cs_listener::odom_callback, this);
 
-    this->odom_sub =
-          nh.subscribe(odom_topic, 1000, &cs_listener::odom_callback, this);
-    
-    this->pose_sub =
-          nh.subscribe(pose_topic, 1000, &cs_listener::pose_callback, this);
+  this->pose_sub =
+      nh.subscribe(pose_topic, 1000, &cs_listener::pose_callback, this);
 
-    // // Example for optional subscription
-    // const ros::master::TopicInfo &info = *it;
-    // if (info.datatype == odom_msg_type)
-    // {
-    //   // If odom type is found, subscribe
-    //   odom_topic = info.name;
-    //   std::cout << "Odom topic found! Subscribing to " << info.name << " for telemetry." << std::endl;
-    //   this->odom_sub =
-    //       nh.subscribe(odom_topic, 1000, &cs_listener::odom_callback, this);
-    // }
-    // else if ((info.datatype == pose_msg_type) && (info.name != "/initialpose"))
-    // {
-    //   // If pose type is found, subscribe
-    //   pose_topic = info.name;
-    //   std::cout << "Pose topic found! Subscribing to " << info.name << " for telemetry." << std::endl;
-    //   this->pose_sub =
-    //       nh.subscribe(pose_topic, 1000, &cs_listener::pose_callback, this);
-    // }
-  }
-
-  // If subscribers are empty, prompt appropriately
-  if ((this->odom_sub.getTopic().empty()) && (this->pose_sub.getTopic().empty()))
-  {
-    std::cout << "No relevant topics found for telemetry. It will be null. Consider starting the robot nodes first and relaunch this agent." << std::endl;
-  }
+  // // Example for optional subscription
+  // const ros::master::TopicInfo &info = *it;
+  // if (info.datatype == odom_msg_type)
+  // {
+  //   // If odom type is found, subscribe
+  //   odom_topic = info.name;
+  //   std::cout << "Odom topic found! Subscribing to " << info.name << " for telemetry." << std::endl;
+  //   this->odom_sub =
+  //       nh.subscribe(odom_topic, 1000, &cs_listener::odom_callback, this);
+  // }
+  // else if ((info.datatype == pose_msg_type) && (info.name != "/initialpose"))
+  // {
+  //   // If pose type is found, subscribe
+  //   pose_topic = info.name;
+  //   std::cout << "Pose topic found! Subscribing to " << info.name << " for telemetry." << std::endl;
+  //   this->pose_sub =
+  //       nh.subscribe(pose_topic, 1000, &cs_listener::pose_callback, this);
+  // }
 }
 
 void cs_listener::setup_diagnostics(ros::NodeHandle nh)
@@ -221,14 +219,25 @@ void cs_listener::setup_diagnostics(ros::NodeHandle nh)
 
 void cs_listener::log_callback(const rosgraph_msgs::Log::ConstPtr &rosmsg)
 {
-
-  if (rosmsg->name == "/agent_translator_node")
+  if (this->node_list.empty())
   {
     // To debug this callback function
     std::cout << "Message received: " << rosmsg->msg << std::endl;
 
     // Callback that hands over message to State Manager
     this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+  }
+  else
+  {
+    // If incoming message is from the node list
+    if (find(this->node_list.begin(), this->node_list.end(), rosmsg->name) != this->node_list.end())
+    {
+      // To debug this callback function
+      std::cout << "Message received: " << rosmsg->msg << std::endl;
+
+      // Callback that hands over message to State Manager
+      this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+    }
   }
 }
 
