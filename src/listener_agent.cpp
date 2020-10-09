@@ -90,6 +90,20 @@ cs_listener::cs_listener()
     }
     std::cout << std::endl;
   }
+  else if (std::getenv("LOG_NODE_EX_LIST"))
+  {
+    // Get env variable
+    std::string log_node_ex_list_env = std::getenv("LOG_NODE_EX_LIST");
+    // Split it by ; delimiter
+    boost::split(this->node_ex_list, log_node_ex_list_env, [](char c) { return c == ';'; });
+    // Print info
+    std::cout << "Node pre-filtering ON. Excepting:";
+    for (std::string node_str : this->node_ex_list)
+    {
+      std::cout << " " << node_str;
+    }
+    std::cout << std::endl;
+  }
 
   // Heartbeat parameters
   this->heartrate = ros::WallDuration(15.0);
@@ -219,17 +233,34 @@ void cs_listener::setup_diagnostics(ros::NodeHandle nh)
 
 void cs_listener::log_callback(const rosgraph_msgs::Log::ConstPtr &rosmsg)
 {
+  // If node list is not set
   if (this->node_list.empty())
   {
-    // To debug this callback function
-    std::cout << "Message received: " << rosmsg->msg << std::endl;
+    // If node except list is not set, process everything
+    if (this->node_ex_list.empty())
+    {
+      // To debug this callback function
+      std::cout << "Message received: " << rosmsg->msg << std::endl;
 
-    // Callback that hands over message to State Manager
-    this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+      // Callback that hands over message to State Manager
+      this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+    }
+    else
+    {
+      // If incoming message is NOT from the node except list, process
+      if (find(this->node_ex_list.begin(), this->node_ex_list.end(), rosmsg->name) == this->node_ex_list.end())
+      {
+        // To debug this callback function
+        std::cout << "Message received: " << rosmsg->msg << std::endl;
+
+        // Callback that hands over message to State Manager
+        this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+      }
+    }
   }
   else
   {
-    // If incoming message is from the node list
+    // If incoming message IS from the node list, process
     if (find(this->node_list.begin(), this->node_list.end(), rosmsg->name) != this->node_list.end())
     {
       // To debug this callback function

@@ -11,19 +11,20 @@ class cs_listener
 {
     // This class provides the ROS node interface for the agent.
 
-    std::string agent_type;              // DB or ROS agent
-    std::string robot_code;              // UUID supplied during setup
-    ros::WallTimer heartbeat_timer;      // ROS timer that is configured to with heartbeat_start as callback
-    ros::WallDuration heartrate;         // Period duration for heartbeat_timer
-    StateManager state_manager_instance; // State manager object that processes all incoming messages
-    ros::Subscriber odom_sub;            // Subscriber for Odometry telemetry info
-    ros::Subscriber pose_sub;            // Subscriber for Pose telemetry info
-    ros::Subscriber diag_sub;            // Subscriber for Diagnostics info
-    web::json::value telemetry;          // JSON value that will be pushed as a part of event/status
-    bool telemetry_ok;                   // Used to check if telemetry subs have been setup
-    int num_diag_samples;                // Down sample factor for diagnostics
-    int curr_diag_sample;                // Keeps track of sample index received
-    std::vector<std::string> node_list;  // List of nodes to filter messages by
+    std::string agent_type;                // DB or ROS agent
+    std::string robot_code;                // UUID supplied during setup
+    ros::WallTimer heartbeat_timer;        // ROS timer that is configured to with heartbeat_start as callback
+    ros::WallDuration heartrate;           // Period duration for heartbeat_timer
+    StateManager state_manager_instance;   // State manager object that processes all incoming messages
+    ros::Subscriber odom_sub;              // Subscriber for Odometry telemetry info
+    ros::Subscriber pose_sub;              // Subscriber for Pose telemetry info
+    ros::Subscriber diag_sub;              // Subscriber for Diagnostics info
+    web::json::value telemetry;            // JSON value that will be pushed as a part of event/status
+    bool telemetry_ok;                     // Used to check if telemetry subs have been setup
+    int num_diag_samples;                  // Down sample factor for diagnostics
+    int curr_diag_sample;                  // Keeps track of sample index received
+    std::vector<std::string> node_list;    // List of nodes to include messages by
+    std::vector<std::string> node_ex_list; // List of nodes to exclude messages by
 
 public:
     cs_listener();                                                                             // Constructor to set up listener object
