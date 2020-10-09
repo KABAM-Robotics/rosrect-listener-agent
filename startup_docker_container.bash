@@ -16,5 +16,3 @@ docker run -d \
 --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
 error_resolution_diagnoser:latest  \
 rosrun error_resolution_diagnoser error_resolution_diagnoser 
-
-# --env="ROS_MASTER_URI=http://localhost:11311" \
