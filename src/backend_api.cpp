@@ -241,7 +241,7 @@ pplx::task<void> BackendApi::post_event_log(json::value payload)
            }
            else
            {
-             req.set_request_uri("/api/agentstream/putRecord");
+             req.set_request_uri("/agentstream/put-record");
            }
            req.set_body(payload);
 
