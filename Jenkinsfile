@@ -1,34 +1,30 @@
 pipeline{
   agent { label 'ubuntu' }
-  stages{
-    stage('--test--'){
-      steps{
-        echo 'conducting tests'
-      }
-    }
+
     stage('--build--'){
       steps{
-            sh '''
-            ls
+            echo 'Building and running the tests'
             sh test.sh
-            '''
-
+      }
+    }
+    stage('--CD--'){
+      steps{
+            echo 'Deploying the agents'
+            sh cd.sh
       }
     }
     stage ("--Extract test results--") {
     steps {
-            sh '''
+            echo 'Estimating code coverage'
             sh coverage.sh
-            '''
+        
       cobertura coberturaReportFile: 'coverage.xml'
     }
     }
   }
   post {
   always {
-     // junit 'coverage.xml'
       step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
   }
 }
-
 }
