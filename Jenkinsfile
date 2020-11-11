@@ -1,6 +1,6 @@
 pipeline{
   agent { label 'ubuntu' }
-
+  stages{
     stage('--build--'){
       steps{
             echo 'Building and running the tests'
