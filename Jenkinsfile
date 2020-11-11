@@ -4,19 +4,25 @@ pipeline{
     stage('--build--'){
       steps{
             echo 'Building and running the tests'
+            sh '''
             sh test.sh
+            '''
       }
     }
     stage('--CD--'){
       steps{
             echo 'Deploying the agents'
+            sh '''
             sh cd.sh
+            '''
       }
     }
     stage ("--Extract test results--") {
     steps {
             echo 'Estimating code coverage'
+            sh '''
             sh coverage.sh
+            '''
         
       cobertura coberturaReportFile: 'coverage.xml'
     }
