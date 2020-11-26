@@ -19,20 +19,23 @@ class BackendApi
 {
   // This class provides access to Error Classification API and event log creation through C++.
 
-  std::string robot_id;         // ENV variable/Undefined - identifies a robot uniquely, such as an UUID
-  std::string site_id;          // ENV variable/Undefined - identifies a site uniquely, such as an UUID
-  std::string agent_id;         // ENV variable/Undefined - identifies an agent uniquely, such as an UUID
-  std::string agent_mode;       // ENV variable JSON_TEST(default), POST_TEST - determines if the agent saves local JSON logs or passes it off to a configurable POST API endpoint
-  std::string agent_type;       // ENV variable ROS(default), DB - determines if the agent takes ROS messages directly or passes through Error Classification first
-  std::string log_dir;          // Stores the log directory location
-  std::string log_name;         // Stores the directory along with log name
-  std::string log_ext;          // Stores the log file extension type
-  int log_id;                   // Incremental log id #
-  std::string msg_resp;         // Stores the ECS response
-  std::string ecs_api_host;     // ENV variable that specifies the host for the ECS API
-  std::string ecs_api_endpoint; // Stores the endpoint for the ECS API. Based on AGENT_TYPE this is automatically configured.
-  std::string ecs_robot_model;  // ENV variable that specifies the type of robot. Currently use Turtlebot3 for any /move_base navigation stack.
-  std::string agent_post_api;   // Any valid POST API endpoint which the agent can directly submit data to in addition to creating local logs.
+  std::string robot_id;                  // ENV variable/Undefined - identifies a robot uniquely, such as an UUID
+  std::string site_id;                   // ENV variable/Undefined - identifies a site uniquely, such as an UUID
+  std::string agent_id;                  // ENV variable/Undefined - identifies an agent uniquely, such as an UUID
+  std::string agent_mode;                // ENV variable JSON_TEST(default), POST_TEST - determines if the agent saves local JSON logs or passes it off to a configurable POST API endpoint
+  std::string agent_type;                // ENV variable ROS(default), DB - determines if the agent takes ROS messages directly or passes through Error Classification first
+  std::string log_dir;                   // Stores the log directory location
+  std::string log_name;                  // Stores the directory along with log name
+  std::string log_ext;                   // Stores the log file extension type
+  int log_id;                            // Incremental log id #
+  std::string msg_resp;                  // Stores the ECS response
+  std::string ecs_api_host;              // ENV variable that specifies the host for the ECS API
+  std::string ecs_api_endpoint;          // Stores the endpoint for the ECS API. Based on AGENT_TYPE this is automatically configured.
+  std::string ecs_robot_model;           // ENV variable that specifies the type of robot. Currently use Turtlebot3 for any /move_base navigation stack.
+  std::string agent_post_api;            // Any valid POST API endpoint which the agent can directly submit data to in addition to creating local logs.
+  std::vector<std::string> node_list;    // List of nodes to include messages by
+  std::vector<std::string> node_ex_list; // List of nodes to exclude messages by
+  std::string diag_setting;              // Keeps track of the diagnostics setting on or off
 
 public:
   BackendApi();
