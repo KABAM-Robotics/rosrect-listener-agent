@@ -25,6 +25,7 @@ class cs_listener
     int curr_diag_sample;                  // Keeps track of sample index received
     std::vector<std::string> node_list;    // List of nodes to include messages by
     std::vector<std::string> node_ex_list; // List of nodes to exclude messages by
+    std::string diag_setting;              // Keeps track of the diagnostics setting on or off
 
 public:
     cs_listener();                                                                             // Constructor to set up listener object
