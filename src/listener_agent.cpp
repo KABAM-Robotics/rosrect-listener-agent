@@ -61,20 +61,6 @@ cs_listener::cs_listener()
     this->robot_code = "Undefined";
   }
 
-  // Depending on ENV variable, communicate to user
-  if ((this->agent_type == "DB") || (this->agent_type == "ERT"))
-  {
-    std::cout << "Subscribed to Listener Agent with ERT Access..." << std::endl;
-  }
-  else if (this->agent_type == "ECS")
-  {
-    std::cout << "Subscribed to Listener Agent with ECS Access..." << std::endl;
-  }
-  else
-  {
-    std::cout << "Subscribed to Listener Agent with direct rosout..." << std::endl;
-  }
-
   // SET node list if specified
   if (std::getenv("LOG_NODE_LIST"))
   {
@@ -82,13 +68,6 @@ cs_listener::cs_listener()
     std::string log_node_list_env = std::getenv("LOG_NODE_LIST");
     // Split it by ; delimiter
     boost::split(this->node_list, log_node_list_env, [](char c) { return c == ';'; });
-    // Print info
-    std::cout << "Node pre-filtering ON:";
-    for (std::string node_str : this->node_list)
-    {
-      std::cout << " " << node_str;
-    }
-    std::cout << std::endl;
   }
   else if (std::getenv("LOG_NODE_EX_LIST"))
   {
@@ -96,13 +75,19 @@ cs_listener::cs_listener()
     std::string log_node_ex_list_env = std::getenv("LOG_NODE_EX_LIST");
     // Split it by ; delimiter
     boost::split(this->node_ex_list, log_node_ex_list_env, [](char c) { return c == ';'; });
-    // Print info
-    std::cout << "Node pre-filtering ON. Excepting:";
-    for (std::string node_str : this->node_ex_list)
-    {
-      std::cout << " " << node_str;
-    }
-    std::cout << std::endl;
+  }
+
+  // DIAGNOSTICS setting
+  if (std::getenv("DIAGNOSTICS"))
+  {
+    // Success case
+    this->diag_setting = std::getenv("DIAGNOSTICS");
+    boost::algorithm::to_lower(this->diag_setting);
+  }
+  else
+  {
+    // Failure case - Default
+    this->diag_setting = "off";
   }
 
   // Heartbeat parameters
@@ -122,7 +107,7 @@ cs_listener::~cs_listener()
   // Stop heartbeat
   this->heartbeat_stop();
   // Destructor
-  std::cout << "Unsubscribed from Listener Agent..." << std::endl;
+  std::cout << "error_resolution_diagnoser stopped..." << std::endl;
 }
 
 json::value cs_listener::odom_to_json(const nav_msgs::Odometry::ConstPtr &rosmsg)
@@ -226,9 +211,12 @@ void cs_listener::setup_telemetry(ros::NodeHandle nh)
 
 void cs_listener::setup_diagnostics(ros::NodeHandle nh)
 {
-  // Subscribe to diagnostics_agg topic
-  this->diag_sub =
-      nh.subscribe("diagnostics_agg", 1000, &cs_listener::diag_callback, this);
+  if (this->diag_setting == "on")
+  {
+    // Subscribe to diagnostics_agg topic
+    this->diag_sub =
+        nh.subscribe("diagnostics_agg", 1000, &cs_listener::diag_callback, this);
+  }
 }
 
 void cs_listener::log_callback(const rosgraph_msgs::Log::ConstPtr &rosmsg)
@@ -382,7 +370,7 @@ int main(int argc, char **argv)
   std::string session_id;
   nh.param<std::string>("/run_id", session_id, "unknown");
   int loop_counter;
-  ROS_INFO("AGENT:: STATUS:: OK");
+  std::cout << "AGENT:: STATUS:: OK" << std::endl;
 
   while (ros::ok())
   {
@@ -394,8 +382,8 @@ int main(int argc, char **argv)
     if (!master_status && status == RobotStatus::RUNNING)
     {
       // If ROS master is unavailable and robot status was running, disconnect.
-      ROS_ERROR_STREAM("AGENT:: ROS master with session id `" << session_id << "` disconnected.");
-      ROS_INFO("AGENT:: STATUS:: MASTER_DISCONNECTED");
+      std::cout << "AGENT:: ROS master with session id `" << session_id << "` disconnected." << std::endl;
+      std::cout << "AGENT:: STATUS:: MASTER_DISCONNECTED" << std::endl;
       status = RobotStatus::MASTER_DISCONNECTED;
     }
     else if (master_status && status == RobotStatus::MASTER_DISCONNECTED)
@@ -403,13 +391,13 @@ int main(int argc, char **argv)
       // If ROS master is available and robot status was disconnected, connect.
       std::string new_session_id;
       nh.param<std::string>("/run_id", new_session_id, "unknown");
-      ROS_INFO_STREAM("AGENT:: ROS master is back online with session id `" << session_id << "`.");
+      std::cout << "AGENT:: ROS master is back online with session id `" << session_id << "`." << std::endl;
       status = RobotStatus::RUNNING;
       if (new_session_id != session_id)
       {
         // If ROS master is new, restart agent.
-        ROS_ERROR("AGENT:: New ROS master detected. Restarting agent.");
-        ROS_INFO("AGENT:: STATUS:: OFFLINE");
+        std::cout << "AGENT:: New ROS master detected. Restarting agent." << std::endl;
+        std::cout << "AGENT:: STATUS:: OFFLINE" << std::endl;
         break;
       }
     }
@@ -427,11 +415,11 @@ int main(int argc, char **argv)
     {
       if (status == RobotStatus::RUNNING)
       {
-        ROS_INFO("AGENT:: STATUS:: OK");
+        std::cout << "AGENT:: STATUS:: OK" << std::endl;
       }
       else if (status == RobotStatus::MASTER_DISCONNECTED)
       {
-        ROS_INFO("AGENT:: STATUS:: MASTER_DISCONNECTED");
+        std::cout << "AGENT:: STATUS:: MASTER_DISCONNECTED" << std::endl;
       }
     }
   }
