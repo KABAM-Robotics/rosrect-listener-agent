@@ -266,7 +266,7 @@ void BackendApi::check_environment()
   {
     // Failure case - Default
     this->diag_setting = "off";
-    std::cout << "DIAGNOSTICS is unspecified. Defaulting to OFF." << this->diag_setting << std::endl;
+    std::cout << "DIAGNOSTICS is unspecified. Defaulting to OFF." << std::endl;
   }
 }
 
