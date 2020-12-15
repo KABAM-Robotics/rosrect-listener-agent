@@ -12,7 +12,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home/catkin_diag_agent
-COPY . src/rosrect-listener-agent
+COPY . src/error_resolution_diagnoser
 
 RUN /ros_entrypoint.sh catkin_make && sed -i '$isource "/home/catkin_diag_agent/devel/setup.bash"' /ros_entrypoint.sh
 

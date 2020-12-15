@@ -1,7 +1,14 @@
-#include <rosrect-listener-agent/listener_agent.h>
+#include <error_resolution_diagnoser/listener_agent.h>
 
 using namespace web::json; // JSON features
 using namespace web;       // Common features like URIs.
+
+enum class RobotStatus
+{
+  INIT,
+  RUNNING,
+  MASTER_DISCONNECTED
+};
 
 cs_listener::cs_listener()
 {
@@ -9,17 +16,17 @@ cs_listener::cs_listener()
 
   // Pulling environment variables
   // AGENT_TYPE
-  if(std::getenv("AGENT_TYPE"))
+  if (std::getenv("AGENT_TYPE"))
   {
     // Success case
     this->agent_type = std::getenv("AGENT_TYPE");
     // See if configuration is correct otherwise default to ROS
-    if((this->agent_type == "DB") || (this->agent_type == "ERT") || (this->agent_type == "ECS"))
+    if ((this->agent_type == "DB") || (this->agent_type == "ERT") || (this->agent_type == "ECS"))
     {
-      if(std::getenv("ECS_API"))
+      if (std::getenv("ECS_API"))
       {
         // Success case
-        if(std::getenv("ECS_ROBOT_MODEL"))
+        if (std::getenv("ECS_ROBOT_MODEL"))
         {
           // Success case
         }
@@ -27,13 +34,13 @@ cs_listener::cs_listener()
         {
           // Failure case - Default
           this->agent_type = "ROS";
-        } 
+        }
       }
       else
       {
         // Failure case - Default
         this->agent_type = "ROS";
-      }     
+      }
     }
   }
   else
@@ -43,7 +50,7 @@ cs_listener::cs_listener()
   }
 
   // ROBOT_CODE
-  if(std::getenv("ROBOT_CODE"))
+  if (std::getenv("ROBOT_CODE"))
   {
     // Success case
     this->robot_code = std::getenv("ROBOT_CODE");
@@ -54,18 +61,33 @@ cs_listener::cs_listener()
     this->robot_code = "Undefined";
   }
 
-  // Depending on ENV variable, communicate to user
-  if ((this->agent_type == "DB") || (this->agent_type == "ERT"))
+  // SET node list if specified
+  if (std::getenv("LOG_NODE_LIST"))
   {
-    std::cout << "Subscribed to Listener Agent with ERT Access..." << std::endl;
+    // Get env variable
+    std::string log_node_list_env = std::getenv("LOG_NODE_LIST");
+    // Split it by ; delimiter
+    boost::split(this->node_list, log_node_list_env, [](char c) { return c == ';'; });
   }
-  else if (this->agent_type == "ECS")
+  else if (std::getenv("LOG_NODE_EX_LIST"))
   {
-    std::cout << "Subscribed to Listener Agent with ECS Access..." << std::endl;
+    // Get env variable
+    std::string log_node_ex_list_env = std::getenv("LOG_NODE_EX_LIST");
+    // Split it by ; delimiter
+    boost::split(this->node_ex_list, log_node_ex_list_env, [](char c) { return c == ';'; });
+  }
+
+  // DIAGNOSTICS setting
+  if (std::getenv("DIAGNOSTICS"))
+  {
+    // Success case
+    this->diag_setting = std::getenv("DIAGNOSTICS");
+    boost::algorithm::to_lower(this->diag_setting);
   }
   else
   {
-    std::cout << "Subscribed to Listener Agent with direct rosout..." << std::endl;
+    // Failure case - Default
+    this->diag_setting = "off";
   }
 
   // Heartbeat parameters
@@ -74,6 +96,10 @@ cs_listener::cs_listener()
   // Telemetry
   // Create JSON object
   this->telemetry = json::value::object();
+
+  // Diagnostics
+  this->num_diag_samples = 15;
+  this->curr_diag_sample = INT_MIN;
 }
 
 cs_listener::~cs_listener()
@@ -81,7 +107,7 @@ cs_listener::~cs_listener()
   // Stop heartbeat
   this->heartbeat_stop();
   // Destructor
-  std::cout << "Unsubscribed from Listener Agent..." << std::endl;
+  std::cout << "error_resolution_diagnoser stopped..." << std::endl;
 }
 
 json::value cs_listener::odom_to_json(const nav_msgs::Odometry::ConstPtr &rosmsg)
@@ -152,63 +178,86 @@ json::value cs_listener::pose_to_json(const geometry_msgs::PoseWithCovarianceSta
 
 void cs_listener::setup_telemetry(ros::NodeHandle nh)
 {
-  // Get all topics
-  ros::master::V_TopicInfo all_topics;
-  ros::master::getTopics(all_topics);
 
-  // Find topics relevant to telemetry info and dynamically subscribe
-  std::string odom_msg_type = "nav_msgs/Odometry";
-  std::string pose_msg_type = "geometry_msgs/PoseWithCovarianceStamped";
-  std::string odom_topic;
-  std::string pose_topic;
+  // Find topics relevant to telemetry info and subscribe
+  std::string odom_topic = "odom";
+  std::string pose_topic = "amcl_pose";
 
-  for (ros::master::V_TopicInfo::iterator it = all_topics.begin(); it != all_topics.end(); it++)
+  this->odom_sub =
+      nh.subscribe(odom_topic, 1000, &cs_listener::odom_callback, this);
+
+  this->pose_sub =
+      nh.subscribe(pose_topic, 1000, &cs_listener::pose_callback, this);
+
+  // // Example for optional subscription
+  // const ros::master::TopicInfo &info = *it;
+  // if (info.datatype == odom_msg_type)
+  // {
+  //   // If odom type is found, subscribe
+  //   odom_topic = info.name;
+  //   std::cout << "Odom topic found! Subscribing to " << info.name << " for telemetry." << std::endl;
+  //   this->odom_sub =
+  //       nh.subscribe(odom_topic, 1000, &cs_listener::odom_callback, this);
+  // }
+  // else if ((info.datatype == pose_msg_type) && (info.name != "/initialpose"))
+  // {
+  //   // If pose type is found, subscribe
+  //   pose_topic = info.name;
+  //   std::cout << "Pose topic found! Subscribing to " << info.name << " for telemetry." << std::endl;
+  //   this->pose_sub =
+  //       nh.subscribe(pose_topic, 1000, &cs_listener::pose_callback, this);
+  // }
+}
+
+void cs_listener::setup_diagnostics(ros::NodeHandle nh)
+{
+  if (this->diag_setting == "on")
   {
-    // Find topics relevant to telemetry info and subscribe
-    std::string odom_topic = "odom";
-    std::string pose_topic = "amcl_pose";
-
-    this->odom_sub =
-          nh.subscribe(odom_topic, 1000, &cs_listener::odom_callback, this);
-    
-    this->pose_sub =
-          nh.subscribe(pose_topic, 1000, &cs_listener::pose_callback, this);
-
-    // // Example for optional subscription
-    // const ros::master::TopicInfo &info = *it;
-    // if (info.datatype == odom_msg_type)
-    // {
-    //   // If odom type is found, subscribe
-    //   odom_topic = info.name;
-    //   std::cout << "Odom topic found! Subscribing to " << info.name << " for telemetry." << std::endl;
-    //   this->odom_sub =
-    //       nh.subscribe(odom_topic, 1000, &cs_listener::odom_callback, this);
-    // }
-    // else if ((info.datatype == pose_msg_type) && (info.name != "/initialpose"))
-    // {
-    //   // If pose type is found, subscribe
-    //   pose_topic = info.name;
-    //   std::cout << "Pose topic found! Subscribing to " << info.name << " for telemetry." << std::endl;
-    //   this->pose_sub =
-    //       nh.subscribe(pose_topic, 1000, &cs_listener::pose_callback, this);
-    // }
-  }
-
-  // If subscribers are empty, prompt appropriately
-  if ((this->odom_sub.getTopic().empty()) && (this->pose_sub.getTopic().empty()))
-  {
-    std::cout << "No relevant topics found for telemetry. It will be null. Consider starting the robot nodes first and relaunch this agent." << std::endl;
+    // Subscribe to diagnostics_agg topic
+    this->diag_sub =
+        nh.subscribe("diagnostics_agg", 1000, &cs_listener::diag_callback, this);
   }
 }
 
 void cs_listener::log_callback(const rosgraph_msgs::Log::ConstPtr &rosmsg)
 {
+  // If node list is not set
+  if (this->node_list.empty())
+  {
+    // If node except list is not set, process everything
+    if (this->node_ex_list.empty())
+    {
+      // To debug this callback function
+      std::cout << "Message received: " << rosmsg->msg << std::endl;
 
-  // To debug this callback function
-  std::cout << "Message received: " << rosmsg->msg << std::endl;
+      // Callback that hands over message to State Manager
+      this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+    }
+    else
+    {
+      // If incoming message is NOT from the node except list, process
+      if (find(this->node_ex_list.begin(), this->node_ex_list.end(), rosmsg->name) == this->node_ex_list.end())
+      {
+        // To debug this callback function
+        std::cout << "Message received: " << rosmsg->msg << std::endl;
 
-  // Callback that hands over message to State Manager
-  this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+        // Callback that hands over message to State Manager
+        this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+      }
+    }
+  }
+  else
+  {
+    // If incoming message IS from the node list, process
+    if (find(this->node_list.begin(), this->node_list.end(), rosmsg->name) != this->node_list.end())
+    {
+      // To debug this callback function
+      std::cout << "Message received: " << rosmsg->msg << std::endl;
+
+      // Callback that hands over message to State Manager
+      this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+    }
+  }
 }
 
 void cs_listener::odom_callback(const nav_msgs::Odometry::ConstPtr &rosmsg)
@@ -241,6 +290,35 @@ void cs_listener::pose_callback(const geometry_msgs::PoseWithCovarianceStamped::
   this->telemetry[poseKey] = pose_data;
 }
 
+void cs_listener::diag_callback(const diagnostic_msgs::DiagnosticArray::ConstPtr &rosmsg)
+{
+  // Process diagnostics information
+
+  // Check if current diagnostic sample index is less than prescribed number
+  // If yes, ignore sample until prescribed number is reached. Just a simple downsample
+  if (this->curr_diag_sample < this->num_diag_samples)
+  {
+    // Handle special case of if the current sample index is INT_MIN then it is the first ever sample, so we process.
+    if (this->curr_diag_sample == INT_MIN)
+    {
+      this->state_manager_instance.check_diagnostic(this->agent_type, this->robot_code, rosmsg->status, this->telemetry);
+      this->curr_diag_sample = 0;
+    }
+    else
+    {
+      // General case to ignore current sample
+      this->curr_diag_sample++;
+    }
+  }
+  else
+  {
+    // General case to process current sample if index > prescribed number
+    this->state_manager_instance.check_diagnostic(this->agent_type, this->robot_code, rosmsg->status, this->telemetry);
+    // Reset index back to 0 to restart sampling loop again
+    this->curr_diag_sample = 0;
+  }
+}
+
 void cs_listener::heartbeat_start(ros::NodeHandle nh)
 {
   // Records heartbeat online status when node is started. Future status is pushed by timer bound callback
@@ -253,7 +331,7 @@ void cs_listener::heartbeat_start(ros::NodeHandle nh)
 void cs_listener::heartbeat_log(const ros::WallTimerEvent &timer_event)
 {
   // A timer bound method that periodically checks the ROS connection status and passes it to the state manager.
-  bool status = ros::ok;
+  bool status = ros::master::check();
   this->state_manager_instance.check_heartbeat(status, this->telemetry);
 }
 
@@ -267,7 +345,7 @@ int main(int argc, char **argv)
 {
 
   // Initialize node
-  ros::init(argc, argv, "rosrect_listener_agent_node");
+  ros::init(argc, argv, "error_resolution_diagnoser");
   ros::NodeHandle nh;
   ros::Rate looprate(10);
 
@@ -280,14 +358,70 @@ int main(int argc, char **argv)
   // Setup telemetry
   cs_agent.setup_telemetry(nh);
 
+  // Setup diagnostics
+  cs_agent.setup_diagnostics(nh);
+
   // Create /rosout_agg subscriber
   ros::Subscriber rosout_agg_sub =
       nh.subscribe("rosout_agg", 1000, &cs_listener::log_callback, &cs_agent);
+
+  // ROS Master reconnection parameters
+  RobotStatus status = RobotStatus::RUNNING;
+  std::string session_id;
+  nh.param<std::string>("/run_id", session_id, "unknown");
+  int loop_counter;
+  std::cout << "AGENT:: STATUS:: OK" << std::endl;
 
   while (ros::ok())
   {
     ros::spinOnce();
     looprate.sleep();
+
+    // ROS Master Connection/Reconnection
+    bool master_status = ros::master::check();
+    if (!master_status && status == RobotStatus::RUNNING)
+    {
+      // If ROS master is unavailable and robot status was running, disconnect.
+      std::cout << "AGENT:: ROS master with session id `" << session_id << "` disconnected." << std::endl;
+      std::cout << "AGENT:: STATUS:: MASTER_DISCONNECTED" << std::endl;
+      status = RobotStatus::MASTER_DISCONNECTED;
+    }
+    else if (master_status && status == RobotStatus::MASTER_DISCONNECTED)
+    {
+      // If ROS master is available and robot status was disconnected, connect.
+      std::string new_session_id;
+      nh.param<std::string>("/run_id", new_session_id, "unknown");
+      std::cout << "AGENT:: ROS master is back online with session id `" << session_id << "`." << std::endl;
+      status = RobotStatus::RUNNING;
+      if (new_session_id != session_id)
+      {
+        // If ROS master is new, restart agent.
+        std::cout << "AGENT:: New ROS master detected. Restarting agent." << std::endl;
+        std::cout << "AGENT:: STATUS:: OFFLINE" << std::endl;
+        break;
+      }
+    }
+    else if (!master_status && status == RobotStatus::MASTER_DISCONNECTED)
+    {
+      // If ROS master is not available and robot was disconnected, do nothing.
+    }
+    else
+    {
+      // Normal case
+      status = RobotStatus::RUNNING;
+    }
+
+    if (loop_counter % 6000 == 0)
+    {
+      if (status == RobotStatus::RUNNING)
+      {
+        std::cout << "AGENT:: STATUS:: OK" << std::endl;
+      }
+      else if (status == RobotStatus::MASTER_DISCONNECTED)
+      {
+        std::cout << "AGENT:: STATUS:: MASTER_DISCONNECTED" << std::endl;
+      }
+    }
   }
 
   return 0;

@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include <fstream>
 #include <ros/console.h>
-#include <rosrect-listener-agent/tester_talker.h>
+#include <error_resolution_diagnoser/tester_talker.h>
 
 // Utility function to broadcast log messages
 void TesterTalker::talk_log(std::vector<std::string> msg_list, std::vector<std::string> sev_list)

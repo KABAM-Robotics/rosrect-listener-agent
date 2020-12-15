@@ -1,4 +1,4 @@
-#include <rosrect-listener-agent/backend_api.h>
+#include <error_resolution_diagnoser/backend_api.h>
 
 using namespace utility;              // Common utilities like string conversions
 using namespace web;                  // Common features like URIs.
@@ -23,6 +23,7 @@ BackendApi::BackendApi()
   std::string latest_log = this->log_dir + "latest_log_loc.txt";
   std::string disp_dir = "/$HOME/.cognicept/agent/logs/";
 
+  std::cout << "================================Other Info==============================" << std::endl;
   if (check_id)
   {
     ros::param::get("run_id", run_id);
@@ -83,6 +84,8 @@ BackendApi::BackendApi()
     // This means the agent is running in ROS mode. So no need to configure endpoint.
     this->ecs_api_endpoint = "/api/ert/getErrorData/";
   }
+
+  std::cout << "===========================Diagnosing Started===========================" << std::endl;
 }
 
 BackendApi::~BackendApi()
@@ -100,7 +103,7 @@ void BackendApi::check_environment()
   {
     // Success case
     this->agent_type = std::getenv("AGENT_TYPE");
-    std::cout << "Environment variable AGENT_TYPE set to: " << this->agent_type << std::endl;
+    std::cout << "AGENT_TYPE: " << this->agent_type << std::endl;
     // ECS_API, ECS_ROBOT_MODEL
     if ((this->agent_type == "DB") || (this->agent_type == "ERT") || (this->agent_type == "ECS"))
     {
@@ -108,17 +111,17 @@ void BackendApi::check_environment()
       {
         // Success case
         this->ecs_api_host = std::getenv("ECS_API");
-        std::cout << "Environment variable ECS_API set to: " << this->ecs_api_host << std::endl;
+        std::cout << "ECS_API: " << this->ecs_api_host << std::endl;
         if (std::getenv("ECS_ROBOT_MODEL"))
         {
           // Success case
           this->ecs_robot_model = std::getenv("ECS_ROBOT_MODEL");
-          std::cout << "Environment variable ECS_ROBOT_MODEL set to: " << this->ecs_robot_model << std::endl;
+          std::cout << "ECS_ROBOT_MODEL: " << this->ecs_robot_model << std::endl;
         }
         else
         {
           // Failure case - Default
-          std::cerr << "Agent configured in " << this->agent_type << " mode but ECS_ROBOT_MODEL environment variable is not configured. Defaulting back to ROS mode instead..." << std::endl;
+          std::cerr << "Agent configured in " << this->agent_type << " mode but ECS_ROBOT_MODEL is not configured. Defaulting back to ROS mode instead..." << std::endl;
           this->agent_type = "ROS";
           this->agent_type = "ROS";
         }
@@ -126,7 +129,7 @@ void BackendApi::check_environment()
       else
       {
         // Failure case - Default
-        std::cerr << "Agent configured in " << this->agent_type << " mode but ECS_API environment variable is not configured. Defaulting back to ROS mode instead..." << std::endl;
+        std::cerr << "Agent configured in " << this->agent_type << " mode but ECS_API is not configured. Defaulting back to ROS mode instead..." << std::endl;
         this->agent_type = "ROS";
       }
     }
@@ -135,7 +138,7 @@ void BackendApi::check_environment()
   {
     // Failure case - Default
     this->agent_type = "ROS";
-    std::cerr << "Environment variable AGENT_TYPE unspecified. Defaulting to ROS mode..." << std::endl;
+    std::cerr << "AGENT_TYPE unspecified. Defaulting to ROS mode..." << std::endl;
   }
 
   // ROBOT_CODE
@@ -143,13 +146,13 @@ void BackendApi::check_environment()
   {
     // Success case
     this->robot_id = std::getenv("ROBOT_CODE");
-    std::cout << "Environment variable ROBOT_CODE set to: " << this->robot_id << std::endl;
+    std::cout << "ROBOT_CODE: " << this->robot_id << std::endl;
   }
   else
   {
     // Failure case - Default
     this->robot_id = "Undefined";
-    std::cerr << "Environment variable ROBOT_CODE unspecified. Defaulting to 'Undefined'..." << std::endl;
+    std::cerr << "ROBOT_CODE unspecified. Defaulting to 'Undefined'..." << std::endl;
   }
 
   // SITE_CODE
@@ -157,13 +160,13 @@ void BackendApi::check_environment()
   {
     // Success case
     this->site_id = std::getenv("SITE_CODE");
-    std::cout << "Environment variable SITE_CODE set to: " << this->site_id << std::endl;
+    std::cout << "SITE_CODE: " << this->site_id << std::endl;
   }
   else
   {
     // Failure case - Default
     this->site_id = "Undefined";
-    std::cerr << "Environment variable SITE_CODE unspecified. Defaulting to 'Undefined'..." << std::endl;
+    std::cerr << "SITE_CODE unspecified. Defaulting to 'Undefined'..." << std::endl;
   }
 
   // AGENT_ID
@@ -171,13 +174,13 @@ void BackendApi::check_environment()
   {
     // Success case
     this->agent_id = std::getenv("AGENT_ID");
-    std::cout << "Environment variable AGENT_ID set to: " << this->agent_id << std::endl;
+    std::cout << "AGENT_ID: " << this->agent_id << std::endl;
   }
   else
   {
     // Failure case - Default
     this->agent_id = "Undefined";
-    std::cerr << "Environment variable AGENT_ID unspecified. Defaulting to 'Undefined'..." << std::endl;
+    std::cerr << "AGENT_ID unspecified. Defaulting to 'Undefined'..." << std::endl;
   }
 
   // AGENT_MODE, AGENT_POST_API
@@ -185,7 +188,7 @@ void BackendApi::check_environment()
   {
     // Success case
     this->agent_mode = std::getenv("AGENT_MODE");
-    std::cout << "Environment variable AGENT_MODE set to: " << this->agent_mode << std::endl;
+    std::cout << "AGENT_MODE: " << this->agent_mode << std::endl;
     // Specially handle POST_TEST case
     if (this->agent_mode == "POST_TEST")
     {
@@ -193,13 +196,13 @@ void BackendApi::check_environment()
       {
         // Success case
         this->agent_post_api = std::getenv("AGENT_POST_API");
-        std::cout << "Environment variable AGENT_POST_API set to: " << this->agent_post_api << std::endl;
+        std::cout << "AGENT_POST_API: " << this->agent_post_api << std::endl;
       }
       else
       {
         // Failure case - Default
         this->agent_mode = "JSON_TEST";
-        std::cerr << "Agent configured in POST_TEST mode but AGENT_POST_API environment variable is not configured. Defaulting back to JSON_TEST mode instead..." << std::endl;
+        std::cerr << "Agent configured in POST_TEST mode but AGENT_POST_API is not configured. Defaulting back to JSON_TEST mode instead..." << std::endl;
       }
     }
   }
@@ -207,10 +210,64 @@ void BackendApi::check_environment()
   {
     // Failure case - Default
     this->agent_mode = "JSON_TEST";
-    std::cerr << "Environment variable AGENT_MODE unspecified. Defaulting to 'JSON_TEST'..." << std::endl;
+    std::cerr << "AGENT_MODE unspecified. Defaulting to 'JSON_TEST'..." << std::endl;
   }
 
-  std::cout << "=========================================================================" << std::endl;
+  // SET node list if specified
+  if (std::getenv("LOG_NODE_LIST"))
+  {
+    // Get env variable
+    std::string log_node_list_env = std::getenv("LOG_NODE_LIST");
+    // Split it by ; delimiter
+    boost::split(this->node_list, log_node_list_env, [](char c) { return c == ';'; });
+    // Print info
+    std::cout << "LOG_NODE_LIST: ";
+    for (std::string node_str : this->node_list)
+    {
+      std::cout << " " << node_str;
+    }
+    std::cout << std::endl;
+  }
+  else if (std::getenv("LOG_NODE_EX_LIST"))
+  {
+    // Get env variable
+    std::string log_node_ex_list_env = std::getenv("LOG_NODE_EX_LIST");
+    // Split it by ; delimiter
+    boost::split(this->node_ex_list, log_node_ex_list_env, [](char c) { return c == ';'; });
+    // Print info
+    std::cout << "LOG_NODE_EX_LIST:";
+    for (std::string node_str : this->node_ex_list)
+    {
+      std::cout << " " << node_str;
+    }
+    std::cout << std::endl;
+  }
+  else
+  {
+    std::cout << "LOG_NODE_LIST and LOG_NODE_EX_LIST unspecified. Defaulting to ALL nodes." << std::endl;
+  }
+
+  // DIAGNOSTICS setting
+  if (std::getenv("DIAGNOSTICS"))
+  {
+    // Success case
+    this->diag_setting = std::getenv("DIAGNOSTICS");
+    boost::algorithm::to_lower(this->diag_setting);
+    if ((this->diag_setting == "on") || (this->diag_setting == "off"))
+    {
+      std::cout << "DIAGNOSTICS is: " << this->diag_setting << std::endl;
+    }
+    else
+    {
+      std::cout << "DIAGNOSTICS is set to an invalid value. Defaulting to OFF." << this->diag_setting << std::endl;
+    }
+  }
+  else
+  {
+    // Failure case - Default
+    this->diag_setting = "off";
+    std::cout << "DIAGNOSTICS is unspecified. Defaulting to OFF." << std::endl;
+  }
 }
 
 pplx::task<void> BackendApi::post_event_log(json::value payload)
@@ -221,6 +278,8 @@ pplx::task<void> BackendApi::post_event_log(json::value payload)
            // Create HTTP client configuration
            http_client_config config;
            config.set_validate_certificates(false);
+           auto timeout = std::chrono::milliseconds(500);
+           config.set_timeout(timeout);
 
            // Create HTTP client
            http_client client(this->agent_post_api, config);
@@ -241,7 +300,7 @@ pplx::task<void> BackendApi::post_event_log(json::value payload)
            }
            else
            {
-             req.set_request_uri("/api/agentstream/putRecord");
+             req.set_request_uri("/agentstream/put-record");
            }
            req.set_body(payload);
 
@@ -368,7 +427,7 @@ void BackendApi::push_status(bool status, json::value telemetry)
     }
     catch (const http::http_exception &e)
     {
-      std::cerr << "POST API error: " << e.what() << ". Agent will retry API connection at: " << this->agent_post_api  << std::endl;
+      std::cerr << "POST API error: " << e.what() << ". Agent will retry API connection at: " << this->agent_post_api << std::endl;
     }
   }
 }
@@ -558,6 +617,8 @@ pplx::task<void> BackendApi::query_error_classification(std::string msg_text)
            // Create HTTP client configuration
            http_client_config config;
            config.set_validate_certificates(false);
+           auto timeout = std::chrono::milliseconds(500);
+           config.set_timeout(timeout);
 
            // Create HTTP client
            http_client client(this->ecs_api_host, config);
