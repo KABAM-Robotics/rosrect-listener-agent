@@ -20,17 +20,17 @@ pipeline{
     stage ("--Extract test results--") {
     steps {
             echo 'Estimating code coverage'
-            sh '''
-            sh coverage.sh
-            '''
+            //sh '''
+            //sh coverage.sh
+            //'''
         
-      cobertura coberturaReportFile: 'coverage.xml'
+      //cobertura coberturaReportFile: 'coverage.xml'
     }
     }
   }
   post {
   always {
-      step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
+    slackSend(message:"Job ${env.JOB_NAME} ${env.BUILD_NUMBER} with commit: '${env.GIT_COMMIT}' has completed with status: ${currentBuild.currentResult} \n (<${env.BUILD_URL}|Open>)")
   }
 }
 }
