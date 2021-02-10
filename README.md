@@ -25,6 +25,9 @@ This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDU
     * [Start Simulation](#start-simulation)
     * [Start error_resolution_diagnoser](#start-error_resolution_diagnoser)
     * [Generate a navigation error](#generate-a-navigation-error)
+    * [Generate diagnostic logs](#generate-diagnostic-logs)
+        * [Log parsing](#log-parsing)
+        * [Log publishing](#log-publishing)
 - [Related-Pages](#related-pages)
 
 ## Description
@@ -267,7 +270,7 @@ The agent can be configured using the following environment variables:
 | `ECS_ROBOT_MODEL`  | Valid Robot Model                                                                                       | Not applicable | If the `AGENT_TYPE` is set to `DB`, this variable MUST be configured to a valid robot model. If not specified, the agent will default back to `ROS` mode. For ROS 1 navigation stack, just use `Turtlebot3`.                                                                                                                                                                                                                                                                                                                                                                         |
 | `LOG_NODE_LIST`    | Semicolon separated list of ROS nodes to filter and listen to (precede node names with `/`)             | Not applicable | This is an optional parameter that can be used to specify a 'semi-colon' separated list of ROS node names for which alone the ROS logs will be filtered by. Use this parameter to selectively choose only nodes of choice to remove noise from the ROS logs. Especially if you do not have control over the ROS logs of some of the other nodes. When not specified, all ROS node logs will be processed. When both `LOG_NODE_LIST` and `LOG_NODE_EX_LIST` are specified, `LOG_NODE_LIST` takes precedence and `LOG_NODE_EX_LIST` is ignored.                                        |
 | `LOG_NODE_EX_LIST` | Semicolon separated list of ROS node logs to filter OUT and NOT listen to (precede node names with `/`) | Not applicable | This is an optional parameter that can be used to specify a 'semi-colon' separated list of ROS node names for which the ROS logs will be filtered OUT and not listened to. Use this parameter to selectively exclude only nodes of choice to remove nodes that emit noisy and unnecessary ROS logs. Especially if you do not have control over the ROS logs of some of the other nodes. When not specified, all ROS node logs will be processed. When both `LOG_NODE_LIST` and `LOG_NODE_EX_LIST` are specified, `LOG_NODE_LIST` takes precedence and `LOG_NODE_EX_LIST` is ignored. |
-| `DIAGNOSTICS`      | ON/OFF                                                                                                  |      OFF       | This is a *beta* feature that will let the diagnoser listen to diagnostic information on the ROS node. By setting this to ON, the diagnoser will subscribe to `/diagnostics_agg` topic and report 'state-changes'.                                                                                                                                                                                                                                                                                                                                                                     |
+| `DIAGNOSTICS`      | ON/OFF                                                                                                  |      OFF       | This will let the diagnoser listen to diagnostic information on the ROS node. By setting this to ON, the diagnoser will subscribe to `/diagnostics_agg` topic and report 'state-changes'. For more information, refer to the section [Generate diagnostic logs](#generate-diagnostic-logs).                                                                                                                                                                                                                                                                                          |
 
 **NOTE: To run the agent in the `DB` mode, `error_classification_server` should be running either natively or using Docker. Take a look at the relevant documentation [here][9]. Failure to have the API server will result in the agent not able to find a valid API endpoint and result in an error thrown.**
 
@@ -612,6 +615,41 @@ These JSON logs can be consumed by REST APIs/data streams to connect to incident
 
 From the echo, you are able to see that the response has the same contents as the JSON logs generated. Configure this endpoint appropriately to directly connect the agent to other systems such as incident management. Now, operators can monitor this incident management system to intervene robot operations to correct the errors to reduce downtime on the actual field.
 
+### Generate diagnostic logs
+The `error_resolution_diagnoser` supports logging `diagnostic_msgs/DiagnosticArray` type messages published to `/diagnostics_agg` topic in addition to the `rosgraph_msgs/Log` messages published to `/rosout_agg` topic. The support for diagnostics is slightly different from that of ROS logs. 
+
+#### **Log parsing**
+The diagnostic messages that come in are not directly processed by the diagnoser. It is first parsed into the following format. 
+
+```
+[(level)] (diagnostic_identifier)-->(diagnostic_message>)
+```
+
+This is because, every diagnostic message has a `level` that is published as shown [here][10]. The diagnoser includes this information in the `[(level)]` part of the log in a string form of `[ERROR]`, `[WARN]` or `[INFO]`. Optionally, the nodes also publish a `msg`. This information is included in the `(diagnostic_message)` part of the log. However this is not a requirement. A node might just publish the `level` noting the diagnostic status and not publish anything in the `msg`. Additionally, based on the type of node publishing, it also has identifiers such as `name` and `hardware_id`. The `(diagnostic_identifier)` part of the log is set to `name`, if it is available, otherwise `hardware_id` is used if that is available else set to an empty string if none is available.
+
+#### **Log publishing**
+The diagnoser then publishes the log by checking for *state changes* of the log. To give an example, here are the logs for a RoboSense lidar topic at the `[INFO]` and `[WARN]` levels.
+
+```
+[INFO] /Other/rslidar_node: rslidar_packets topic status-->Desired frequency met.
+```
+
+```
+[WARN] /Other/rslidar_node: rslidar_packets topic status-->Frequency too low.
+```
+
+Since a majority of the diagnostic messages are published at a periodic interval, it is desirable to reduce the clutter by only publishing the state changes. i.e. publish logs only when log level for a node changes from `[INFO]` <--> `[WARN]` <--> `[ERROR]`. Another thing to note is, the error classification queries are done on the node names and levels rather than the messages which tend to be very dynamic. For example, the NVidia Jetson hardware has a ROS package called [`ros_jetson_stats`][11] that can help monitor the hardware diagnostics. One such diagnostic it publishes is the disk usage as follows.
+
+```
+[WARN] /jtop/board/disk-->23.1GB/27.4GB
+```
+
+```
+[ERROR] /jtop/board/disk-->26.1GB/27.4GB
+```
+
+The node publishes disk usage message as UsedGB/AvailGB no matter the status level. And this might change based on the size of the drive installed. This makes it very dynamic in terms of adding logs. So the design choice was to make the the logging mechanism diagnostic message independent.
+
 ## Related Pages
 For more related information, refer to:
 
@@ -624,6 +662,8 @@ For more related information, refer to:
 * [Microsoft C++ REST SDK][5]
 * [Docker Installation][6]
 * [Intro Document][7]
+* [diagnostic_msgs documentation][10]
+* [ros_jetson_stats repository][11]
 
 [1]: http://emanual.robotis.com/docs/en/platform/turtlebot3/simulation/#virtual-navigation-with-turtlebot3
 [2]: http://emanual.robotis.com/docs/en/platform/turtlebot3/pc_setup/#install-dependent-ros-packages
@@ -634,6 +674,8 @@ For more related information, refer to:
 [7]: docs/INTRO.md
 [8]: https://github.com/cognicept-admin/error_classification_server#installation
 [9]: https://github.com/cognicept-admin/error_classification_server#syntax
+[10]: http://docs.ros.org/en/api/diagnostic_msgs/html/msg/DiagnosticStatus.html
+[11]: https://github.com/rbonghi/ros_jetson_stats
 
 ## Acknowledgements
 We would like to acknowledge the Singapore government for their vision and support to start this ambitious research and development project, *"Accelerating Open Source Technologies for Cross Domain Adoption through the Robot Operating System"*. The project is supported by Singapore National Robotics Programme (NRP).
