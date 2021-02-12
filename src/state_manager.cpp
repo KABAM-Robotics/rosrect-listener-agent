@@ -455,6 +455,7 @@ void StateManager::check_diagnostic_ros(std::string robot_code, std::vector<diag
         diag_str = current_diag[idx].name + "_" + current_diag[idx].hardware_id;
         // Diagnostics level. Main determination for state suppression
         diag_level = static_cast<int>(current_diag[idx].level);
+        // std::cout << "Checking: " << diag_level << " " << diag_str << std::endl;
         // Check if diagnostic needs to be suppressed. All diagnostics with the same str
         // and no change in level are suppressed. We process only when there is change in levels.
         this->check_diag_data(robot_code, diag_str, std::to_string(diag_level));
