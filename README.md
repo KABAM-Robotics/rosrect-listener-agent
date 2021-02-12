@@ -254,6 +254,38 @@ Optionally, you can run the unit and integration tests natively or using Docker,
     * TESTS: 5
     * ERRORS: 0
     * FAILURES: 0
+    .
+    .
+    .
+    .
+    [Testcase: testlisteneragent_test_node_telemetry] ... ok
+
+    [ROSTEST]-----------------------------------------------------------------------
+
+    [error_resolution_diagnoser.rosunit-listeneragent_test_node_telemetry/telemetryTest][passed]
+
+    SUMMARY
+    * RESULT: SUCCESS
+    * TESTS: 1
+    * ERRORS: 0
+    * FAILURES: 0
+    .
+    .
+    .
+    .
+    [Testcase: testlisteneragent_test_node_diagnostics] ... ok
+
+    [ROSTEST]-----------------------------------------------------------------------
+
+    [error_resolution_diagnoser.rosunit-listeneragent_test_node_diagnostics/diagnosticsNoStateChangeTest][passed]
+    [error_resolution_diagnoser.rosunit-listeneragent_test_node_diagnostics/diagnosticsStateChangeTest][passed]
+
+    SUMMARY
+    * RESULT: SUCCESS
+    * TESTS: 2
+    * ERRORS: 0
+    * FAILURES: 0
+
 
 ## Syntax
 The agent can be configured using the following environment variables:

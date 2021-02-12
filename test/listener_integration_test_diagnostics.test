@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+    <env name="AGENT_TYPE" value="ROS"/>
+    <env name="AGENT_MODE" value="JSON_TEST"/>
+    <env name="ECS_ROBOT_MODEL" value="Turtlebot3"/>
+    <env name="ECS_API" value="http://0.0.0.0:8000"/>
+    <env name="DIAGNOSTICS" value="ON"/>
+    <node pkg="error_resolution_diagnoser" type="error_resolution_diagnoser" name="error_resolution_diagnoser"  output="screen"/>
+    <test test-name="listeneragent_test_node_diagnostics" pkg="error_resolution_diagnoser" type="listeneragent_test_node_diagnostics" time-limit="120.0"/>
+</launch>
