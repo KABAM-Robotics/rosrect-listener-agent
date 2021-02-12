@@ -98,7 +98,7 @@ cs_listener::cs_listener()
   this->telemetry = json::value::object();
 
   // Diagnostics
-  this->num_diag_samples = 15;
+  this->num_diag_samples = 0;
   this->curr_diag_sample = INT_MIN;
 }
 
@@ -308,6 +308,7 @@ void cs_listener::diag_callback(const diagnostic_msgs::DiagnosticArray::ConstPtr
     {
       // General case to ignore current sample
       this->curr_diag_sample++;
+      std::cout << "Sample ignored" << std::endl;
     }
   }
   else
