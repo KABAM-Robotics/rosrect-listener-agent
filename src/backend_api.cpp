@@ -82,7 +82,7 @@ BackendApi::BackendApi()
   else
   {
     // This means the agent is running in ROS mode. So no need to configure endpoint.
-    this->ecs_api_endpoint = "/api/ert/getErrorData/";
+    this->ecs_api_endpoint = "";
   }
 
   std::cout << "===========================Diagnosing Started===========================" << std::endl;
@@ -255,7 +255,7 @@ void BackendApi::check_environment()
     boost::algorithm::to_lower(this->diag_setting);
     if ((this->diag_setting == "on") || (this->diag_setting == "off"))
     {
-      std::cout << "DIAGNOSTICS is: " << this->diag_setting << std::endl;
+      std::cout << "DIAGNOSTICS: " << this->diag_setting << std::endl;
     }
     else
     {
@@ -617,7 +617,7 @@ pplx::task<void> BackendApi::query_error_classification(std::string msg_text)
            // Create HTTP client configuration
            http_client_config config;
            config.set_validate_certificates(false);
-           auto timeout = std::chrono::milliseconds(500);
+           auto timeout = std::chrono::milliseconds(2000);
            config.set_timeout(timeout);
 
            // Create HTTP client
