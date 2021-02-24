@@ -221,43 +221,48 @@ void cs_listener::setup_diagnostics(ros::NodeHandle nh)
 
 void cs_listener::log_callback(const rosgraph_msgs::Log::ConstPtr &rosmsg)
 {
-  // If node list is not set
-  if (this->node_list.empty())
-  {
-    // If node except list is not set, process everything
-    if (this->node_ex_list.empty())
-    {
-      // To debug this callback function
-      std::cout << "Message received: " << rosmsg->msg << std::endl;
+  // To debug this callback function
+  std::cout << "Message received: " << rosmsg->msg << std::endl;
 
-      // Callback that hands over message to State Manager
-      this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
-    }
-    else
-    {
-      // If incoming message is NOT from the node except list, process
-      if (find(this->node_ex_list.begin(), this->node_ex_list.end(), rosmsg->name) == this->node_ex_list.end())
-      {
-        // To debug this callback function
-        std::cout << "Message received: " << rosmsg->msg << std::endl;
+  // Callback that hands over message to State Manager
+  this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+  // // If node list is not set
+  // if (this->node_list.empty())
+  // {
+  //   // If node except list is not set, process everything
+  //   if (this->node_ex_list.empty())
+  //   {
+  //     // To debug this callback function
+  //     std::cout << "Message received: " << rosmsg->msg << std::endl;
 
-        // Callback that hands over message to State Manager
-        this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
-      }
-    }
-  }
-  else
-  {
-    // If incoming message IS from the node list, process
-    if (find(this->node_list.begin(), this->node_list.end(), rosmsg->name) != this->node_list.end())
-    {
-      // To debug this callback function
-      std::cout << "Message received: " << rosmsg->msg << std::endl;
+  //     // Callback that hands over message to State Manager
+  //     this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+  //   }
+  //   else
+  //   {
+  //     // If incoming message is NOT from the node except list, process
+  //     if (find(this->node_ex_list.begin(), this->node_ex_list.end(), rosmsg->name) == this->node_ex_list.end())
+  //     {
+  //       // To debug this callback function
+  //       std::cout << "Message received: " << rosmsg->msg << std::endl;
 
-      // Callback that hands over message to State Manager
-      this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
-    }
-  }
+  //       // Callback that hands over message to State Manager
+  //       this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+  //     }
+  //   }
+  // }
+  // else
+  // {
+  //   // If incoming message IS from the node list, process
+  //   if (find(this->node_list.begin(), this->node_list.end(), rosmsg->name) != this->node_list.end())
+  //   {
+  //     // To debug this callback function
+  //     std::cout << "Message received: " << rosmsg->msg << std::endl;
+
+  //     // Callback that hands over message to State Manager
+  //     this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+  //   }
+  // }
 }
 
 void cs_listener::odom_callback(const nav_msgs::Odometry::ConstPtr &rosmsg)
@@ -354,75 +359,75 @@ int main(int argc, char **argv)
   cs_listener cs_agent;
 
   // Start heartbeat
-  cs_agent.heartbeat_start(nh);
+  // cs_agent.heartbeat_start(nh);
 
   // Setup telemetry
-  cs_agent.setup_telemetry(nh);
+  // cs_agent.setup_telemetry(nh);
 
   // Setup diagnostics
-  cs_agent.setup_diagnostics(nh);
+  // cs_agent.setup_diagnostics(nh);
 
   // Create /rosout_agg subscriber
   ros::Subscriber rosout_agg_sub =
       nh.subscribe("rosout_agg", 1000, &cs_listener::log_callback, &cs_agent);
 
-  // ROS Master reconnection parameters
-  RobotStatus status = RobotStatus::RUNNING;
-  std::string session_id;
-  nh.param<std::string>("/run_id", session_id, "unknown");
-  int loop_counter;
-  std::cout << "AGENT:: STATUS:: OK" << std::endl;
+  // // ROS Master reconnection parameters
+  // RobotStatus status = RobotStatus::RUNNING;
+  // std::string session_id;
+  // nh.param<std::string>("/run_id", session_id, "unknown");
+  // int loop_counter;
+  // std::cout << "AGENT:: STATUS:: OK" << std::endl;
 
   while (ros::ok())
   {
     ros::spinOnce();
     looprate.sleep();
 
-    // ROS Master Connection/Reconnection
-    bool master_status = ros::master::check();
-    if (!master_status && status == RobotStatus::RUNNING)
-    {
-      // If ROS master is unavailable and robot status was running, disconnect.
-      std::cout << "AGENT:: ROS master with session id `" << session_id << "` disconnected." << std::endl;
-      std::cout << "AGENT:: STATUS:: MASTER_DISCONNECTED" << std::endl;
-      status = RobotStatus::MASTER_DISCONNECTED;
-    }
-    else if (master_status && status == RobotStatus::MASTER_DISCONNECTED)
-    {
-      // If ROS master is available and robot status was disconnected, connect.
-      std::string new_session_id;
-      nh.param<std::string>("/run_id", new_session_id, "unknown");
-      std::cout << "AGENT:: ROS master is back online with session id `" << session_id << "`." << std::endl;
-      status = RobotStatus::RUNNING;
-      if (new_session_id != session_id)
-      {
-        // If ROS master is new, restart agent.
-        std::cout << "AGENT:: New ROS master detected. Restarting agent." << std::endl;
-        std::cout << "AGENT:: STATUS:: OFFLINE" << std::endl;
-        break;
-      }
-    }
-    else if (!master_status && status == RobotStatus::MASTER_DISCONNECTED)
-    {
-      // If ROS master is not available and robot was disconnected, do nothing.
-    }
-    else
-    {
-      // Normal case
-      status = RobotStatus::RUNNING;
-    }
+    // // ROS Master Connection/Reconnection
+    // bool master_status = ros::master::check();
+    // if (!master_status && status == RobotStatus::RUNNING)
+    // {
+    //   // If ROS master is unavailable and robot status was running, disconnect.
+    //   std::cout << "AGENT:: ROS master with session id `" << session_id << "` disconnected." << std::endl;
+    //   std::cout << "AGENT:: STATUS:: MASTER_DISCONNECTED" << std::endl;
+    //   status = RobotStatus::MASTER_DISCONNECTED;
+    // }
+    // else if (master_status && status == RobotStatus::MASTER_DISCONNECTED)
+    // {
+    //   // If ROS master is available and robot status was disconnected, connect.
+    //   std::string new_session_id;
+    //   nh.param<std::string>("/run_id", new_session_id, "unknown");
+    //   std::cout << "AGENT:: ROS master is back online with session id `" << session_id << "`." << std::endl;
+    //   status = RobotStatus::RUNNING;
+    //   if (new_session_id != session_id)
+    //   {
+    //     // If ROS master is new, restart agent.
+    //     std::cout << "AGENT:: New ROS master detected. Restarting agent." << std::endl;
+    //     std::cout << "AGENT:: STATUS:: OFFLINE" << std::endl;
+    //     break;
+    //   }
+    // }
+    // else if (!master_status && status == RobotStatus::MASTER_DISCONNECTED)
+    // {
+    //   // If ROS master is not available and robot was disconnected, do nothing.
+    // }
+    // else
+    // {
+    //   // Normal case
+    //   status = RobotStatus::RUNNING;
+    // }
 
-    if (loop_counter % 6000 == 0)
-    {
-      if (status == RobotStatus::RUNNING)
-      {
-        std::cout << "AGENT:: STATUS:: OK" << std::endl;
-      }
-      else if (status == RobotStatus::MASTER_DISCONNECTED)
-      {
-        std::cout << "AGENT:: STATUS:: MASTER_DISCONNECTED" << std::endl;
-      }
-    }
+    // if (loop_counter % 6000 == 0)
+    // {
+    //   if (status == RobotStatus::RUNNING)
+    //   {
+    //     std::cout << "AGENT:: STATUS:: OK" << std::endl;
+    //   }
+    //   else if (status == RobotStatus::MASTER_DISCONNECTED)
+    //   {
+    //     std::cout << "AGENT:: STATUS:: MASTER_DISCONNECTED" << std::endl;
+    //   }
+    // }
   }
 
   return 0;

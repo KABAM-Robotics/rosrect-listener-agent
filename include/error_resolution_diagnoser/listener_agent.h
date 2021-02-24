@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <ros/ros.h>
 #include <rosgraph_msgs/Log.h>
 #include <nav_msgs/Odometry.h>
@@ -6,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <error_resolution_diagnoser/state_manager.h>
+#include <boost/algorithm/string.hpp>
 
 class cs_listener
 {

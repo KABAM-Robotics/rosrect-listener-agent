@@ -11,7 +11,7 @@ RobotEvent::RobotEvent()
 
 void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::value msg_info, json::value telemetry, std::string agent_type)
 {
-    // std::cout << "Event log updating..." << std::endl;
+    std::cout << "Event log updating..." << std::endl;
     // Each message has a queue id
     this->queue_id += 1;
 
@@ -24,17 +24,19 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
     // 'Module', 'Source', 'Message', 'Description',
     // 'Resolution', 'RobotEvent_ID', 'Telemetry'
     int level = 8;
-    std::string cflag = "Null";
-    std::string module = "Null";
-    std::string source = "Null";
-    std::string message = "Null";
-    std::string description = "Null";
-    std::string resolution = "Null";
+    std::wstring cflag = L"Null";
+    std::wstring module = L"Null";
+    std::wstring source = L"Null";
+    std::wstring message = L"Null";
+    std::wstring description = L"Null";
+    std::wstring resolution = L"Null";
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 
-    utility::stringstream_t stream;
-    telemetry.serialize(stream);
+    // utility::stringstream_t stream;
+    // telemetry.serialize(stream);
     // std::cout << "Event telemetry: " << stream.str() << std::endl;
-    std::string telemetry_str = stream.str();
+    // std::wstring telemetry_str = stream.str();
+    std::wstring telemetry_str = L"Null";
 
     if (agent_type == "ECS")
     {
@@ -45,15 +47,15 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
         bool cflag_bool = (msg_info.at(utility::conversions::to_string_t("compounding_flag"))).as_bool();
         if (cflag_bool)
         {
-            cflag = "true";
+            cflag = L"true";
         }
         else
         {
-            cflag = "false";
+            cflag = L"false";
         }
         module = (msg_info.at(utility::conversions::to_string_t("error_module"))).as_string();
         source = (msg_info.at(utility::conversions::to_string_t("error_source"))).as_string();
-        message = data->msg;
+        message = converter.from_bytes(data->msg);
         // Setting description to stored error_text. Needs to be set appropriately later
         description = (msg_info.at(utility::conversions::to_string_t("error_text"))).as_string();
         // Resolution needs to be set appropriately later.
@@ -68,27 +70,26 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
         bool cflag_bool = (msg_info.at(utility::conversions::to_string_t("compounding_flag"))).as_bool();
         if (cflag_bool)
         {
-            cflag = "true";
+            cflag = L"true";
         }
         else
         {
-            cflag = "false";
+            cflag = L"false";
         }
         module = (msg_info.at(utility::conversions::to_string_t("error_module"))).as_string();
         source = (msg_info.at(utility::conversions::to_string_t("error_source"))).as_string();
-        message = data->msg;
+        message = converter.from_bytes(data->msg);
         description = (msg_info.at(utility::conversions::to_string_t("error_description"))).as_string();
         resolution = (msg_info.at(utility::conversions::to_string_t("error_resolution"))).as_string();
     }
     else
     {
-        // std::cout << "Populating from ROS!" << std::endl;
+        std::cout << "Populating from ROS!" << std::endl;
         // This is the direct ROS feed case
         // Assign message
-        message = data->msg;
+        message = converter.from_bytes(data->msg);
         // Assign source
-        source = data->name;
-
+        source = converter.from_bytes(data->name);
         // Assign level
         level = data->level;
     }
@@ -100,18 +101,18 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
     std::vector<std::string> event_details;
     event_details.push_back(time_str);
     event_details.push_back(std::to_string(level));
-    event_details.push_back(cflag);
-    event_details.push_back(module);
-    event_details.push_back(source);
-    event_details.push_back(message);
-    event_details.push_back(description);
-    event_details.push_back(resolution);
-    event_details.push_back(telemetry_str);
+    event_details.push_back(converter.to_bytes(cflag));
+    event_details.push_back(converter.to_bytes(module));
+    event_details.push_back(converter.to_bytes(source));
+    event_details.push_back(converter.to_bytes(message));
+    event_details.push_back(converter.to_bytes(description));
+    event_details.push_back(converter.to_bytes(resolution));
+    event_details.push_back(converter.to_bytes(telemetry_str));
     event_details.push_back(this->event_id_str);
 
     // Push to log
     this->event_log.push_back(event_details);
-    // std::cout << "Event log updated!" << std::endl;
+    std::cout << "Event log updated!" << std::endl;
 }
 
 void RobotEvent::update_event_id()

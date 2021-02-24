@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <cpprest/json.h>
 #undef U
 #include <string>
@@ -9,6 +10,8 @@
 #include <diagnostic_msgs/DiagnosticArray.h>
 #include <error_resolution_diagnoser/backend_api.h>
 #include <error_resolution_diagnoser/robot_event.h>
+#include <locale>
+#include <codecvt>
 
 class StateManager
 {

@@ -16,7 +16,7 @@ BackendApi::BackendApi()
   this->check_environment();
 
   // File variables
-  this->log_dir = std::getenv("HOME");
+  this->log_dir = std::getenv("USERPROFILE");
   std::string run_id;
   bool check_id = ros::param::has("run_id");
   this->log_dir.append("/.cognicept/agent/logs/");
@@ -282,7 +282,8 @@ pplx::task<void> BackendApi::post_event_log(json::value payload)
            config.set_timeout(timeout);
 
            // Create HTTP client
-           http_client client(this->agent_post_api, config);
+           std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+           http_client client(converter.from_bytes(this->agent_post_api), config);
 
            // // Write the current JSON value to a stream with the native platform character width
            // utility::stringstream_t stream;
@@ -296,11 +297,11 @@ pplx::task<void> BackendApi::post_event_log(json::value payload)
            // req.headers().add("Authorization", this->headers);
            if (this->agent_post_api == "https://postman-echo.com")
            {
-             req.set_request_uri("/post");
+             req.set_request_uri(L"/post");
            }
            else
            {
-             req.set_request_uri("/agentstream/put-record");
+             req.set_request_uri(L"/agentstream/put-record");
            }
            req.set_body(payload);
 
@@ -387,8 +388,8 @@ void BackendApi::push_status(bool status, json::value telemetry)
   if (this->agent_mode == "JSON_TEST")
   {
     // Write the current JSON value to a stream with the native platform character width
-    utility::stringstream_t stream;
-    payload.serialize(stream);
+    // utility::stringstream_t stream;
+    // payload.serialize(stream);
 
     // Display the string stream
     // std::cout << stream.str() << std::endl;
@@ -398,15 +399,15 @@ void BackendApi::push_status(bool status, json::value telemetry)
     std::ofstream outfile;
     std::string filename = this->log_name + "Status" + this->log_ext;
     // std::cout << filename << std::endl;
-    outfile.open(filename);
-    outfile << std::setw(4) << stream.str() << std::endl;
-    outfile.close();
+    // outfile.open(filename);
+    // outfile << std::setw(4) << stream.str() << std::endl;
+    // outfile.close();
   }
   else if (this->agent_mode == "POST_TEST")
   {
     // Write the current JSON value to a stream with the native platform character width
-    utility::stringstream_t stream;
-    payload.serialize(stream);
+    // utility::stringstream_t stream;
+    // payload.serialize(stream);
 
     // Display the string stream
     // std::cout << stream.str() << std::endl;
@@ -416,9 +417,9 @@ void BackendApi::push_status(bool status, json::value telemetry)
     std::ofstream outfile;
     std::string filename = this->log_name + "Status" + this->log_ext;
     // std::cout << filename << std::endl;
-    outfile.open(filename);
-    outfile << std::setw(4) << stream.str() << std::endl;
-    outfile.close();
+    // outfile.open(filename);
+    // outfile << std::setw(4) << stream.str() << std::endl;
+    // outfile.close();
 
     // Post downstream
     try
@@ -434,6 +435,7 @@ void BackendApi::push_status(bool status, json::value telemetry)
 
 void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
 {
+  std::cout << "Pushing event" << std::endl;
   // Create JSON payload and push to kinesis
   auto last_log = log.back();
   int idx = 0;
@@ -450,6 +452,8 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   std::string telemetry_str = last_log[idx++];
   std::string event_id = last_log[idx++];
 
+  std::cout << "Initialized" << std::endl;
+
   bool ticketBool = false;
   if (((level == "8") || (level == "16")) && ((cflag == "false") || (cflag == "Null")))
   {
@@ -460,57 +464,65 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
     ticketBool = false;
   }
 
+  std::cout << "Creating payload" << std::endl;
   // Create JSON object
   json::value payload = json::value::object();
 
-  // Create keys
-  utility::string_t agentKey(utility::conversions::to_string_t("agent_id"));
-  utility::string_t roboKey(utility::conversions::to_string_t("robot_id"));
-  utility::string_t propKey(utility::conversions::to_string_t("property_id"));
-  utility::string_t eventidKey(utility::conversions::to_string_t("event_id"));
-  utility::string_t timeKey(utility::conversions::to_string_t("timestamp"));
-  utility::string_t msgKey(utility::conversions::to_string_t("message"));
-  utility::string_t lvlKey(utility::conversions::to_string_t("level"));
-  utility::string_t modKey(utility::conversions::to_string_t("module"));
-  utility::string_t srcKey(utility::conversions::to_string_t("source"));
-  utility::string_t cKey(utility::conversions::to_string_t("compounding"));
-  utility::string_t ticketKey(utility::conversions::to_string_t("create_ticket"));
-  utility::string_t descKey(utility::conversions::to_string_t("description"));
-  utility::string_t resKey(utility::conversions::to_string_t("resolution"));
-  utility::string_t telKey(utility::conversions::to_string_t("telemetry"));
+  try
+  {
+    // Create keys
+    utility::string_t agentKey(utility::conversions::to_string_t("agent_id"));
+    utility::string_t roboKey(utility::conversions::to_string_t("robot_id"));
+    utility::string_t propKey(utility::conversions::to_string_t("property_id"));
+    utility::string_t eventidKey(utility::conversions::to_string_t("event_id"));
+    utility::string_t timeKey(utility::conversions::to_string_t("timestamp"));
+    utility::string_t msgKey(utility::conversions::to_string_t("message"));
+    utility::string_t lvlKey(utility::conversions::to_string_t("level"));
+    utility::string_t modKey(utility::conversions::to_string_t("module"));
+    utility::string_t srcKey(utility::conversions::to_string_t("source"));
+    utility::string_t cKey(utility::conversions::to_string_t("compounding"));
+    utility::string_t ticketKey(utility::conversions::to_string_t("create_ticket"));
+    utility::string_t descKey(utility::conversions::to_string_t("description"));
+    utility::string_t resKey(utility::conversions::to_string_t("resolution"));
+    utility::string_t telKey(utility::conversions::to_string_t("telemetry"));
 
-  // Assign key-value
-  payload[agentKey] = json::value::string(utility::conversions::to_string_t(this->agent_id));
-  payload[roboKey] = json::value::string(utility::conversions::to_string_t(this->robot_id));
-  payload[propKey] = json::value::string(utility::conversions::to_string_t(this->site_id));
-  payload[eventidKey] = json::value::string(utility::conversions::to_string_t(event_id));
-  payload[timeKey] = json::value::string(utility::conversions::to_string_t(timestr));
-  payload[msgKey] = json::value::string(utility::conversions::to_string_t(message));
-  payload[lvlKey] = json::value::string(utility::conversions::to_string_t(level));
-  payload[modKey] = json::value::string(utility::conversions::to_string_t(module));
-  payload[srcKey] = json::value::string(utility::conversions::to_string_t(source));
-  if (cflag == "false")
-  {
-    payload[cKey] = json::value::boolean(false);
+    // Assign key-value
+    payload[agentKey] = json::value::string(utility::conversions::to_string_t(this->agent_id));
+    payload[roboKey] = json::value::string(utility::conversions::to_string_t(this->robot_id));
+    payload[propKey] = json::value::string(utility::conversions::to_string_t(this->site_id));
+    payload[eventidKey] = json::value::string(utility::conversions::to_string_t(event_id));
+    payload[timeKey] = json::value::string(utility::conversions::to_string_t(timestr));
+    payload[msgKey] = json::value::string(utility::conversions::to_string_t(message));
+    payload[lvlKey] = json::value::string(utility::conversions::to_string_t(level));
+    payload[modKey] = json::value::string(utility::conversions::to_string_t(module));
+    payload[srcKey] = json::value::string(utility::conversions::to_string_t(source));
+    if (cflag == "false")
+    {
+      payload[cKey] = json::value::boolean(false);
+    }
+    else if (cflag == "true")
+    {
+      payload[cKey] = json::value::boolean(true);
+    }
+    else
+    {
+      payload[cKey] = json::value::string(utility::conversions::to_string_t("Null"));
+    }
+    payload[ticketKey] = json::value::boolean(ticketBool);
+    payload[descKey] = json::value::string(utility::conversions::to_string_t(description));
+    payload[resKey] = json::value::string(utility::conversions::to_string_t(resolution));
+    payload[telKey] = json::value::parse(utility::conversions::to_string_t(telemetry_str));
   }
-  else if (cflag == "true")
+  catch(const std::exception& e)
   {
-    payload[cKey] = json::value::boolean(true);
-  }
-  else
-  {
-    payload[cKey] = json::value::string(utility::conversions::to_string_t("Null"));
-  }
-  payload[ticketKey] = json::value::boolean(ticketBool);
-  payload[descKey] = json::value::string(utility::conversions::to_string_t(description));
-  payload[resKey] = json::value::string(utility::conversions::to_string_t(resolution));
-  payload[telKey] = json::value::parse(utility::conversions::to_string_t(telemetry_str));
+    std::cerr << e.what() << '\n';
+  }   
 
   if (this->agent_mode == "JSON_TEST")
   {
     // Write the current JSON value to a stream with the native platform character width
-    utility::stringstream_t stream;
-    payload.serialize(stream);
+    // utility::stringstream_t stream;
+    // payload.serialize(stream);
 
     // Display the string stream
     // std::cout << stream.str() << std::endl;
@@ -520,16 +532,16 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
     std::ofstream outfile;
     this->log_id++;
     std::string filename = this->log_name + std::to_string(this->log_id) + this->log_ext;
-    std::cout << filename << std::endl;
-    outfile.open(filename);
-    outfile << std::setw(4) << stream.str() << std::endl;
-    outfile.close();
+    // std::cout << filename << std::endl;
+    // outfile.open(filename);
+    // outfile << std::setw(4) << stream.str() << std::endl;
+    // outfile.close();
   }
   else if (this->agent_mode == "POST_TEST")
   {
     // Write the current JSON value to a stream with the native platform character width
-    utility::stringstream_t stream;
-    payload.serialize(stream);
+    // utility::stringstream_t stream;
+    // payload.serialize(stream);
 
     // Display the string stream
     // std::cout << stream.str() << std::endl;
@@ -539,10 +551,10 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
     std::ofstream outfile;
     this->log_id++;
     std::string filename = this->log_name + std::to_string(this->log_id) + this->log_ext;
-    std::cout << filename << std::endl;
-    outfile.open(filename);
-    outfile << std::setw(4) << stream.str() << std::endl;
-    outfile.close();
+    // std::cout << filename << std::endl;
+    // outfile.open(filename);
+    // outfile << std::setw(4) << stream.str() << std::endl;
+    // outfile.close();
 
     // Post downstream
     try
@@ -610,61 +622,63 @@ json::value BackendApi::create_event_log(std::vector<std::vector<std::string>> l
   return (event_log);
 }
 
-pplx::task<void> BackendApi::query_error_classification(std::string msg_text)
-{
+// pplx::task<void> BackendApi::query_error_classification(std::string msg_text)
+// {
 
-  return pplx::create_task([this, msg_text] {
-           // Create HTTP client configuration
-           http_client_config config;
-           config.set_validate_certificates(false);
-           auto timeout = std::chrono::milliseconds(2000);
-           config.set_timeout(timeout);
+//   return pplx::create_task([this, msg_text] {
+//            // Create HTTP client configuration
+//            http_client_config config;
+//            config.set_validate_certificates(false);
+//            auto timeout = std::chrono::milliseconds(2000);
+//            config.set_timeout(timeout);
 
-           // Create HTTP client
-           http_client client(this->ecs_api_host, config);
+//            // Create HTTP client
+//            std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+//            http_client client(converter.from_bytes(this->ecs_api_host), config);
 
-           // Build request
-           http_request req(methods::GET);
+//            // Build request
+//            http_request req(methods::GET);
 
-           // Build request URI.
-           uri_builder builder(this->ecs_api_endpoint);
-           builder.append_query("RobotModel", this->ecs_robot_model);
-           builder.append_query("ErrorText", msg_text);
-           req.set_request_uri(builder.to_string());
+//            // Build request URI.
+//            uri_builder builder(converter.from_bytes(this->ecs_api_endpoint));
+//            builder.append_query(L"RobotModel", this->ecs_robot_model);
+//            builder.append_query(L"ErrorText", msg_text);
+//            req.set_request_uri(builder.to_string());
 
-           return client.request(req);
-         })
-      .then([this](http_response response) {
-        // If successful, return JSON query
-        if (response.status_code() == status_codes::OK)
-        {
-          auto body = response.extract_string();
-          std::string body_str = body.get().c_str();
-          this->msg_resp = body_str;
-        }
-        // If not, request failed
-        else
-        {
-          std::cout << "Request failed" << std::endl;
-        }
-      });
-}
+//            return client.request(req);
+//          })
+//       .then([this](http_response response) {
+//         // If successful, return JSON query
+//         if (response.status_code() == status_codes::OK)
+//         {
+//           auto body = response.extract_string();
+//           std::wstring body_str = body.get().c_str();
+//           std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+//           this->msg_resp = converter.to_bytes(body_str);
+//         }
+//         // If not, request failed
+//         else
+//         {
+//           std::cout << "Request failed" << std::endl;
+//         }
+//       });
+// }
 
 json::value BackendApi::check_error_classification(std::string msg_text)
 {
   json::value response = json::value::null();
   json::value response_data = json::value::null();
 
-  try
-  {
-    this->query_error_classification(msg_text).wait();
-    std::string temp_msg = this->msg_resp;
-    response = json::value::parse(temp_msg);
-  }
-  catch (const http::http_exception &e)
-  {
-    std::cerr << "ECS API error: " << e.what() << ". Agent will retry API connection at: " << this->ecs_api_host + this->ecs_api_endpoint << std::endl;
-  }
+  // try
+  // {
+  //   this->query_error_classification(msg_text).wait();
+  //   std::string temp_msg = this->msg_resp;
+  //   response = json::value::parse(temp_msg);
+  // }
+  // catch (const http::http_exception &e)
+  // {
+  //   std::cerr << "ECS API error: " << e.what() << ". Agent will retry API connection at: " << this->ecs_api_host + this->ecs_api_endpoint << std::endl;
+  // }
 
   try
   {

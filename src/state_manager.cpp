@@ -74,7 +74,9 @@ void StateManager::check_message_ecs(std::string robot_code, const rosgraph_msgs
 
         int error_level = (msg_info.at(utility::conversions::to_string_t("severity"))).as_integer();
         // std::cout << "Level: " << error_level << std::endl;
-        std::string error_msg = (msg_info.at(utility::conversions::to_string_t("error_text"))).as_string();
+        std::wstring error_msgw = (msg_info.at(utility::conversions::to_string_t("error_text"))).as_string();
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+        std::string error_msg = converter.to_bytes(error_msgw);
         // std::cout << "Text: " << error_msg << std::endl;
 
         if ((error_level == 8) || (error_level == 16))
@@ -163,7 +165,9 @@ void StateManager::check_message_ert(std::string robot_code, const rosgraph_msgs
 
         int error_level = (msg_info.at(utility::conversions::to_string_t("error_level"))).as_integer();
         // std::cout << "Level: " << error_level << std::endl;
-        std::string error_msg = (msg_info.at(utility::conversions::to_string_t("error_text"))).as_string();
+        std::wstring error_msgw = (msg_info.at(utility::conversions::to_string_t("error_text"))).as_string();
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+        std::string error_msg = converter.to_bytes(error_msgw);
         // std::cout << "Text: " << error_msg << std::endl;
 
         if (error_level == 8)
@@ -235,19 +239,19 @@ void StateManager::check_message_ros(std::string robot_code, const rosgraph_msgs
 
     if (data->level == 8)
     {
-        // std::cout << "Error... " << data->msg << std::endl;
+        std::cout << "Error... " << data->msg << std::endl;
         // Check for suppression
         this->check_error(robot_code, data->msg);
     }
     else if (data->level == 4)
     {
-        // std::cout << "Warning... " << data->msg << std::endl;
+        std::cout << "Warning... " << data->msg << std::endl;
         // Check for suppression
         this->check_warning(robot_code, data->msg);
     }
     else
     {
-        // std::cout << "Info... " << data->msg << std::endl;
+        std::cout << "Info... " << data->msg << std::endl;
         // Check for suppression
         this->check_info(robot_code, data->msg);
     }
@@ -256,16 +260,16 @@ void StateManager::check_message_ros(std::string robot_code, const rosgraph_msgs
     if (this->suppress_flag)
     {
         // If suppressed, do nothing
-        // std::cout << "Suppressed!" << std::endl;
+        std::cout << "Suppressed!" << std::endl;
     }
     else
     {
-        // std::cout << "Not suppressed!" << std::endl;
+        std::cout << "Not suppressed!" << std::endl;
         // If not suppressed, send it to event to update
-        this->event_instance.update_log(data, json::value::null(), telemetry, "ROS");
+        // this->event_instance.update_log(data, json::value::null(), telemetry, "ROS");
 
         // Push log
-        this->api_instance.push_event_log(this->event_instance.get_log());
+        // this->api_instance.push_event_log(this->event_instance.get_log());
 
         if ((data->level == 8) || (data->msg == "Goal reached"))
         {
