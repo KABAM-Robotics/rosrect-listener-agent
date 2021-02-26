@@ -108,7 +108,7 @@ void StateManager::check_message_ecs(std::string robot_code, const rosgraph_msgs
         {
             // std::cout << "Not suppressed!" << std::endl;
             // If not suppressed, send it to event to update
-            // this->event_instance.update_log(data, msg_info, telemetry, "ECS");
+            this->event_instance.update_log(data, msg_info, telemetry, "ECS");
 
             // Push to stream
             this->api_instance.push_event_log(this->event_instance.get_log());

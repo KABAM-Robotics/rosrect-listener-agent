@@ -49,6 +49,6 @@ public:
   void push_status(bool, web::json::value);                                 // Pushes appropriate status data
   void push_event_log(std::vector<std::vector<std::string>>);               // Create and push single JSON record payload data for downstream consumption
   web::json::value create_event_log(std::vector<std::vector<std::string>>); // Create JSON "multiple record" payload data for downstream consumption
-  // pplx::task<void> query_error_classification(std::string);                 // Query error classification database table
+  pplx::task<void> query_error_classification(std::string);                 // Query error classification database table
   web::json::value check_error_classification(std::string);                 // Entry point for error classification
 };

@@ -278,7 +278,7 @@ pplx::task<void> BackendApi::post_event_log(json::value payload)
            // Create HTTP client configuration
            http_client_config config;
            config.set_validate_certificates(false);
-           auto timeout = std::chrono::milliseconds(500);
+           auto timeout = std::chrono::milliseconds(2000);
            config.set_timeout(timeout);
 
            // Create HTTP client
@@ -629,63 +629,65 @@ json::value BackendApi::create_event_log(std::vector<std::vector<std::string>> l
   return (event_log);
 }
 
-// pplx::task<void> BackendApi::query_error_classification(std::string msg_text)
-// {
+pplx::task<void> BackendApi::query_error_classification(std::string msg_text)
+{
 
-//   return pplx::create_task([this, msg_text] {
-//            // Create HTTP client configuration
-//            http_client_config config;
-//            config.set_validate_certificates(false);
-//            auto timeout = std::chrono::milliseconds(2000);
-//            config.set_timeout(timeout);
+  return pplx::create_task([this, msg_text] {
+           
+           // Create HTTP client configuration
+           http_client_config config;
+           config.set_validate_certificates(false);
+           auto timeout = std::chrono::milliseconds(2000);
+           config.set_timeout(timeout);
+           
+           // Create HTTP client
+           std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+           http_client client(converter.from_bytes(this->ecs_api_host), config);
+           
+           // Build request
+           http_request req(methods::GET);
+           
+           // Build request URI.
+           uri_builder builder(converter.from_bytes(this->ecs_api_endpoint));
+           builder.append_query(L"RobotModel", converter.from_bytes(this->ecs_robot_model));
+           builder.append_query(L"ErrorText", converter.from_bytes(msg_text));
+           req.set_request_uri(builder.to_string());
 
-//            // Create HTTP client
-//            std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-//            http_client client(converter.from_bytes(this->ecs_api_host), config);
-
-//            // Build request
-//            http_request req(methods::GET);
-
-//            // Build request URI.
-//            uri_builder builder(converter.from_bytes(this->ecs_api_endpoint));
-//            builder.append_query(L"RobotModel", this->ecs_robot_model);
-//            builder.append_query(L"ErrorText", msg_text);
-//            req.set_request_uri(builder.to_string());
-
-//            return client.request(req);
-//          })
-//       .then([this](http_response response) {
-//         // If successful, return JSON query
-//         if (response.status_code() == status_codes::OK)
-//         {
-//           auto body = response.extract_string();
-//           std::wstring body_str = body.get().c_str();
-//           std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-//           this->msg_resp = converter.to_bytes(body_str);
-//         }
-//         // If not, request failed
-//         else
-//         {
-//           std::cout << "Request failed" << std::endl;
-//         }
-//       });
-// }
+           return client.request(req);
+         })
+      .then([this](http_response response) {
+        // If successful, return JSON query
+        if (response.status_code() == status_codes::OK)
+        {
+          auto body = response.extract_string();
+          std::wstring body_str = body.get().c_str();
+          // std::wcout << body_str << std::endl;
+          std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+          this->msg_resp = converter.to_bytes(body_str);
+        }
+        // If not, request failed
+        else
+        {
+          std::cout << "Request failed" << std::endl;
+        }
+      });
+}
 
 json::value BackendApi::check_error_classification(std::string msg_text)
 {
   json::value response = json::value::null();
   json::value response_data = json::value::null();
-
-  // try
-  // {
-  //   this->query_error_classification(msg_text).wait();
-  //   std::string temp_msg = this->msg_resp;
-  //   response = json::value::parse(temp_msg);
-  // }
-  // catch (const http::http_exception &e)
-  // {
-  //   std::cerr << "ECS API error: " << e.what() << ". Agent will retry API connection at: " << this->ecs_api_host + this->ecs_api_endpoint << std::endl;
-  // }
+  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+  try
+  {
+    this->query_error_classification(msg_text).wait();
+    std::string temp_msg = this->msg_resp;
+    response = json::value::parse(converter.from_bytes(temp_msg));
+  }
+  catch (const http::http_exception &e)
+  {
+    std::cerr << "ECS API error: " << e.what() << ". Agent will retry API connection at: " << this->ecs_api_host + this->ecs_api_endpoint << std::endl;
+  }
 
   try
   {

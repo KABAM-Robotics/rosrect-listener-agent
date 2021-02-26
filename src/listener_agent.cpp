@@ -91,7 +91,7 @@ cs_listener::cs_listener()
   }
 
   // Heartbeat parameters
-  this->heartrate = ros::WallDuration(5.0);
+  this->heartrate = ros::WallDuration(15.0);
 
   // Telemetry
   // Create JSON object
