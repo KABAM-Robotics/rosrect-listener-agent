@@ -91,7 +91,7 @@ cs_listener::cs_listener()
   }
 
   // Heartbeat parameters
-  this->heartrate = ros::WallDuration(15.0);
+  this->heartrate = ros::WallDuration(5.0);
 
   // Telemetry
   // Create JSON object
@@ -209,15 +209,15 @@ void cs_listener::setup_telemetry(ros::NodeHandle nh)
   // }
 }
 
-void cs_listener::setup_diagnostics(ros::NodeHandle nh)
-{
-  if (this->diag_setting == "on")
-  {
-    // Subscribe to diagnostics_agg topic
-    this->diag_sub =
-        nh.subscribe("diagnostics_agg", 1000, &cs_listener::diag_callback, this);
-  }
-}
+// void cs_listener::setup_diagnostics(ros::NodeHandle nh)
+// {
+//   if (this->diag_setting == "on")
+//   {
+//     // Subscribe to diagnostics_agg topic
+//     this->diag_sub =
+//         nh.subscribe("diagnostics_agg", 1000, &cs_listener::diag_callback, this);
+//   }
+// }
 
 void cs_listener::log_callback(const rosgraph_msgs::Log::ConstPtr &rosmsg)
 {
@@ -225,44 +225,44 @@ void cs_listener::log_callback(const rosgraph_msgs::Log::ConstPtr &rosmsg)
   std::cout << "Message received: " << rosmsg->msg << std::endl;
 
   // Callback that hands over message to State Manager
-  this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
-  // // If node list is not set
-  // if (this->node_list.empty())
-  // {
-  //   // If node except list is not set, process everything
-  //   if (this->node_ex_list.empty())
-  //   {
-  //     // To debug this callback function
-  //     std::cout << "Message received: " << rosmsg->msg << std::endl;
 
-  //     // Callback that hands over message to State Manager
-  //     this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
-  //   }
-  //   else
-  //   {
-  //     // If incoming message is NOT from the node except list, process
-  //     if (find(this->node_ex_list.begin(), this->node_ex_list.end(), rosmsg->name) == this->node_ex_list.end())
-  //     {
-  //       // To debug this callback function
-  //       std::cout << "Message received: " << rosmsg->msg << std::endl;
+  // If node list is not set
+  if (this->node_list.empty())
+  {
+    // If node except list is not set, process everything
+    if (this->node_ex_list.empty())
+    {
+      // To debug this callback function
+      std::cout << "Message received: " << rosmsg->msg << std::endl;
 
-  //       // Callback that hands over message to State Manager
-  //       this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
-  //     }
-  //   }
-  // }
-  // else
-  // {
-  //   // If incoming message IS from the node list, process
-  //   if (find(this->node_list.begin(), this->node_list.end(), rosmsg->name) != this->node_list.end())
-  //   {
-  //     // To debug this callback function
-  //     std::cout << "Message received: " << rosmsg->msg << std::endl;
+      // Callback that hands over message to State Manager
+      this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+    }
+    else
+    {
+      // If incoming message is NOT from the node except list, process
+      if (find(this->node_ex_list.begin(), this->node_ex_list.end(), rosmsg->name) == this->node_ex_list.end())
+      {
+        // To debug this callback function
+        std::cout << "Message received: " << rosmsg->msg << std::endl;
 
-  //     // Callback that hands over message to State Manager
-  //     this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
-  //   }
-  // }
+        // Callback that hands over message to State Manager
+        this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+      }
+    }
+  }
+  else
+  {
+    // If incoming message IS from the node list, process
+    if (find(this->node_list.begin(), this->node_list.end(), rosmsg->name) != this->node_list.end())
+    {
+      // To debug this callback function
+      std::cout << "Message received: " << rosmsg->msg << std::endl;
+
+      // Callback that hands over message to State Manager
+      this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg, this->telemetry);
+    }
+  }
 }
 
 void cs_listener::odom_callback(const nav_msgs::Odometry::ConstPtr &rosmsg)
@@ -295,35 +295,35 @@ void cs_listener::pose_callback(const geometry_msgs::PoseWithCovarianceStamped::
   this->telemetry[poseKey] = pose_data;
 }
 
-void cs_listener::diag_callback(const diagnostic_msgs::DiagnosticArray::ConstPtr &rosmsg)
-{
-  // Process diagnostics information
+// void cs_listener::diag_callback(const diagnostic_msgs::DiagnosticArray::ConstPtr &rosmsg)
+// {
+//   // Process diagnostics information
 
-  // Check if current diagnostic sample index is less than prescribed number
-  // If yes, ignore sample until prescribed number is reached. Just a simple downsample
-  if (this->curr_diag_sample < this->num_diag_samples)
-  {
-    // Handle special case of if the current sample index is INT_MIN then it is the first ever sample, so we process.
-    if (this->curr_diag_sample == INT_MIN)
-    {
-      this->state_manager_instance.check_diagnostic(this->agent_type, this->robot_code, rosmsg->status, this->telemetry);
-      this->curr_diag_sample = 0;
-    }
-    else
-    {
-      // General case to ignore current sample
-      this->curr_diag_sample++;
-      std::cout << "Sample ignored" << std::endl;
-    }
-  }
-  else
-  {
-    // General case to process current sample if index > prescribed number
-    this->state_manager_instance.check_diagnostic(this->agent_type, this->robot_code, rosmsg->status, this->telemetry);
-    // Reset index back to 0 to restart sampling loop again
-    this->curr_diag_sample = 0;
-  }
-}
+//   // Check if current diagnostic sample index is less than prescribed number
+//   // If yes, ignore sample until prescribed number is reached. Just a simple downsample
+//   if (this->curr_diag_sample < this->num_diag_samples)
+//   {
+//     // Handle special case of if the current sample index is INT_MIN then it is the first ever sample, so we process.
+//     if (this->curr_diag_sample == INT_MIN)
+//     {
+//       this->state_manager_instance.check_diagnostic(this->agent_type, this->robot_code, rosmsg->status, this->telemetry);
+//       this->curr_diag_sample = 0;
+//     }
+//     else
+//     {
+//       // General case to ignore current sample
+//       this->curr_diag_sample++;
+//       std::cout << "Sample ignored" << std::endl;
+//     }
+//   }
+//   else
+//   {
+//     // General case to process current sample if index > prescribed number
+//     this->state_manager_instance.check_diagnostic(this->agent_type, this->robot_code, rosmsg->status, this->telemetry);
+//     // Reset index back to 0 to restart sampling loop again
+//     this->curr_diag_sample = 0;
+//   }
+// }
 
 void cs_listener::heartbeat_start(ros::NodeHandle nh)
 {
@@ -359,10 +359,10 @@ int main(int argc, char **argv)
   cs_listener cs_agent;
 
   // Start heartbeat
-  // cs_agent.heartbeat_start(nh);
+  cs_agent.heartbeat_start(nh);
 
   // Setup telemetry
-  // cs_agent.setup_telemetry(nh);
+  cs_agent.setup_telemetry(nh);
 
   // Setup diagnostics
   // cs_agent.setup_diagnostics(nh);

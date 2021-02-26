@@ -353,73 +353,80 @@ void BackendApi::push_status(bool status, json::value telemetry)
   // Create JSON object
   json::value payload = json::value::object();
 
-  // Create keys
-  utility::string_t agentKey(utility::conversions::to_string_t("agent_id"));
-  utility::string_t roboKey(utility::conversions::to_string_t("robot_id"));
-  utility::string_t propKey(utility::conversions::to_string_t("property_id"));
-  utility::string_t eventidKey(utility::conversions::to_string_t("event_id"));
-  utility::string_t timeKey(utility::conversions::to_string_t("timestamp"));
-  utility::string_t msgKey(utility::conversions::to_string_t("message"));
-  utility::string_t lvlKey(utility::conversions::to_string_t("level"));
-  utility::string_t modKey(utility::conversions::to_string_t("module"));
-  utility::string_t srcKey(utility::conversions::to_string_t("source"));
-  utility::string_t cKey(utility::conversions::to_string_t("compounding"));
-  utility::string_t ticketKey(utility::conversions::to_string_t("create_ticket"));
-  utility::string_t descKey(utility::conversions::to_string_t("description"));
-  utility::string_t resKey(utility::conversions::to_string_t("resolution"));
-  utility::string_t telKey(utility::conversions::to_string_t("telemetry"));
+  try
+  {
+    // Create keys
+    utility::string_t agentKey(utility::conversions::to_string_t("agent_id"));
+    utility::string_t roboKey(utility::conversions::to_string_t("robot_id"));
+    utility::string_t propKey(utility::conversions::to_string_t("property_id"));
+    utility::string_t eventidKey(utility::conversions::to_string_t("event_id"));
+    utility::string_t timeKey(utility::conversions::to_string_t("timestamp"));
+    utility::string_t msgKey(utility::conversions::to_string_t("message"));
+    utility::string_t lvlKey(utility::conversions::to_string_t("level"));
+    utility::string_t modKey(utility::conversions::to_string_t("module"));
+    utility::string_t srcKey(utility::conversions::to_string_t("source"));
+    utility::string_t cKey(utility::conversions::to_string_t("compounding"));
+    utility::string_t ticketKey(utility::conversions::to_string_t("create_ticket"));
+    utility::string_t descKey(utility::conversions::to_string_t("description"));
+    utility::string_t resKey(utility::conversions::to_string_t("resolution"));
+    utility::string_t telKey(utility::conversions::to_string_t("telemetry"));
 
-  // Assign key-value
-  payload[agentKey] = json::value::string(utility::conversions::to_string_t(this->agent_id));
-  payload[roboKey] = json::value::string(utility::conversions::to_string_t(this->robot_id));
-  payload[propKey] = json::value::string(utility::conversions::to_string_t(this->site_id));
-  payload[eventidKey] = json::value::string(utility::conversions::to_string_t(event_id));
-  payload[timeKey] = json::value::string(utility::conversions::to_string_t(timestr));
-  payload[msgKey] = json::value::string(utility::conversions::to_string_t(message));
-  payload[lvlKey] = json::value::string(utility::conversions::to_string_t(level));
-  payload[modKey] = json::value::string(utility::conversions::to_string_t(module));
-  payload[srcKey] = json::value::string(utility::conversions::to_string_t(source));
-  payload[cKey] = json::value::string(utility::conversions::to_string_t(cflag));
-  payload[ticketKey] = json::value::boolean(ticketBool);
-  payload[descKey] = json::value::string(utility::conversions::to_string_t(description));
-  payload[resKey] = json::value::string(utility::conversions::to_string_t(resolution));
-  payload[telKey] = telemetry;
+    // Assign key-value
+    payload[agentKey] = json::value::string(utility::conversions::to_string_t(this->agent_id));
+    payload[roboKey] = json::value::string(utility::conversions::to_string_t(this->robot_id));
+    payload[propKey] = json::value::string(utility::conversions::to_string_t(this->site_id));
+    payload[eventidKey] = json::value::string(utility::conversions::to_string_t(event_id));
+    payload[timeKey] = json::value::string(utility::conversions::to_string_t(timestr));
+    payload[msgKey] = json::value::string(utility::conversions::to_string_t(message));
+    payload[lvlKey] = json::value::string(utility::conversions::to_string_t(level));
+    payload[modKey] = json::value::string(utility::conversions::to_string_t(module));
+    payload[srcKey] = json::value::string(utility::conversions::to_string_t(source));
+    payload[cKey] = json::value::string(utility::conversions::to_string_t(cflag));
+    payload[ticketKey] = json::value::boolean(ticketBool);
+    payload[descKey] = json::value::string(utility::conversions::to_string_t(description));
+    payload[resKey] = json::value::string(utility::conversions::to_string_t(resolution));
+    payload[telKey] = telemetry;
+  }
+  catch(const std::exception& e)
+  {
+    std::cerr << e.what() << '\n';
+  }
 
   if (this->agent_mode == "JSON_TEST")
   {
     // Write the current JSON value to a stream with the native platform character width
-    // utility::stringstream_t stream;
-    // payload.serialize(stream);
+    utility::stringstream_t stream;
+    payload.serialize(stream);
 
     // Display the string stream
-    // std::cout << stream.str() << std::endl;
+    // std::wcout << stream.str() << std::endl;
     std::cout << "Status Logged: " << message << std::endl;
 
     // Write to file
-    std::ofstream outfile;
+    std::wofstream outfile;
     std::string filename = this->log_name + "Status" + this->log_ext;
     // std::cout << filename << std::endl;
-    // outfile.open(filename);
-    // outfile << std::setw(4) << stream.str() << std::endl;
-    // outfile.close();
+    outfile.open(filename);
+    outfile << std::setw(4) << stream.str() << std::endl;
+    outfile.close();
   }
   else if (this->agent_mode == "POST_TEST")
   {
     // Write the current JSON value to a stream with the native platform character width
-    // utility::stringstream_t stream;
-    // payload.serialize(stream);
+    utility::stringstream_t stream;
+    payload.serialize(stream);
 
     // Display the string stream
-    // std::cout << stream.str() << std::endl;
+    // std::wcout << stream.str() << std::endl;
     std::cout << "Status Logged: " << message << std::endl;
 
     // Write to file
-    std::ofstream outfile;
+    std::wofstream outfile;
     std::string filename = this->log_name + "Status" + this->log_ext;
     // std::cout << filename << std::endl;
-    // outfile.open(filename);
-    // outfile << std::setw(4) << stream.str() << std::endl;
-    // outfile.close();
+    outfile.open(filename);
+    outfile << std::setw(4) << stream.str() << std::endl;
+    outfile.close();
 
     // Post downstream
     try
@@ -435,7 +442,7 @@ void BackendApi::push_status(bool status, json::value telemetry)
 
 void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
 {
-  std::cout << "Pushing event" << std::endl;
+  // std::cout << "Pushing event" << std::endl;
   // Create JSON payload and push to kinesis
   auto last_log = log.back();
   int idx = 0;
@@ -452,7 +459,7 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   std::string telemetry_str = last_log[idx++];
   std::string event_id = last_log[idx++];
 
-  std::cout << "Initialized" << std::endl;
+  // std::cout << "Initialized" << std::endl;
 
   bool ticketBool = false;
   if (((level == "8") || (level == "16")) && ((cflag == "false") || (cflag == "Null")))
@@ -464,7 +471,7 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
     ticketBool = false;
   }
 
-  std::cout << "Creating payload" << std::endl;
+  // std::cout << "Creating payload" << std::endl;
   // Create JSON object
   json::value payload = json::value::object();
 
@@ -521,40 +528,40 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   if (this->agent_mode == "JSON_TEST")
   {
     // Write the current JSON value to a stream with the native platform character width
-    // utility::stringstream_t stream;
-    // payload.serialize(stream);
+    utility::stringstream_t stream;
+    payload.serialize(stream);
 
     // Display the string stream
     // std::cout << stream.str() << std::endl;
     std::cout << level << " level event logged with id: " << event_id << std::endl;
 
     // Write to file
-    std::ofstream outfile;
+    std::wofstream outfile;
     this->log_id++;
     std::string filename = this->log_name + std::to_string(this->log_id) + this->log_ext;
-    // std::cout << filename << std::endl;
-    // outfile.open(filename);
-    // outfile << std::setw(4) << stream.str() << std::endl;
-    // outfile.close();
+    std::cout << filename << std::endl;
+    outfile.open(filename);
+    outfile << std::setw(4) << stream.str() << std::endl;
+    outfile.close();
   }
   else if (this->agent_mode == "POST_TEST")
   {
     // Write the current JSON value to a stream with the native platform character width
-    // utility::stringstream_t stream;
-    // payload.serialize(stream);
+    utility::stringstream_t stream;
+    payload.serialize(stream);
 
     // Display the string stream
     // std::cout << stream.str() << std::endl;
     std::cout << level << " level event logged with id: " << event_id << std::endl;
 
     // Write to file
-    std::ofstream outfile;
+    std::wofstream outfile;
     this->log_id++;
     std::string filename = this->log_name + std::to_string(this->log_id) + this->log_ext;
-    // std::cout << filename << std::endl;
-    // outfile.open(filename);
-    // outfile << std::setw(4) << stream.str() << std::endl;
-    // outfile.close();
+    std::cout << filename << std::endl;
+    outfile.open(filename);
+    outfile << std::setw(4) << stream.str() << std::endl;
+    outfile.close();
 
     // Post downstream
     try

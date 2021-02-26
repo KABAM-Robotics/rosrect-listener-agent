@@ -11,7 +11,7 @@ RobotEvent::RobotEvent()
 
 void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::value msg_info, json::value telemetry, std::string agent_type)
 {
-    std::cout << "Event log updating..." << std::endl;
+    // std::cout << "Event log updating..." << std::endl;
     // Each message has a queue id
     this->queue_id += 1;
 
@@ -32,11 +32,11 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
     std::wstring resolution = L"Null";
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 
-    // utility::stringstream_t stream;
-    // telemetry.serialize(stream);
+    utility::stringstream_t stream;
+    telemetry.serialize(stream);
     // std::cout << "Event telemetry: " << stream.str() << std::endl;
-    // std::wstring telemetry_str = stream.str();
-    std::wstring telemetry_str = L"Null";
+    std::wstring telemetry_str = stream.str();
+    // std::wstring telemetry_str = L"Null";
 
     if (agent_type == "ECS")
     {
@@ -84,7 +84,7 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
     }
     else
     {
-        std::cout << "Populating from ROS!" << std::endl;
+        // std::cout << "Populating from ROS!" << std::endl;
         // This is the direct ROS feed case
         // Assign message
         message = converter.from_bytes(data->msg);
@@ -112,7 +112,7 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr &data, json::valu
 
     // Push to log
     this->event_log.push_back(event_details);
-    std::cout << "Event log updated!" << std::endl;
+    // std::cout << "Event log updated!" << std::endl;
 }
 
 void RobotEvent::update_event_id()
