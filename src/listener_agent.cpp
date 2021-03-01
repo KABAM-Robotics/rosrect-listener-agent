@@ -221,8 +221,6 @@ void cs_listener::setup_diagnostics(ros::NodeHandle nh)
 
 void cs_listener::log_callback(const rosgraph_msgs::Log::ConstPtr &rosmsg)
 {
-  // Callback that hands over message to State Manager
-
   // If node list is not set
   if (this->node_list.empty())
   {
@@ -295,6 +293,7 @@ void cs_listener::pose_callback(const geometry_msgs::PoseWithCovarianceStamped::
 void cs_listener::diag_callback(const diagnostic_msgs::DiagnosticArray::ConstPtr &rosmsg)
 {
   // Process diagnostics information
+  
   // Check if current diagnostic sample index is less than prescribed number
   // If yes, ignore sample until prescribed number is reached. Just a simple downsample
   if (this->curr_diag_sample < this->num_diag_samples)
