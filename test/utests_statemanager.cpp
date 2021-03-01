@@ -1,3 +1,4 @@
+#define _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
 #include <ros/ros.h>
 #include <gtest/gtest.h>
 #include <fstream>
@@ -9,7 +10,7 @@ using namespace web;       // Common features like URIs.
 
 // Log file settings
 std::string run_id;
-std::string parent_dir = std::getenv("HOME");
+std::string parent_dir = std::getenv("USERPROFILE");
 std::string log_name = parent_dir.append("/.cognicept/agent/logs/unittest_logs") + "/logData";
 std::string log_ext = ".json";
 int log_id = 0;
@@ -24,7 +25,7 @@ std::string infoMessage = "Got new plan";
 std::string infoEndMessage = "Goal reached";
 
 // Sample telemetry
-json::value telemetry = json::value::parse("{ \"pose\" : 42 }");
+json::value telemetry = json::value::parse(L"{ \"pose\" : 42 }");
 
 // Sample log
 std::vector<std::string> found;
@@ -319,7 +320,7 @@ TEST(StateManagerTestSuite, checkMessageERTErrorTest)
 
   // Set mode to ERT
   char agent_type[50] = "AGENT_TYPE=ERT";
-  char ecs_api[200] = "ECS_API=http://0.0.0.0:8000";
+  char ecs_api[200] = "ECS_API=http://localhost:8000";
   char ecs_robot_model[200] = "ECS_ROBOT_MODEL=Turtlebot3";
   putenv(agent_type);
   putenv(ecs_api);
@@ -371,7 +372,7 @@ TEST(StateManagerTestSuite, checkMessageERTWarningTest)
 
   // Set mode to ERT
   char agent_type[50] = "AGENT_TYPE=ERT";
-  char ecs_api[200] = "ECS_API=http://0.0.0.0:8000";
+  char ecs_api[200] = "ECS_API=http://localhost:8000";
   char ecs_robot_model[200] = "ECS_ROBOT_MODEL=Turtlebot3";
   putenv(agent_type);
   putenv(ecs_api);
@@ -411,7 +412,7 @@ TEST(StateManagerTestSuite, checkMessageERTInfoTest)
 
   // Set mode to ERT
   char agent_type[50] = "AGENT_TYPE=ERT";
-  char ecs_api[200] = "ECS_API=http://0.0.0.0:8000";
+  char ecs_api[200] = "ECS_API=http://localhost:8000";
   char ecs_robot_model[200] = "ECS_ROBOT_MODEL=Turtlebot3";
   putenv(agent_type);
   putenv(ecs_api);
@@ -465,7 +466,7 @@ TEST(StateManagerTestSuite, checkMessageECSErrorTest)
 
   // Set mode to ECS
   char agent_type[50] = "AGENT_TYPE=ECS";
-  char ecs_api[200] = "ECS_API=http://0.0.0.0:8000";
+  char ecs_api[200] = "ECS_API=http://localhost:8000";
   char ecs_robot_model[200] = "ECS_ROBOT_MODEL=Turtlebot3";
   putenv(agent_type);
   putenv(ecs_api);
@@ -517,7 +518,7 @@ TEST(StateManagerTestSuite, checkMessageECSWarningTest)
 
   // Set mode to ECS
   char agent_type[50] = "AGENT_TYPE=ECS";
-  char ecs_api[200] = "ECS_API=http://0.0.0.0:8000";
+  char ecs_api[200] = "ECS_API=http://localhost:8000";
   char ecs_robot_model[200] = "ECS_ROBOT_MODEL=Turtlebot3";
   putenv(agent_type);
   putenv(ecs_api);
@@ -557,7 +558,7 @@ TEST(StateManagerTestSuite, checkMessageECSInfoTest)
 
   // Set mode to ECS
   char agent_type[50] = "AGENT_TYPE=ECS";
-  char ecs_api[200] = "ECS_API=http://0.0.0.0:8000";
+  char ecs_api[200] = "ECS_API=http://localhost:8000";
   char ecs_robot_model[200] = "ECS_ROBOT_MODEL=Turtlebot3";
   putenv(agent_type);
   putenv(ecs_api);
@@ -722,7 +723,7 @@ TEST(StateManagerTestSuite, checkDiagERTTest)
 
   // Set mode to ERT
   char agent_type[50] = "AGENT_TYPE=ERT";
-  char ecs_api[200] = "ECS_API=http://0.0.0.0:8000";
+  char ecs_api[200] = "ECS_API=http://localhost:8000";
   char ecs_robot_model[200] = "ECS_ROBOT_MODEL=Jeff";
   putenv(agent_type);
   putenv(ecs_api);
@@ -776,7 +777,7 @@ TEST(StateManagerTestSuite, checkDiagECSTest)
 
   // Set mode to ERT
   char agent_type[50] = "AGENT_TYPE=ECS";
-  char ecs_api[200] = "ECS_API=http://0.0.0.0:8000";
+  char ecs_api[200] = "ECS_API=http://localhost:8000";
   char ecs_robot_model[200] = "ECS_ROBOT_MODEL=Jeff";
   putenv(agent_type);
   putenv(ecs_api);

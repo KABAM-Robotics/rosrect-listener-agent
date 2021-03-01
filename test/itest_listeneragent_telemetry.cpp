@@ -1,3 +1,5 @@
+#define _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
+#define _CRT_SECURE_NO_WARNINGS
 #include <cpprest/filestream.h>
 #include <cpprest/json.h>
 #include <cpprest/containerstream.h>
@@ -7,6 +9,9 @@
 #include <fstream>
 #include <ros/console.h>
 #include <boost/date_time.hpp>
+#include <locale>
+#include <codecvt>
+#include <Windows.h>
 #include <error_resolution_diagnoser/tester_talker.h>
 
 using namespace web;       // Common features like URIs.
@@ -74,6 +79,9 @@ std::string log_name;
 std::string log_ext = ".json";
 int log_id = 0;
 
+// Converter for wstring <> string
+std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+
 TEST(ListenerAgentTestSuite, telemetryTest)
 {
   // Go through the lifecycle of a heartbeat to test telemetry
@@ -98,8 +106,8 @@ TEST(ListenerAgentTestSuite, telemetryTest)
   while (getline(infile1, status_line))
   {
     // Output the text from the file
-    stream << status_line;
-    std::cout << stream.str() << std::endl;
+    stream << converter.from_bytes(status_line);
+    std::wcout << stream.str() << std::endl;
   }
 
   // Close file
@@ -113,19 +121,19 @@ TEST(ListenerAgentTestSuite, telemetryTest)
   utility::string_t tktKey(utility::conversions::to_string_t("create_ticket"));
   utility::string_t teleKey(utility::conversions::to_string_t("telemetry"));
   utility::string_t tmKey(utility::conversions::to_string_t("timestamp"));
-  std::string message_value;
+  std::wstring message_value;
   bool ticket_value;
   json::value telemetry_value;
-  std::string timestamp_value_str;
+  std::wstring timestamp_value_str;
 
   message_value = status_log[msgKey].as_string();
   ticket_value = status_log[tktKey].as_bool();
   telemetry_value = status_log[teleKey];
   timestamp_value_str = status_log[tmKey].as_string();
-  boost::posix_time::ptime timestamp1 = boost::posix_time::from_iso_extended_string(timestamp_value_str);
+  boost::posix_time::ptime timestamp1 = boost::posix_time::from_iso_extended_string(converter.to_bytes(timestamp_value_str));
 
   // Check if message is correct
-  ASSERT_EQ(message_value, "Online");
+  ASSERT_EQ(message_value, L"Online");
 
   // Check if create ticket is correctly set to False
   ASSERT_EQ(ticket_value, false);
@@ -167,8 +175,8 @@ TEST(ListenerAgentTestSuite, telemetryTest)
   while (getline(infile2, status_line))
   {
     // Output the text from the file
-    stream << status_line;
-    std::cout << stream.str() << std::endl;
+    stream << converter.from_bytes(status_line);
+    std::wcout << stream.str() << std::endl;
   }
 
   // Close file
@@ -182,10 +190,10 @@ TEST(ListenerAgentTestSuite, telemetryTest)
   ticket_value = status_log[tktKey].as_bool();
   telemetry_value = status_log[teleKey];
   timestamp_value_str = status_log[tmKey].as_string();
-  boost::posix_time::ptime timestamp2 = boost::posix_time::from_iso_extended_string(timestamp_value_str);
+  boost::posix_time::ptime timestamp2 = boost::posix_time::from_iso_extended_string(converter.to_bytes(timestamp_value_str));
 
   // Check if message is correct
-  ASSERT_EQ(message_value, "Online");
+  ASSERT_EQ(message_value, L"Online");
 
   // Check if create ticket is correctly set to False
   ASSERT_EQ(ticket_value, false);
@@ -199,7 +207,7 @@ TEST(ListenerAgentTestSuite, telemetryTest)
     {
       fieldFlag = false;
     }
-    std::cout << value << ": " << fieldFlag << std::endl;
+    std::wcout << value << ": " << fieldFlag << std::endl;
   }
   ASSERT_EQ(fieldFlag, true);
 
@@ -215,7 +223,7 @@ int main(int argc, char **argv)
 {
   // Wait for a few seconds to run the listener test
   std::cout << "Listener test will wait a few seconds for other tests to finish..." << std::endl;
-  sleep(30);
+  Sleep(30000);
 
   // Start tests
   testing::InitGoogleTest(&argc, argv);
@@ -223,7 +231,7 @@ int main(int argc, char **argv)
 
   // Set log folder
   ros::param::get("run_id", run_id);
-  parent_dir = std::getenv("HOME");
+  parent_dir = std::getenv("USERPROFILE");
   parent_dir.append("/.cognicept/agent/logs/" + run_id);
   log_name = parent_dir + "/logDataStatus";
 

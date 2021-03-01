@@ -1,3 +1,5 @@
+#define _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
+#define _CRT_SECURE_NO_WARNINGS
 #include <cpprest/filestream.h>
 #include <cpprest/json.h>
 #include <cpprest/containerstream.h>
@@ -7,6 +9,7 @@
 #include <fstream>
 #include <ros/console.h>
 #include <boost/date_time.hpp>
+#include <Windows.h>
 #include <error_resolution_diagnoser/tester_talker.h>
 
 using namespace web;       // Common features like URIs.
@@ -143,7 +146,7 @@ int main(int argc, char **argv)
 {
   // Wait for a few seconds to run the listener test
   std::cout << "Listener test will wait a few seconds for other tests to finish..." << std::endl;
-  sleep(40);
+  Sleep(40000);
 
   // Start tests
   testing::InitGoogleTest(&argc, argv);
@@ -151,7 +154,7 @@ int main(int argc, char **argv)
 
   // Set log folder
   ros::param::get("run_id", run_id);
-  parent_dir = std::getenv("HOME");
+  parent_dir = std::getenv("USERPROFILE");
   parent_dir.append("/.cognicept/agent/logs/" + run_id);
   log_name = parent_dir + "/logData";
 

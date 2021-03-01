@@ -1,3 +1,5 @@
+#define _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
+#define _CRT_SECURE_NO_WARNINGS
 #include <ros/ros.h>
 #include <rosgraph_msgs/Log.h>
 #include <nav_msgs/Odometry.h>

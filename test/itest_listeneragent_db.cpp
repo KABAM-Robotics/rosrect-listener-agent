@@ -1,7 +1,10 @@
+#define _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
+#define _CRT_SECURE_NO_WARNINGS
 #include <ros/ros.h>
 #include <gtest/gtest.h>
 #include <fstream>
 #include <ros/console.h>
+#include <Windows.h>
 #include <error_resolution_diagnoser/tester_talker.h>
 
 // Utility function to broadcast log messages
@@ -259,7 +262,7 @@ int main(int argc, char **argv)
 {
   // Wait for a few seconds to run the listener test
   std::cout << "Listener test DB will wait 20 seconds for other tests to finish..." << std::endl;
-  sleep(20);
+  Sleep(20000);
 
   // Start tests
   testing::InitGoogleTest(&argc, argv);
@@ -267,7 +270,7 @@ int main(int argc, char **argv)
 
   // Set log folder 
   ros::param::get("run_id", run_id);
-  parent_dir = std::getenv("HOME");
+  parent_dir = std::getenv("USERPROFILE");
   parent_dir.append("/.cognicept/agent/logs/" + run_id);
   log_name = parent_dir + "/logData";
   
