@@ -293,7 +293,7 @@ void cs_listener::pose_callback(const geometry_msgs::PoseWithCovarianceStamped::
 void cs_listener::diag_callback(const diagnostic_msgs::DiagnosticArray::ConstPtr &rosmsg)
 {
   // Process diagnostics information
-  
+
   // Check if current diagnostic sample index is less than prescribed number
   // If yes, ignore sample until prescribed number is reached. Just a simple downsample
   if (this->curr_diag_sample < this->num_diag_samples)
