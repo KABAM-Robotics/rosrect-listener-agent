@@ -23,8 +23,8 @@ set ECS_ROBOT_MODEL=Turtlebot3
 set AGENT_POST_API=http://localhost:8042
 
 @REM ROS Config Examples
-@REM ROS_MASTER_URI=http://192.168.11.87:11311/
-@REM ROS_IP=192.168.11.87
-@REM LOG_NODE_LIST=/move_base;/amcl
-@REM LOG_NODE_EX_LIST=/rviz
+@REM set ROS_MASTER_URI=http://192.168.11.87:11311/
+@REM set ROS_IP=192.168.11.87
+set LOG_NODE_LIST=/move_base;/amcl
+set LOG_NODE_EX_LIST=/rviz
 set DIAGNOSTICS=ON
