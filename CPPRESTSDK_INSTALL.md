@@ -27,6 +27,6 @@ The `error_resolution_diagnoser` package uses Microsoft's `cpprestsdk` library a
 
 8. Add `C:\opt\cpprestsdk_install\bin` to the Windows System path by editing the `Path` variable.
 
-9. In [CmakeLists.txt](CmakeLists.txt), edit line 14 to set the `cpprestsdk_DIR` to the appropriate value such as follows that contains the necessary `*.cmake` files:
+9. In [CMakeLists.txt](CMakeLists.txt), edit line 14 to set the `cpprestsdk_DIR` to the appropriate value such as follows that contains the necessary `*.cmake` files:
     
         set(cpprestsdk_DIR C:/opt/cpprestsdk_install/lib/cpprestsdk/)
