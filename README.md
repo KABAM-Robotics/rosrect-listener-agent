@@ -4,6 +4,13 @@
 [![license - bsd 3 clause](https://img.shields.io/:license-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![support level: vendor](https://img.shields.io/badge/support%20level-vendor-brightgreen.svg)](https://cognicept.systems)
 
+**--------Disclaimer Start--------**
+
+This particular branch has specific instructions and source code ported for Windows OS. If you are planning on using this on Linux, please switch to the `master` or `develop` branches. Thanks for checking this project out!
+
+**--------Disclaimer End--------**
+
+
 Hello there! Thanks for checking out the documentation. This particular document is a user's guide. If you are more interested in what the `error_resolution_diagnoser` is designed for, and the architecture, please take a look at the introduction document [here][7]!
 
 This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [info@cognicept.systems](mailto:info@cognicept.systems). If you are interested in contributing, please refer to the guidelines [here](CONTRIBUTING.md).  
@@ -57,9 +64,7 @@ You can get access to the agent by cloning this repo. After this, there are a co
 
 You can use this approach if you are planning on running this on a system that has a working ROS installation. Steps are as follows:
 
-1.  Install Microsoft's [`C++ REST SDK`][6] for establishing the backend api for using `apt-get`:
-
-        $ sudo apt-get install libcpprest-dev
+1.  Install Microsoft's [`C++ REST SDK`][6] for establishing the backend api. For Windows OS, the latest version of this package at the time of the development of this project had some issues with respect to how platform dependent strings are handled. So instead of using this version, we need to use a public fork of the project where this issue has been addressed. To keep this document clean, please refer to [`CPPRESTSDK_INSTALL.md`](CPPRESTSDK_INSTALL.md) to see how to do the installation for the dependency and come back here!
     
 2. Change to your `catkin_ws` folder:
     
