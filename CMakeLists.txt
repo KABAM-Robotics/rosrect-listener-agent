@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   rosgraph_msgs
   std_msgs
 )
-set(cpprestsdk_DIR /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/cmake/)
+set(cpprestsdk_DIR C:/opt/cpprestsdkinstall/lib/cpprestsdk/)
 find_package(OpenSSL REQUIRED)
 find_package(cpprestsdk REQUIRED)
 ## System dependencies are found with CMake's conventions
