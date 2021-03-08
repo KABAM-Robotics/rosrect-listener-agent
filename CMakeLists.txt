@@ -179,11 +179,11 @@ add_dependencies(error_resolution_diagnoser ${error_resolution_diagnoser_EXPORTE
 # endif()
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
-  find_package(code_coverage REQUIRED)
-  # Add compiler flags for coverage instrumentation before defining any targets
-  APPEND_COVERAGE_COMPILER_FLAGS()
-endif()
+# if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
+#   find_package(code_coverage REQUIRED)
+#   # Add compiler flags for coverage instrumentation before defining any targets
+#   APPEND_COVERAGE_COMPILER_FLAGS()
+# endif()
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
   
@@ -206,11 +206,11 @@ if(CATKIN_ENABLE_TESTING)
   target_link_libraries(listeneragent_test_node_telemetry ${catkin_LIBRARIES} error_resolution_diagnoser_lib cpprestsdk::cpprest)
   target_link_libraries(listeneragent_test_node_diagnostics ${catkin_LIBRARIES} error_resolution_diagnoser_lib cpprestsdk::cpprest)
 
-  if(ENABLE_COVERAGE_TESTING)
-    set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*" "*/${PROJECT_NAME}/include/${PROJECT_NAME}/*.h")
-    add_code_coverage(
-      NAME ${PROJECT_NAME}_coverage_report
-      # DEPENDENCIES tests
-    )
-  endif()
+  # if(ENABLE_COVERAGE_TESTING)
+  #   set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*" "*/${PROJECT_NAME}/include/${PROJECT_NAME}/*.h")
+  #   add_code_coverage(
+  #     NAME ${PROJECT_NAME}_coverage_report
+  #     # DEPENDENCIES tests
+  #   )
+  # endif()
 endif()
