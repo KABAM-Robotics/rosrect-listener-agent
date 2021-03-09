@@ -48,7 +48,7 @@ Some knowledge of ROS and robotics is necessary.
 
 ## Installation
 
-You can get access to the agent by cloning this repo. After this, there are a couple of choices as to how you want to build and run the agent ROS node. Either natively, or using Docker. Steps are as follows:
+You can get access to the agent by cloning this repo. On Windows, Docker support has not been developed/tested. So building and running the node is only supported natively. Steps are as follows:
 
 1. Open a terminal window.
 
@@ -86,22 +86,12 @@ That is it for the native installation! You can now jump to [Running tests](#run
 
 ### Building through Docker:
 
-You can use this approach if you are planning on running the agent on a system that does not have ROS but will be connected to the same ROS network. 
-
-1. First, make sure you have a working [Docker installation][6].
-
-2. You can then build the `docker` image using `docker build` and the provided `Dockerfile`:
-
-        $ docker build -t error_resolution_diagnoser .
-
-3. Additionally, follow the appropriate installation steps for installing the `error_classification_server` [here][8].
-    
-That is it for the Docker installation! You can now jump to [Running tests](#running-tests) or [Syntax](#syntax).
+TBD for Windows. If there is an immediate need for this, please create an issue!
 
 ## Running tests
-Optionally, you can run the unit and integration tests natively or using Docker, based on the installation method you chose in the previous section. 
+Optionally, you can run the unit and integration tests natively. For Windows, Docker support for running tests does not exist yet. 
 
-**NOTE: Before running tests, makes sure the `error_classification_server` is running either natively or using Docker. Take a look at the relevant documentation [here][9]. Failure to have the API server will result in some failed tests that require connection to ECS.**
+**NOTE: Before running tests, makes sure the `error_classification_server` is running natively. Take a look at the relevant documentation [here][9]. Failure to have the API server will result in some failed tests that require connection to ECS.**
 
 ### Native
 
@@ -115,21 +105,7 @@ Optionally, you can run the unit and integration tests natively or using Docker,
     
 ### Using Docker
 
-1. Make sure that you have built the docker image by following the steps [here](#building-through-docker).
-
-2. Switch to the repository's folder or wherever you might be storing the `runtime.env` file.
-
-        $ cd ~/catkin_ws/src/error_resolution_diagnoser
-    
-3. You can run the tests by using the following `docker run` command. Your terminal will show test results similar to the sample [here](#sample-test-results). Logs will be created in the `/$HOME/.cognicept/agent/logs` folder:
-
-        $ docker run -it \
-        --env-file runtime.env \
-        --network=host \
-        --name=agent  \
-        --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
-        error_resolution_diagnoser:latest  \
-        catkin_make run_tests error_resolution_diagnoser
+TBD for Windows.
     
 ### Sample Test Results:
     
@@ -309,7 +285,7 @@ The agent can be configured using the following environment variables:
 | `LOG_NODE_EX_LIST` | Semicolon separated list of ROS node logs to filter OUT and NOT listen to (precede node names with `/`) | Not applicable | This is an optional parameter that can be used to specify a 'semi-colon' separated list of ROS node names for which the ROS logs will be filtered OUT and not listened to. Use this parameter to selectively exclude only nodes of choice to remove nodes that emit noisy and unnecessary ROS logs. Especially if you do not have control over the ROS logs of some of the other nodes. When not specified, all ROS node logs will be processed. When both `LOG_NODE_LIST` and `LOG_NODE_EX_LIST` are specified, `LOG_NODE_LIST` takes precedence and `LOG_NODE_EX_LIST` is ignored. |
 | `DIAGNOSTICS`      | ON/OFF                                                                                                  |      OFF       | This will let the diagnoser listen to diagnostic information on the ROS node. By setting this to ON, the diagnoser will subscribe to `/diagnostics_agg` topic and report 'state-changes'. For more information, refer to the section [Generate diagnostic logs](#generate-diagnostic-logs).                                                                                                                                                                                                                                                                                          |
 
-**NOTE: To run the agent in the `DB` mode, `error_classification_server` should be running either natively or using Docker. Take a look at the relevant documentation [here][9]. Failure to have the API server will result in the agent not able to find a valid API endpoint and result in an error thrown.**
+**NOTE: To run the agent in the `DB` mode, `error_classification_server` should be running natively. Take a look at the relevant documentation [here][9]. Failure to have the API server will result in the agent not able to find a valid API endpoint and result in an error thrown.**
 
 Based on the type of installation, you can configure these variables by different methods as follows.
 
@@ -332,15 +308,7 @@ Now, you can run the listener agent using the provided launch file and `roslaunc
 **NOTE: Just launching the ROS node will start a new ROS master if one is not found. If you would like to connect to a ROS network that is not localhost and has a different `ROS_IP` and `ROS_MASTER_URI`, specify these as environment variables as well. And use the `rosrun error_resolution_diagnoser error_resolution_diagnoser` run command instead.**
 
 ### Configure and Run for Docker
-In case of a Docker installation, you can simply use the [`runtime.env`](runtime.env) file in this repository as an example template and pass it to the docker container with the `--env-file` argument when using the `docker run` command. Simply edit the `runtime.env` like a text file, or comment the unnecessary variables and then rerun the container. Example below:
-
-    $ docker run -it \
-    --env-file runtime.env \
-    --network=host \
-    --name=agent  \
-    --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
-    error_resolution_diagnoser:latest  \
-    roslaunch error_resolution_diagnoser error_resolution_diagnoser.launch 
+TBD for Windows.
 
 **NOTE: Just launching the ROS node will start a new ROS master if one is not found. If you would like to connect to a ROS network that is not localhost and has a different `ROS_IP` and `ROS_MASTER_URI`, specify these as environment variables as well. And use the `rosrun error_resolution_diagnoser error_resolution_diagnoser` run command instead.**
 
@@ -378,16 +346,7 @@ Simply launch the agent ROS node using the launch file:
     $ roslaunch error_resolution_diagnoser error_resolution_diagnoser.launch
     
 **Running using Docker**
-
-Run the following `docker run` command:
-
-    $ docker run -it \
-    --env-file runtime.env \
-    --network=host \
-    --name=agent  \
-    --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
-    error_resolution_diagnoser:latest  \
-    roslaunch error_resolution_diagnoser error_resolution_diagnoser.launch 
+TBD for Windows.
 
  Apart from a few small differences, the agent prompts would look similar for both the types of launches. Sample is shown below:
 
